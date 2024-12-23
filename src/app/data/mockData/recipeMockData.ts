@@ -346,7 +346,7 @@ const mockRecipe = [
 
 
 // Function to save recipes to Firebase
-const saveRecipesToFirebase = async () => {
+export const addMockRecipesToFirebase = async () => {
     try {
         // Loop through mockRecipe array and save each recipe to Firestore
         for (const recipe of mockRecipe) {
@@ -357,5 +357,3 @@ const saveRecipesToFirebase = async () => {
         console.error('Error saving recipes to Firebase:', error);
     }
 };
-
-export default saveRecipesToFirebase;
