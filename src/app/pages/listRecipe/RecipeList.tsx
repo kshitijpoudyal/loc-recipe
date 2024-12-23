@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {fetchRecipes, Recipe} from "@/app/data/Recipe";
 
 
-export default function Recipes() {
+export default function RecipeList() {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 

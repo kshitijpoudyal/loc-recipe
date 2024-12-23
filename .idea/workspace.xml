@@ -5,19 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b35be50f-5ad2-45ad-9e84-9099623e45d3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/accordionRecipe.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/addRecipe.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/data/Recipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/data/mockData/recipeMockData.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/data/mockData/weeklyScheduleMockData.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/lib/firebase.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/viewWeeklySchedule.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/components/NavBar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/pages/mockInputPage/insertMockData.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/accordionRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/listRecipe/RecipeList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/addRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/addRecipe/AddRecipe.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/Recipe.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/Recipe.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/mockData/recipeMockData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/mockData/recipeMockData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/mockData/weeklyScheduleMockData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/mockData/weeklyScheduleMockData.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/viewWeeklySchedule.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/weeklySchedule/viewWeeklySchedule.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +53,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/app/data" />
+      <recent name="$PROJECT_DIR$/src/app/pages/listRecipe" />
+      <recent name="$PROJECT_DIR$/src/app/pages/addRecipe" />
+      <recent name="$PROJECT_DIR$/src/app" />
+      <recent name="$PROJECT_DIR$/src/app/pages/weeklySchedule" />
+      <recent name="$PROJECT_DIR$/src/app/pages/home" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -73,7 +77,7 @@
       <updated>1734926304806</updated>
       <workItem from="1734926307091" duration="1301000" />
       <workItem from="1734928278332" duration="423000" />
-      <workItem from="1734928790378" duration="12029000" />
+      <workItem from="1734928790378" duration="14686000" />
     </task>
     <servers />
   </component>
