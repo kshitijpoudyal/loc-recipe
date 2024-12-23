@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {db} from './lib/firebase';
-import {collection, addDoc} from 'firebase/firestore';
+import {addRecipe, Recipe} from "@/app/data/Recipe";
 
 export default function AddRecipe() {
     const [name, setName] = useState('');
-    const [prepTime, setPrepTime] = useState('');
-    const [cookTime, setCookTime] = useState('');
-    const [servings, setServings] = useState('');
+    const [id, setId] = useState('1001');
+    const [prepTime, setPrepTime] = useState(0);
+    const [cookTime, setCookTime] = useState(0);
+    const [servings, setServings] = useState(0);
     const [mealType, setMealType] = useState<string[]>([]);
     const [ingredients, setIngredients] = useState<{ name: string, quantity: string, unit: string }[]>([]);
     const [ingredientName, setIngredientName] = useState('');
@@ -50,9 +50,9 @@ export default function AddRecipe() {
 
     const clearForm = () => {
         setName('');
-        setPrepTime('');
-        setCookTime('');
-        setServings('');
+        setPrepTime(0);
+        setCookTime(0);
+        setServings(0);
         setMealType([]);
         setIngredients([]);
         setSteps('');
@@ -84,20 +84,24 @@ export default function AddRecipe() {
         };
 
         try {
-            await addDoc(collection(db, 'recipe'), {
-                name,
-                prepTime: parseInt(prepTime),
-                cookTime: parseInt(cookTime),
-                servings: parseInt(servings),
-                mealType,
+            const recipe: Recipe = {
+                id: id,
+                name: name,
+                prepTime: prepTime,
+                cookTime: cookTime,
+                servings: servings,
+                mealType: mealType,
                 ingredients: ingredientList,
                 steps: stepsList,
-                ageGroup,
+                ageGroup: ageGroup,
                 nutrition: nutritionData,
-                createdAt: new Date(),
-            });
-            alert('Recipe added successfully!');
-            clearForm();
+                createdAt: new Date()
+            }
+
+            addRecipe(recipe).then(() => {
+                alert('Recipe added successfully!');
+                clearForm();
+            })
         } catch (error) {
             console.error('Error adding recipe: ', error);
         }
@@ -107,6 +111,19 @@ export default function AddRecipe() {
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-3xl font-bold text-center mb-6">Add New Recipe</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
+
+                <div>
+                    <label htmlFor="id" className="block text-lg font-medium text-gray-700">Recipe Id</label>
+                    <input
+                        id="id"
+                        type="string"
+                        value={name}
+                        onChange={(e) => setId(e.target.value)}
+                        required
+                        className="w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                </div>
+
                 <div>
                     <label htmlFor="name" className="block text-lg font-medium text-gray-700">Recipe Name</label>
                     <input
@@ -126,7 +143,7 @@ export default function AddRecipe() {
                         id="prepTime"
                         type="number"
                         value={prepTime}
-                        onChange={(e) => setPrepTime(e.target.value)}
+                        onChange={(e) => setPrepTime(parseInt(e.target.value))}
                         className="w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                 </div>
@@ -138,7 +155,7 @@ export default function AddRecipe() {
                         id="cookTime"
                         type="number"
                         value={cookTime}
-                        onChange={(e) => setCookTime(e.target.value)}
+                        onChange={(e) => setCookTime(parseInt(e.target.value))}
                         className="w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                 </div>
@@ -149,7 +166,7 @@ export default function AddRecipe() {
                         id="servings"
                         type="number"
                         value={servings}
-                        onChange={(e) => setServings(e.target.value)}
+                        onChange={(e) => setServings(parseInt(e.target.value))}
                         required
                         className="w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
