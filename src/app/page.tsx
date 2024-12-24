@@ -1,6 +1,7 @@
 "use client";
 import React, {useEffect, useState} from "react";
 import NavigationMenu from "@/app/components/NavigationMenu";
+import Example from "@/app/components/AddRecipeTemplate";
 
 export default function Home() {
 
@@ -16,6 +17,7 @@ export default function Home() {
                 <div>
                     <NavigationMenu></NavigationMenu>
                     <main>
+                        <Example></Example>
                     </main>
                 </div>
             )
