@@ -28,14 +28,17 @@ export default function NavigationMenu() {
                     </button>
                 </div>
                 <PopoverGroup className="hidden lg:flex lg:gap-x-12 items-center">
-                    <a href="#" className="text-sm/6 font-semibold text-gray-900">
+                    <a href="/" className="text-sm/6 font-semibold text-gray-900">
+                        Home
+                    </a>
+                    <a href="/add-recipe" className="text-sm/6 font-semibold text-gray-900">
                         Add Recipe
                     </a>
-                    <a href="#" className="text-sm/6 font-semibold text-gray-900">
-                        Recipe List
+                    <a href="/list-recipe" className="text-sm/6 font-semibold text-gray-900">
+                        List Recipe
                     </a>
-                    <a href="#" className="text-sm/6 font-semibold text-gray-900">
-                        Schedule
+                    <a href="/daily-schedule" className="text-sm/6 font-semibold text-gray-900">
+                        Daily Schedule
                     </a>
                 </PopoverGroup>
             </nav>
@@ -56,22 +59,28 @@ export default function NavigationMenu() {
                         <div className="-my-6 divide-y divide-gray-500/10">
                             <div className="space-y-2 py-6">
                                 <a
-                                    href="#"
+                                    href="/"
+                                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                                >
+                                    Home
+                                </a>
+                                <a
+                                    href="/add-recipe"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                                 >
                                     Add Recipe
                                 </a>
                                 <a
-                                    href="#"
+                                    href="/list-recipe"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                                 >
-                                    Recipe List
+                                    List Recipe
                                 </a>
                                 <a
-                                    href="#"
+                                    href="/daily-schedule"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                                 >
-                                    Schedule
+                                    Daily Schedule
                                 </a>
                             </div>
                         </div>
