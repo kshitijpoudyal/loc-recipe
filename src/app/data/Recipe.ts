@@ -1,5 +1,5 @@
-import {addDoc, collection, getDocs} from "firebase/firestore";
-import {db} from "@/app/lib/firebase";
+import {addDoc, collection, doc, getDoc, getDocs} from "firebase/firestore";
+import {db, recipeTableName} from "@/app/lib/firebase";
 
 export interface Recipe {
     id: string;
@@ -18,11 +18,12 @@ export interface Recipe {
         fats?: number; // in grams
         sugar?: number; // in grams
     };
-    createdAt: Date
+    daysOfTheWeek?: string[]
+    createdAt: Date,
 }
 
 export const fetchRecipes = async () => {
-    const recipesCollection = collection(db, 'recipe');
+    const recipesCollection = collection(db, recipeTableName);
     const recipeSnapshot = await getDocs(recipesCollection);
     return recipeSnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -30,8 +31,28 @@ export const fetchRecipes = async () => {
     })) as Recipe[];
 };
 
+export const fetchRecipeById = async (id: string): Promise<Recipe | null> => {
+    try {
+        const recipeDocRef = doc(db, recipeTableName, id);
+        const recipeSnapshot = await getDoc(recipeDocRef);
+
+        if (recipeSnapshot.exists()) {
+            return {
+                id: recipeSnapshot.id,
+                ...recipeSnapshot.data(),
+            } as Recipe;
+        } else {
+            console.warn(`Recipe with ID ${id} does not exist.`);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching recipe by ID:", error);
+        throw error;
+    }
+};
+
 export const addRecipe = async (recipe: Recipe) => {
-    await addDoc(collection(db, 'recipe'), {
+    await addDoc(collection(db, recipeTableName), {
         id: recipe.id,
         name: recipe.name,
         prepTime: recipe.prepTime,
@@ -42,6 +63,7 @@ export const addRecipe = async (recipe: Recipe) => {
         steps: recipe.steps,
         ageGroup: recipe.ageGroup,
         nutrition: recipe.nutrition,
+        daysOfTheWeek: recipe.daysOfTheWeek,
         createdAt: new Date()
     });
 }

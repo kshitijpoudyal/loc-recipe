@@ -5,7 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b35be50f-5ad2-45ad-9e84-9099623e45d3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/data/DailySchedule.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/data/Util.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/pages/dailySchedule/DailyScheduleView.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/Recipe.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/Recipe.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/mockData/recipeMockData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/mockData/RecipeMockData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/mockData/weeklyScheduleMockData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/mockData/DailyScheduleMockData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/lib/firebase.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/lib/firebase.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/pages/addRecipe/AddRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/addRecipe/AddRecipe.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/pages/listRecipe/RecipeList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/listRecipe/RecipeList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/pages/mockInputPage/insertMockData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/mockDataPage/MockDataPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/pages/weeklySchedule/viewWeeklySchedule.tsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

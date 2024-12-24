@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lochana Recipe",
-  description: "List of Recipe",
+  title: "Lochu's Recipe",
+  description: "Lochu's Cafe where Nature reside",
 };
 
 export default function RootLayout({

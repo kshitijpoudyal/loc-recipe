@@ -34,6 +34,7 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
+        daysOfTheWeek: ["monday"]
     },
     {
         id: 1003,
@@ -69,6 +70,7 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
+        daysOfTheWeek: ["monday", "tuesday"]
     },
     {
         id: 1004,
@@ -104,6 +106,7 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
+        daysOfTheWeek: ["wednesday"]
     },
     {
         id: 1005,
@@ -138,6 +141,7 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
+        daysOfTheWeek: ["thursday"]
     },
     {
         id: 1006,
@@ -145,7 +149,7 @@ const mockRecipe = [
         prepTime: 15,
         cookTime: 10,
         servings: 12,
-        mealType: ["dessert"],
+        mealType: ["snacks"],
         ingredients: [
             {name: "flour", quantity: 250, unit: "grams"},
             {name: "butter", quantity: 100, unit: "grams"},
@@ -172,6 +176,7 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
+        daysOfTheWeek: ["friday"]
     },
     {
         id: 1007,
@@ -200,6 +205,7 @@ const mockRecipe = [
             carbohydrates: 15,
             fats: 12,
         },
+        daysOfTheWeek: ["saturday"]
     },
     {
         id: 1008,
@@ -227,6 +233,7 @@ const mockRecipe = [
             carbohydrates: 25,
             fats: 15,
         },
+        daysOfTheWeek: ["sunday"]
     },
     {
         id: 1009,
@@ -256,6 +263,7 @@ const mockRecipe = [
             carbohydrates: 15,
             fats: 4,
         },
+        daysOfTheWeek: ["monday", "saturday"]
     },
     {
         id: 1010,
@@ -284,6 +292,7 @@ const mockRecipe = [
             carbohydrates: 2,
             fats: 14,
         },
+        daysOfTheWeek: ["friday", "tuesday"]
     },
     {
         id: 1011,
@@ -312,6 +321,7 @@ const mockRecipe = [
             carbohydrates: 30,
             fats: 8,
         },
+        daysOfTheWeek: ["saturday", "sunday"]
     },
     {
         id: 1012,
@@ -341,6 +351,7 @@ const mockRecipe = [
             carbohydrates: 35,
             fats: 1,
         },
+        daysOfTheWeek: ["sunday", "tuesday"]
     },
 ];
 
