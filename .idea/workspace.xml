@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b35be50f-5ad2-45ad-9e84-9099623e45d3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/components/NavigationMenu.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/not-found.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/NavBar.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/pages/addRecipe/AddRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/AddRecipe.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/pages/dailySchedule/DailyScheduleView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/DailyScheduleView.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/pages/listRecipe/RecipeList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/RecipeList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/pages/mockDataPage/MockDataPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/MockDataPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/NavigationMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/NavigationMenu.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,11 +43,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app" />
+      <recent name="$PROJECT_DIR$/src/app/404" />
       <recent name="$PROJECT_DIR$/src/app/pages" />
       <recent name="$PROJECT_DIR$/src/app/pages/listRecipe" />
       <recent name="$PROJECT_DIR$/src/app/pages/addRecipe" />
-      <recent name="$PROJECT_DIR$/src/app" />
-      <recent name="$PROJECT_DIR$/src/app/pages/weeklySchedule" />
     </key>
   </component>
   <component name="SharedIndexes">
