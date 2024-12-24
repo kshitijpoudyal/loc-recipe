@@ -1,7 +1,8 @@
+"use client";
 import React, {useState} from 'react';
 import {addRecipe, Recipe} from "@/app/data/Recipe";
 
-export default function AddRecipe() {
+export default function AddRecipeComponent() {
     const [name, setName] = useState('');
     const [id, setId] = useState('1001');
     const [prepTime, setPrepTime] = useState(0);
