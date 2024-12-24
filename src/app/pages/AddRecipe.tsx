@@ -100,7 +100,6 @@ export default function AddRecipe() {
                 daysOfTheWeek: daysOfWeek,
                 createdAt: new Date()
             }
-            console.log(recipe)
 
             addRecipe(recipe).then(() => {
                 alert('Recipe added successfully!');
