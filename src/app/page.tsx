@@ -1,8 +1,9 @@
 "use client";
-import AddRecipe from "@/app/pages/addRecipe/AddRecipe";
+import AddRecipe from "@/app/pages/AddRecipe";
 import React, {useEffect, useState} from "react";
-import RecipeList from "@/app/pages/listRecipe/RecipeList";
-import DailySchedulePage from "@/app/pages/dailySchedule/DailyScheduleView";
+import RecipeList from "@/app/pages/RecipeList";
+import DailySchedulePage from "@/app/pages/DailyScheduleView";
+import NavigationMenu from "@/app/components/NavigationMenu";
 
 export default function Home() {
 
@@ -16,6 +17,7 @@ export default function Home() {
         <>
             {domLoaded && (
                 <div>
+                    <NavigationMenu></NavigationMenu>
                     <main>
                         {/*<AddMockDataForm></AddMockDataForm>*/}
                         <AddRecipe></AddRecipe>
