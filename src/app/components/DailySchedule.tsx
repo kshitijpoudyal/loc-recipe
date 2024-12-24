@@ -6,7 +6,7 @@ interface DailyScheduleProps {
     recipesMap: Record<string, Recipe[]>; // A map of days to recipe arrays
 }
 
-const DailyScheduleView: React.FC<DailyScheduleProps> = ({recipesMap}) => {
+const DailySchedule: React.FC<DailyScheduleProps> = ({recipesMap}) => {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
@@ -71,7 +71,7 @@ const fetchDailySchedule = async (): Promise<Record<string, Recipe[]>> => {
     return schedule;
 };
 
-export default function DailySchedulePage() {
+export default function DailyScheduleComponent() {
     const [recipesMap, setRecipesMap] = useState<Record<string, Recipe[]>>({});
 
     useEffect(() => {
@@ -83,5 +83,5 @@ export default function DailySchedulePage() {
         loadSchedule();
     }, []);
 
-    return <DailyScheduleView recipesMap={recipesMap}/>;
+    return <DailySchedule recipesMap={recipesMap}/>;
 }

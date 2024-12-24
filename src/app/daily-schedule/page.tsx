@@ -1,8 +1,10 @@
 "use client";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState} from 'react';
 import NavigationMenu from "@/app/components/NavigationMenu";
+import DailyScheduleComponent from "@/app/components/DailySchedule";
 
-export default function Home() {
+
+export default function DailySchedulePage() {
 
     const [domLoaded, setDomLoaded] = useState(false);
 
@@ -10,12 +12,14 @@ export default function Home() {
         setDomLoaded(true);
     }, []);
 
+
     return (
         <>
             {domLoaded && (
                 <div>
                     <NavigationMenu></NavigationMenu>
                     <main>
+                        <DailyScheduleComponent/>
                     </main>
                 </div>
             )
@@ -23,4 +27,3 @@ export default function Home() {
         </>
     );
 }
-
