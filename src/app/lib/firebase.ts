@@ -13,10 +13,12 @@ const firebaseConfig = {
     measurementId: "G-BGF2SSQLCM"
 };
 
+export const recipeTableName = "recipe";
+
+export const dailyScheduleTableName = "dailySchedule";
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
-const db = getFirestore(app);
-
-export {db};
+export const db = getFirestore(app);
