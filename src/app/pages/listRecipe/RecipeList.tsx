@@ -33,6 +33,13 @@ export default function RecipeList() {
                         {openIndex === index && (
                             <div className="p-4 bg-gray-100">
                                 <div className="space-y-2">
+                                    {recipe.daysOfTheWeek != null && (
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Days Assigned:</span>
+                                            <span>{recipe.daysOfTheWeek}</span>
+                                        </div>
+                                    )}
+
                                     {recipe.prepTime != null && (
                                         <div className="flex justify-between">
                                             <span className="font-medium">Preparation Time:</span>

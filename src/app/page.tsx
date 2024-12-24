@@ -2,7 +2,7 @@
 import AddRecipe from "@/app/pages/addRecipe/AddRecipe";
 import React, {useEffect, useState} from "react";
 import RecipeList from "@/app/pages/listRecipe/RecipeList";
-// import saveWeeklyScheduleMock from "@/app/mockData/saveWeeklyScheduleMock";
+import DailySchedulePage from "@/app/pages/dailySchedule/DailyScheduleView";
 
 export default function Home() {
 
@@ -15,11 +15,12 @@ export default function Home() {
     return (
         <>
             {domLoaded && (
-                <div className="bg-white">
+                <div>
                     <main>
-                        {/*<ViewWeeklySchedule></ViewWeeklySchedule>*/}
+                        {/*<AddMockDataForm></AddMockDataForm>*/}
                         <AddRecipe></AddRecipe>
                         <RecipeList></RecipeList>
+                        <DailySchedulePage></DailySchedulePage>
                     </main>
                 </div>
             )
