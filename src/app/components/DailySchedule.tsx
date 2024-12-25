@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {fetchRecipes, Recipe} from "@/app/data/Recipe";
-import {daysOfWeek} from "@/app/data/DailySchedule"; // Adjust path for fetching recipes
+import {weekDays} from "@/app/data/DailySchedule"; // Adjust path for fetching recipes
 
 interface DailyScheduleProps {
     recipesMap: Record<string, Recipe[]>; // A map of days to recipe arrays
@@ -12,12 +12,12 @@ const DailySchedule: React.FC<DailyScheduleProps> = ({recipesMap}) => {
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-3xl font-bold text-center mb-6">Daily Recipe Schedule</h1>
             <div className="space-y-6">
-                {daysOfWeek.map((day) => (
-                    <div key={day} className="border-b pb-4">
-                        <h2 className="text-xl font-semibold text-indigo-600">{day}</h2>
+                {weekDays.map((day) => (
+                    <div key={day.id} className="border-b pb-4">
+                        <h2 className="text-xl font-semibold text-indigo-600">{day.name}</h2>
                         <ul className="space-y-2">
-                            {recipesMap[day]?.length > 0 ? (
-                                recipesMap[day].map((recipe) => (
+                            {recipesMap[day.value]?.length > 0 ? (
+                                recipesMap[day.value].map((recipe) => (
                                     <li key={recipe.id} className="bg-gray-100 p-4 rounded-md shadow-sm">
                                         <h3 className="font-medium">{recipe.name}</h3>
                                         <div className="flex space-x-2">
@@ -60,9 +60,9 @@ const fetchDailySchedule = async (): Promise<Record<string, Recipe[]>> => {
 
     recipes.forEach((recipe: Recipe) => {
         if (recipe.daysOfTheWeek && recipe.daysOfTheWeek.length > 0) {
-            daysOfWeek.forEach((day) => {
+            weekDays.forEach((day) => {
                 if (recipe.daysOfTheWeek!!.includes(day)) {
-                        schedule[day].push(recipe);
+                        schedule[day.value].push(recipe);
                 }
             })
         }
