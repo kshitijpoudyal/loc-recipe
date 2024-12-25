@@ -217,7 +217,6 @@ export default function Example() {
                             />
                         </div>
                     </div>
-
                     <div className="sm:col-span-2">
                         <label className="block text-sm/6 font-semibold text-gray-900">
                             Select Day/s
@@ -258,42 +257,169 @@ export default function Example() {
                             </div>
                         </Listbox>
                     </div>
-
                     <div className="sm:col-span-2">
                         <label htmlFor="ingredients" className="block text-sm font-semibold text-gray-900">
                             Ingredients
                         </label>
+                        <div id="ingredients">
+                            <div className="mt-2.5 grid grid-cols-2 gap-x-2.5">
+                                <div className="mt-4 flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
+                                    <div className="relative">
+                                        <label
+                                            htmlFor="ingredientName"
+                                            className="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500"
+                                        >
+                                            Name
+                                        </label>
+                                        <input
+                                            id="ingredientName"
+                                            type="text"
+                                            value={ingredientName}
+                                            onChange={(e) => setIngredientName(e.target.value)}
+                                            className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                        />
+                                    </div>
+                                    <div className="relative">
+                                        <label
+                                            htmlFor="ingredientQuantity"
+                                            className="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500"
+                                        >
+                                            Quantity
+                                        </label>
+                                        <input
+                                            id="ingredientQuantity"
+                                            type="number"
+                                            value={ingredientQuantity}
+                                            onChange={(e) => setIngredientQuantity(e.target.value)}
+                                            className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                        />
+                                    </div>
+                                </div>
 
-                        <div className="flex space-x-4" id="ingredients">
-                            <div className="mt-2.5 flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
-                                <input
-                                    type="number"
-                                    placeholder="Name"
-                                    value={ingredientName}
-                                    onChange={(e) => setIngredientQuantity(e.target.value)}
-                                    className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
-                                />
-                                <input
-                                    type="number"
-                                    placeholder="Quantity"
-                                    value={ingredientQuantity}
-                                    onChange={(e) => setIngredientQuantity(e.target.value)}
-                                    className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Unit"
-                                    value={ingredientUnit}
-                                    onChange={(e) => setIngredientUnit(e.target.value)}
-                                    className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddIngredient}
-                                    className="rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                >
-                                    <PlusIcon aria-hidden="true" className="size-8"/>
-                                </button>
+                                <div className="mt-4 flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
+                                    <div className="relative w-full md:w-1/2">
+                                        <label
+                                            htmlFor="ingredientUnit"
+                                            className="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500"
+                                        >
+                                            Unit
+                                        </label>
+                                        <input
+                                            id="ingredientUnit"
+                                            type="text"
+                                            value={ingredientUnit}
+                                            onChange={(e) => setIngredientUnit(e.target.value)}
+                                            className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="flex border-t border-gray-100 pt-6">
+                                        <button
+                                            type="button"
+                                            onClick={handleAddIngredient}
+                                            className="text-sm/6 font-semibold text-indigo-600 hover:text-indigo-500">
+                                            <span aria-hidden="true">+</span> Ingredients
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <ul className="space-y-2">
+                                    {ingredients.map((ingredient, index) => (
+                                        <li
+                                            key={index}
+                                            className="flex items-center justify-between p-2 pl-4 pr-2 bg-gray-100 rounded-md shadow-sm"
+                                        >
+                                            <div>
+                                                <span className="block font-medium text-gray-800">
+                                                    {ingredient.name} {ingredient.quantity} {ingredient.unit}
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={() =>
+                                                    setIngredients(ingredients.filter((_, i) => i !== index))
+                                                }
+                                                className="rounded-full bg-red-400 p-2 text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                     strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                                    <path strokeLinecap="round" strokeLinejoin="round"
+                                                          d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                                </svg>
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                        <label htmlFor="nutrition" className="block text-sm font-semibold text-gray-900">
+                            Nutrition
+                        </label>
+                        <div id="nutrition" className="mt-2.5 grid grid-cols-2 gap-x-2.5">
+                            <div className="mt-4 flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
+                                <div className="relative">
+                                    <label
+                                        htmlFor="calories"
+                                        className="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500"
+                                    >
+                                        Calories (kcal)
+                                    </label>
+                                    <input
+                                        id="calories"
+                                        type="number"
+                                        value={calories}
+                                        onChange={(e) => setCalories(e.target.value)}
+                                        className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-700 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <label
+                                        htmlFor="protein"
+                                        className="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500"
+                                    >
+                                        Protein (g)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={protein}
+                                        onChange={(e) => setProtein(e.target.value)}
+                                        className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                    />
+                                </div>
+                            </div>
+                            <div className="mt-4 flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
+                                <div className="relative">
+                                    <label
+                                        htmlFor="carbohydrates"
+                                        className="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500"
+                                    >
+                                        Carbohydrates (g)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={carbohydrates}
+                                        onChange={(e) => setCarbohydrates(e.target.value)}
+                                        className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <label
+                                        htmlFor="fats"
+                                        className="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500"
+                                    >
+                                        Fats (g)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={fats}
+                                        onChange={(e) => setFats(e.target.value)}
+                                        className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
