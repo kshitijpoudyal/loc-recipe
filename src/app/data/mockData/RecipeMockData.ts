@@ -1,10 +1,10 @@
-import {db} from '../../lib/firebase'; // Import Firebase configuration
-import {collection, addDoc} from 'firebase/firestore';
+import {addRecipe, Recipe} from "@/app/data/Recipe";
+import {WEEK_DAYS} from "@/app/data/DailySchedule";
 
 // Mock recipe data with added 'id' field starting from 1002
-const mockRecipe = [
+const mockRecipe: Recipe[] = [
     {
-        id: 1002,
+        recipeId: 1002,
         name: "Pancakes",
         prepTime: 15,
         cookTime: 10,
@@ -25,20 +25,18 @@ const mockRecipe = [
             "Serve with syrup and butter.",
         ],
         ageGroup: ["adult", "kids"],
-        createdAt: "2024-12-23T12:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 150,
             protein: 6,
             carbohydrates: 20,
-            fats: 5,
-            iron: 8,
-            calcium: 100,
+            fats: 5
         },
-        daysOfTheWeek: ["monday"],
+        daysOfTheWeek: [WEEK_DAYS[0]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1003,
+        recipeId: 1003,
         name: "Chicken Curry",
         prepTime: 20,
         cookTime: 40,
@@ -62,20 +60,18 @@ const mockRecipe = [
             "Serve with rice or bread.",
         ],
         ageGroup: ["adult", "kids"],
-        createdAt: "2024-12-23T13:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 250,
             protein: 30,
             carbohydrates: 10,
-            fats: 15,
-            iron: 8,
-            calcium: 100,
+            fats: 15
         },
-        daysOfTheWeek: ["monday", "tuesday"],
+        daysOfTheWeek: [WEEK_DAYS[1], WEEK_DAYS[2]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1004,
+        recipeId: 1004,
         name: "Vegetable Stir Fry",
         prepTime: 10,
         cookTime: 15,
@@ -99,20 +95,18 @@ const mockRecipe = [
             "Serve hot with rice or noodles.",
         ],
         ageGroup: ["adult", "kids"],
-        createdAt: "2024-12-23T14:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 180,
             protein: 12,
             carbohydrates: 15,
-            fats: 8,
-            iron: 8,
-            calcium: 100,
+            fats: 8
         },
-        daysOfTheWeek: ["wednesday"],
+        daysOfTheWeek: [WEEK_DAYS[4]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1005,
+        recipeId: 1005,
         name: "Spaghetti Aglio e Olio",
         prepTime: 10,
         cookTime: 15,
@@ -135,20 +129,18 @@ const mockRecipe = [
             "Serve immediately.",
         ],
         ageGroup: ["adult"],
-        createdAt: "2024-12-23T15:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 300,
             protein: 8,
             carbohydrates: 45,
-            fats: 10,
-            iron: 8,
-            calcium: 100,
+            fats: 10
         },
-        daysOfTheWeek: ["thursday"],
+        daysOfTheWeek: [WEEK_DAYS[5]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1006,
+        recipeId: 1006,
         name: "Chocolate Chip Cookies",
         prepTime: 15,
         cookTime: 10,
@@ -171,20 +163,18 @@ const mockRecipe = [
             "Scoop dough onto a baking sheet and bake for 10-12 minutes.",
         ],
         ageGroup: ["kids", "adult"],
-        createdAt: "2024-12-23T16:00:00Z",
+        createdAt:new Date,
         nutrition: {
             calories: 200,
             protein: 3,
             carbohydrates: 25,
-            fats: 10,
-            iron: 8,
-            calcium: 100,
+            fats: 10
         },
-        daysOfTheWeek: ["friday"],
+        daysOfTheWeek: [WEEK_DAYS[6]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1007,
+        recipeId: 1007,
         name: "Caesar Salad",
         prepTime: 15,
         cookTime: 0,
@@ -203,18 +193,18 @@ const mockRecipe = [
             "Serve immediately.",
         ],
         ageGroup: ["adult"],
-        createdAt: "2024-12-23T17:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 200,
             protein: 6,
             carbohydrates: 15,
             fats: 12,
         },
-        daysOfTheWeek: ["saturday"],
+        daysOfTheWeek: [WEEK_DAYS[5]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1008,
+        recipeId: 1008,
         name: "Grilled Cheese Sandwich",
         prepTime: 5,
         cookTime: 10,
@@ -232,18 +222,18 @@ const mockRecipe = [
             "Serve hot.",
         ],
         ageGroup: ["kids", "adult"],
-        createdAt: "2024-12-23T18:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 300,
             protein: 10,
             carbohydrates: 25,
             fats: 15,
         },
-        daysOfTheWeek: ["sunday"],
+        daysOfTheWeek: [WEEK_DAYS[6]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1009,
+        recipeId: 1009,
         name: "Tomato Soup",
         prepTime: 10,
         cookTime: 20,
@@ -263,18 +253,18 @@ const mockRecipe = [
             "Blend the soup until smooth and serve hot.",
         ],
         ageGroup: ["adult", "kids"],
-        createdAt: "2024-12-23T19:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 120,
             protein: 3,
             carbohydrates: 15,
             fats: 4,
         },
-        daysOfTheWeek: ["monday", "saturday"],
+        daysOfTheWeek: [WEEK_DAYS[0], WEEK_DAYS[6]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1010,
+        recipeId: 1010,
         name: "Scrambled Eggs",
         prepTime: 5,
         cookTime: 5,
@@ -293,18 +283,18 @@ const mockRecipe = [
             "Serve immediately.",
         ],
         ageGroup: ["adult", "kids"],
-        createdAt: "2024-12-23T20:00:00Z",
+        createdAt: new Date(),
         nutrition: {
             calories: 180,
             protein: 12,
             carbohydrates: 2,
             fats: 14,
         },
-        daysOfTheWeek: ["friday", "tuesday"],
+        daysOfTheWeek: [WEEK_DAYS[6], WEEK_DAYS[2]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1011,
+        recipeId: 1011,
         name: "Veggie Wrap",
         prepTime: 10,
         cookTime: 0,
@@ -323,23 +313,23 @@ const mockRecipe = [
             "Roll the tortilla tightly and serve immediately.",
         ],
         ageGroup: ["adult", "kids"],
-        createdAt: "2024-12-23T21:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 220,
             protein: 6,
             carbohydrates: 30,
             fats: 8,
         },
-        daysOfTheWeek: ["saturday", "sunday"],
+        daysOfTheWeek: [WEEK_DAYS[5], WEEK_DAYS[6]],
         imageUrl: "https://picsum.photos/600/600"
     },
     {
-        id: 1012,
+        recipeId: 1012,
         name: "Fruit Salad",
         prepTime: 10,
         cookTime: 0,
         servings: 2,
-        mealType: ["dessert", "breakfast"],
+        mealType: ["breakfast"],
         ingredients: [
             {name: "apple", quantity: 1, unit: "medium"},
             {name: "banana", quantity: 1, unit: "medium"},
@@ -354,14 +344,14 @@ const mockRecipe = [
             "Serve chilled.",
         ],
         ageGroup: ["adult", "kids"],
-        createdAt: "2024-12-23T22:00:00Z",
+        createdAt: new Date,
         nutrition: {
             calories: 150,
             protein: 2,
             carbohydrates: 35,
             fats: 1,
         },
-        daysOfTheWeek: ["sunday", "tuesday"],
+        daysOfTheWeek: [WEEK_DAYS[1], WEEK_DAYS[6]],
         imageUrl: "https://picsum.photos/600/600"
     },
 ];
@@ -372,7 +362,7 @@ export const addMockRecipesToFirebase = async () => {
     try {
         // Loop through mockRecipe array and save each recipe to Firestore
         for (const recipe of mockRecipe) {
-            await addDoc(collection(db, 'recipe'), recipe);
+            await addRecipe(recipe)
         }
         console.log('Mock recipes saved successfully!');
     } catch (error) {

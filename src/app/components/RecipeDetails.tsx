@@ -8,6 +8,7 @@ import {
 } from '@headlessui/react'
 import {XMarkIcon} from '@heroicons/react/24/outline'
 import {Recipe} from "@/app/data/Recipe";
+import Image from "next/image";
 
 interface RecipeDetailsProps {
     isOpen: boolean;
@@ -50,20 +51,31 @@ export default ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) => (
                             </div>
                             <div
                                 className="inline-flex overflow-hidden rounded-lg border-4 border-white">
-                                <img
-                                    alt={recipe.name}
-                                    src={recipe.imageUrl}
-                                    className="w-full h-auto object-cover"
-                                />
+                                {recipe.imageUrl && (
+                                    <Image
+                                        alt={recipe.name}
+                                        src={recipe.imageUrl}
+                                        height={100}
+                                        width={100}
+                                        className="w-full h-auto object-cover"
+                                    />
+                                )}
                             </div>
                             <div className="p-4 bg-gray-100">
                                 <div className="space-y-2">
-                                    {/*{recipe.daysOfTheWeek != null && (*/}
-                                    {/*    <div className="flex justify-between">*/}
-                                    {/*        <span className="font-medium">Days Assigned:</span>*/}
-                                    {/*        <span>{recipe.daysOfTheWeek}</span>*/}
-                                    {/*    </div>*/}
-                                    {/*)}*/}
+                                    {recipe.daysOfTheWeek && recipe.daysOfTheWeek.length > 0 && (
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Days Assigned:</span>
+                                            {recipe.daysOfTheWeek.map((day) => (
+                                                <span
+                                                    key={day.id}
+                                                    className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-md"
+                                                >
+                                                    {day.name}
+                                                </span>
+                                            ))}
+                                </div>
+                                    )}
 
                                     {recipe.prepTime != null && (
                                         <div className="flex justify-between">

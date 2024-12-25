@@ -13,9 +13,9 @@ const firebaseConfig = {
     measurementId: "G-BGF2SSQLCM"
 };
 
-export const recipeTableName = "recipe";
+export const RECIPE_TABLE_NAME = "recipe";
 
-export const dailyScheduleTableName = "dailySchedule";
+export const DAILY_SCHEDULE_TABLE_NAME = "dailySchedule";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

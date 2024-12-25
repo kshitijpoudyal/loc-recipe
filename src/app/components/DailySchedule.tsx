@@ -1,26 +1,25 @@
 import React, {useState, useEffect} from 'react';
-import {fetchRecipes, Recipe} from "@/app/data/Recipe";
-import {weekDays} from "@/app/data/DailySchedule"; // Adjust path for fetching recipes
+import {fetchAllRecipes, findRecipeById, Recipe} from "@/app/data/Recipe";
+import {DailySchedule, fetchAllDailySchedules, WEEK_DAYS} from "@/app/data/DailySchedule"; // Adjust path for fetching recipes
 
 interface DailyScheduleProps {
     recipesMap: Record<string, Recipe[]>; // A map of days to recipe arrays
 }
 
-const DailySchedule: React.FC<DailyScheduleProps> = ({recipesMap}) => {
-
+const DailyScheduleTemplate: React.FC<DailyScheduleProps> = ({recipesMap}) => {
     return (
         <div className="max-w-4xl mx-auto p-6">
             <div className="space-y-6">
-                {weekDays.map((day) => (
+                {WEEK_DAYS.map((day) => (
                     <div key={day.id} className="border-b pb-4">
                         <h2 className="text-xl font-semibold text-indigo-600">{day.name}</h2>
                         <ul className="space-y-2">
-                            {recipesMap[day.value]?.length > 0 ? (
-                                recipesMap[day.value].map((recipe) => (
-                                    <li key={recipe.id} className="bg-gray-100 p-4 rounded-md shadow-sm">
+                            {recipesMap[day.id]?.length > 0 ? (
+                                recipesMap[day.id].map((recipe) => (
+                                    <li key={recipe.recipeId} className="bg-gray-100 p-4 rounded-md shadow-sm">
                                         <h3 className="font-medium">{recipe.name}</h3>
                                         <div className="flex space-x-2">
-                                            {recipe.mealType.map((type) => (
+                                            {recipe.mealType && recipe.mealType.map((type) => (
                                                 <span
                                                     key={type}
                                                     className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-md"
@@ -46,28 +45,44 @@ const DailySchedule: React.FC<DailyScheduleProps> = ({recipesMap}) => {
 };
 
 const fetchDailySchedule = async (): Promise<Record<string, Recipe[]>> => {
-    const recipes = await fetchRecipes(); // Fetch all recipes
-    const schedule: Record<string, Recipe[]> = {
-        sunday: [],
-        monday: [],
-        tuesday: [],
-        wednesday: [],
-        thursday: [],
-        friday: [],
-        saturday: [],
+    const recipes = await fetchAllRecipes(); // Fetch all recipes
+    const dailySchedules = await fetchAllDailySchedules(); // Fetch all recipes
+    const scheduleLocal: Record<number, Recipe[]> = {
+        0: [],
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+        6: [],
     };
 
-    recipes.forEach((recipe: Recipe) => {
-        if (recipe.daysOfTheWeek && recipe.daysOfTheWeek.length > 0) {
-            weekDays.forEach((day) => {
-                if (recipe.daysOfTheWeek!!.includes(day)) {
-                        schedule[day.value].push(recipe);
-                }
-            })
-        }
+    dailySchedules.forEach((schedule: DailySchedule) => {
+        schedule.breakfast.map((recipeId) => {
+            // console.log("breakfast recipe", recipeId)
+            const recipe = findRecipeById(recipes, recipeId);
+            if (recipe) {
+                // console.log("breakfast recipe found", recipe)
+                // console.log("recipe id", schedule.weekday.id)
+                scheduleLocal[schedule.weekday.id].push(recipe)
+            }
+        })
+        schedule.lunch.map((recipeId) => {
+            // console.log("lunch recipe", recipeId)
+            const recipe = findRecipeById(recipes, recipeId);
+            if (recipe) {
+                scheduleLocal[schedule.weekday.id].push(recipe)
+            }
+        })
+        schedule.dinner.map((recipeId) => {
+            // console.log("dinner recipe", recipeId)
+            const recipe = findRecipeById(recipes, recipeId);
+            if (recipe) {
+                scheduleLocal[schedule.weekday.id].push(recipe)
+            }
+        })
     });
-
-    return schedule;
+    return scheduleLocal;
 };
 
 export default function DailyScheduleComponent() {
@@ -82,5 +97,7 @@ export default function DailyScheduleComponent() {
         loadSchedule();
     }, []);
 
-    return <DailySchedule recipesMap={recipesMap}/>;
+    console.log(recipesMap)
+
+    return <DailyScheduleTemplate recipesMap={recipesMap}/>;
 }

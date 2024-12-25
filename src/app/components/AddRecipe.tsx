@@ -5,11 +5,11 @@ import {ChevronUpDownIcon} from '@heroicons/react/16/solid'
 import {CheckIcon} from '@heroicons/react/20/solid'
 import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/react'
 import {addRecipe, Ingredients, Recipe} from "@/app/data/Recipe";
-import {WeekDay, weekDays} from "@/app/data/DailySchedule";
+import {WeekDay, WEEK_DAYS} from "@/app/data/DailySchedule";
 
 export default function AddRecipeComponent() {
     const [name, setName] = useState('');
-    const [id, setId] = useState('1001');
+    const [id, setId] = useState(1001);
     const [prepTime, setPrepTime] = useState(0);
     const [cookTime, setCookTime] = useState(0);
     const [servings, setServings] = useState(0);
@@ -25,7 +25,7 @@ export default function AddRecipeComponent() {
     const [carbohydrates, setCarbohydrates] = useState('');
     const [fats, setFats] = useState('');
     const [sugar, setSugar] = useState('');
-    const [daysOfWeek, setDaysOfWeek] = useState<WeekDay[]>([weekDays[0], weekDays[1]]);
+    const [daysOfWeek, setDaysOfWeek] = useState<WeekDay[]>([WEEK_DAYS[0], WEEK_DAYS[1]]);
 
 
     const handleMealTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +58,7 @@ export default function AddRecipeComponent() {
 
     const clearForm = () => {
         setName('');
+        setId(0);
         setPrepTime(0);
         setCookTime(0);
         setServings(0);
@@ -70,7 +71,7 @@ export default function AddRecipeComponent() {
         setCarbohydrates('');
         setFats('');
         setSugar('');
-        setDaysOfWeek([weekDays[0]]);
+        setDaysOfWeek([WEEK_DAYS[0]]);
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -141,7 +142,7 @@ export default function AddRecipeComponent() {
                                 name="recipe-id"
                                 type="text"
                                 value={id}
-                                onChange={(e) => setId(e.target.value)}
+                                onChange={(e) => setId(parseInt(e.target.value))}
                                 required
                                 className="block w-full rounded-md px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
                             />
@@ -215,7 +216,7 @@ export default function AddRecipeComponent() {
                                     transition
                                     className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
                                 >
-                                    {weekDays.map((day) => (
+                                    {WEEK_DAYS.map((day) => (
                                         <ListboxOption
                                             key={day.id}
                                             value={day}

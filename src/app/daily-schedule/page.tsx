@@ -6,13 +6,10 @@ import HeroTitle from "@/app/components/HeroTitle";
 
 
 export default function DailySchedulePage() {
-
     const [domLoaded, setDomLoaded] = useState(false);
-
     useEffect(() => {
         setDomLoaded(true);
     }, []);
-
 
     return (
         <>
@@ -24,8 +21,7 @@ export default function DailySchedulePage() {
                         <DailyScheduleComponent/>
                     </main>
                 </div>
-            )
-            }
+            )}
         </>
     );
 }
