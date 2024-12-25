@@ -34,7 +34,8 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
-        daysOfTheWeek: ["monday"]
+        daysOfTheWeek: ["monday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1003,
@@ -70,7 +71,8 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
-        daysOfTheWeek: ["monday", "tuesday"]
+        daysOfTheWeek: ["monday", "tuesday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1004,
@@ -106,7 +108,8 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
-        daysOfTheWeek: ["wednesday"]
+        daysOfTheWeek: ["wednesday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1005,
@@ -141,7 +144,8 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
-        daysOfTheWeek: ["thursday"]
+        daysOfTheWeek: ["thursday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1006,
@@ -176,7 +180,8 @@ const mockRecipe = [
             iron: 8,
             calcium: 100,
         },
-        daysOfTheWeek: ["friday"]
+        daysOfTheWeek: ["friday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1007,
@@ -205,7 +210,8 @@ const mockRecipe = [
             carbohydrates: 15,
             fats: 12,
         },
-        daysOfTheWeek: ["saturday"]
+        daysOfTheWeek: ["saturday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1008,
@@ -233,7 +239,8 @@ const mockRecipe = [
             carbohydrates: 25,
             fats: 15,
         },
-        daysOfTheWeek: ["sunday"]
+        daysOfTheWeek: ["sunday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1009,
@@ -263,7 +270,8 @@ const mockRecipe = [
             carbohydrates: 15,
             fats: 4,
         },
-        daysOfTheWeek: ["monday", "saturday"]
+        daysOfTheWeek: ["monday", "saturday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1010,
@@ -292,7 +300,8 @@ const mockRecipe = [
             carbohydrates: 2,
             fats: 14,
         },
-        daysOfTheWeek: ["friday", "tuesday"]
+        daysOfTheWeek: ["friday", "tuesday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1011,
@@ -321,7 +330,8 @@ const mockRecipe = [
             carbohydrates: 30,
             fats: 8,
         },
-        daysOfTheWeek: ["saturday", "sunday"]
+        daysOfTheWeek: ["saturday", "sunday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
     {
         id: 1012,
@@ -351,7 +361,8 @@ const mockRecipe = [
             carbohydrates: 35,
             fats: 1,
         },
-        daysOfTheWeek: ["sunday", "tuesday"]
+        daysOfTheWeek: ["sunday", "tuesday"],
+        imageUrl: "https://picsum.photos/600/600"
     },
 ];
 

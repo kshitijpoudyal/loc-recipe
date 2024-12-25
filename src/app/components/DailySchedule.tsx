@@ -10,7 +10,6 @@ const DailySchedule: React.FC<DailyScheduleProps> = ({recipesMap}) => {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
-            <h1 className="text-3xl font-bold text-center mb-6">Daily Recipe Schedule</h1>
             <div className="space-y-6">
                 {weekDays.map((day) => (
                     <div key={day.id} className="border-b pb-4">

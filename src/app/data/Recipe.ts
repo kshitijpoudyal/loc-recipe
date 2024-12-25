@@ -25,7 +25,8 @@ export interface Recipe {
         fats?: number; // in grams
         sugar?: number; // in grams
     };
-    daysOfTheWeek?: WeekDay[]
+    daysOfTheWeek?: WeekDay[],
+    imageUrl?: string,
     createdAt: Date,
 }
 
