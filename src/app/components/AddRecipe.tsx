@@ -113,11 +113,7 @@ export default function AddRecipeComponent() {
     };
 
     return (
-        <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-                <h2 className="text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Add New
-                    Recipe</h2>
-            </div>
+        <div className="px-6 pb-24 sm:pb-32 lg:px-8">
             <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-xl sm:mt-20">
                 <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                     <div>
@@ -132,7 +128,7 @@ export default function AddRecipeComponent() {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
-                                className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                className="block w-full rounded-md px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
                             />
                         </div>
                     </div>
@@ -148,7 +144,7 @@ export default function AddRecipeComponent() {
                                 value={id}
                                 onChange={(e) => setId(e.target.value)}
                                 required
-                                className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                className="block w-full rounded-md px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
                             />
                         </div>
                     </div>
