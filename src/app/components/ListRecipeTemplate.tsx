@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
-import {defaultRecipe, fetchRecipes, Recipe} from "@/app/data/Recipe";
+import {defaultRecipe, fetchAllRecipes, Recipe} from "@/app/data/Recipe";
 import ExampleDetails from "@/app/components/RecipeDetails";
+import Image from "next/image";
 
 export default function Example() {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -8,7 +9,7 @@ export default function Example() {
     const [open, setOpen] = useState(false)
 
     useEffect(() => {
-        fetchRecipes().then((recipes) => {
+        fetchAllRecipes().then((recipes) => {
             setRecipes(recipes)
         })
     }, []);
@@ -22,7 +23,7 @@ export default function Example() {
                 <div
                     className="mt-11 grid grid-cols-1 items-start gap-x-6 gap-y-16 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
                     {recipes.map((recipe) => (
-                        <div key={recipe.name} className="flex flex-col-reverse" onClick={()=> {
+                        <div key={recipe.name} className="flex flex-col-reverse" onClick={() => {
                             console.log("clicked", open, selectedRecipe)
                             setOpen(!open)
                             setSelectedRecipe(recipe)
@@ -44,11 +45,15 @@ export default function Example() {
                                     )}
                                 </h3>
                             </div>
-                            <img
-                                alt={recipe.name}
-                                src={recipe.imageUrl}
-                                className="aspect-square w-full rounded-lg bg-gray-100 object-cover"
-                            />
+                            {recipe.imageUrl && (
+                                <Image
+                                    alt={recipe.name}
+                                    src={recipe.imageUrl}
+                                    height={100}
+                                    width={100}
+                                    className="aspect-square w-full rounded-lg bg-gray-100 object-cover"
+                                />
+                            )}
                         </div>
                     ))}
                 </div>

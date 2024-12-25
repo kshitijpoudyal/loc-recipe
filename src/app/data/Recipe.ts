@@ -1,5 +1,5 @@
 import {addDoc, collection, doc, getDoc, getDocs} from "firebase/firestore";
-import {db, recipeTableName} from "@/app/lib/firebase";
+import {db, RECIPE_TABLE_NAME} from "@/app/lib/firebase";
 import {WeekDay} from "@/app/data/DailySchedule";
 
 export type Ingredients = {
@@ -9,13 +9,14 @@ export type Ingredients = {
 }
 
 export interface Recipe {
-    id: string;
+    _id?: string; //server side id
+    recipeId: number;
     name: string;
     prepTime?: number;
     cookTime?: number;
     servings?: number;
     mealType?: string[];
-    ingredients?: Ingredients[] | undefined;
+    ingredients?: Ingredients[];
     steps?: string[];
     ageGroup?: string[];
     nutrition?: {
@@ -31,27 +32,31 @@ export interface Recipe {
 }
 
 export const defaultRecipe: Recipe = {
-    id: "1001",
+    recipeId: 1001,
     name: "test"
 }
 
-export const fetchRecipes = async () => {
-    const recipesCollection = collection(db, recipeTableName);
+export const fetchAllRecipes = async () => {
+    const recipesCollection = collection(db, RECIPE_TABLE_NAME);
     const recipeSnapshot = await getDocs(recipesCollection);
     return recipeSnapshot.docs.map((doc) => ({
-        id: doc.id,
+        _id: doc.id,
         ...doc.data(),
     })) as Recipe[];
 };
 
+export const findRecipeById = (_recipes: Recipe[], recipeId: number): Recipe | undefined => {
+    return _recipes.find((recipe) => recipe.recipeId === recipeId);
+};
+
 export const fetchRecipeById = async (id: string): Promise<Recipe | null> => {
     try {
-        const recipeDocRef = doc(db, recipeTableName, id);
+        const recipeDocRef = doc(db, RECIPE_TABLE_NAME, id);
         const recipeSnapshot = await getDoc(recipeDocRef);
 
         if (recipeSnapshot.exists()) {
             return {
-                id: recipeSnapshot.id,
+                _id: recipeSnapshot.id,
                 ...recipeSnapshot.data(),
             } as Recipe;
         } else {
@@ -65,8 +70,8 @@ export const fetchRecipeById = async (id: string): Promise<Recipe | null> => {
 };
 
 export const addRecipe = async (recipe: Recipe) => {
-    await addDoc(collection(db, recipeTableName), {
-        id: recipe.id,
+    await addDoc(collection(db, RECIPE_TABLE_NAME), {
+        recipeId: recipe.recipeId,
         name: recipe.name,
         prepTime: recipe.prepTime,
         cookTime: recipe.cookTime,
@@ -76,7 +81,8 @@ export const addRecipe = async (recipe: Recipe) => {
         steps: recipe.steps,
         ageGroup: recipe.ageGroup,
         nutrition: recipe.nutrition,
-        daysOfTheWeek: recipe.daysOfTheWeek?.map((day) => day.value),
-        createdAt: new Date()
+        daysOfTheWeek: recipe.daysOfTheWeek,
+        createdAt: new Date(),
+        imageUrl: recipe.imageUrl
     });
 }

@@ -10,6 +10,7 @@ import {
     Bars3Icon,
     XMarkIcon,
 } from '@heroicons/react/24/outline'
+import Link from "next/link";
 
 export default function NavigationMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -28,18 +29,18 @@ export default function NavigationMenu() {
                     </button>
                 </div>
                 <PopoverGroup className="hidden lg:flex lg:gap-x-12 items-center">
-                    <a href="/" className="text-sm/6 font-semibold text-gray-900">
+                    <Link href="/" className="text-sm/6 font-semibold text-gray-900">
                         Home
-                    </a>
-                    <a href="/add-recipe" className="text-sm/6 font-semibold text-gray-900">
+                    </Link>
+                    <Link href="/add-recipe" className="text-sm/6 font-semibold text-gray-900">
                         Add Recipe
-                    </a>
-                    <a href="/list-recipe" className="text-sm/6 font-semibold text-gray-900">
+                    </Link>
+                    <Link href="/list-recipe" className="text-sm/6 font-semibold text-gray-900">
                         List Recipe
-                    </a>
-                    <a href="/daily-schedule" className="text-sm/6 font-semibold text-gray-900">
+                    </Link>
+                    <Link href="/daily-schedule" className="text-sm/6 font-semibold text-gray-900">
                         Daily Schedule
-                    </a>
+                    </Link>
                 </PopoverGroup>
             </nav>
             <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
@@ -58,30 +59,30 @@ export default function NavigationMenu() {
                     <div className="mt-6 flow-root">
                         <div className="-my-6 divide-y divide-gray-500/10">
                             <div className="space-y-2 py-6">
-                                <a
+                                <Link
                                     href="/"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                                 >
                                     Home
-                                </a>
-                                <a
+                                </Link>
+                                <Link
                                     href="/add-recipe"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                                 >
                                     Add Recipe
-                                </a>
-                                <a
+                                </Link>
+                                <Link
                                     href="/list-recipe"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                                 >
                                     List Recipe
-                                </a>
-                                <a
+                                </Link>
+                                <Link
                                     href="/daily-schedule"
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                                 >
                                     Daily Schedule
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
