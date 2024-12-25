@@ -13,11 +13,11 @@ export interface Recipe {
     name: string;
     prepTime?: number;
     cookTime?: number;
-    servings: number;
-    mealType: string[];
-    ingredients: Ingredients[] | undefined;
-    steps: string[];
-    ageGroup: string[];
+    servings?: number;
+    mealType?: string[];
+    ingredients?: Ingredients[] | undefined;
+    steps?: string[];
+    ageGroup?: string[];
     nutrition?: {
         calories?: number;
         protein?: number; // in grams
@@ -27,7 +27,12 @@ export interface Recipe {
     };
     daysOfTheWeek?: WeekDay[],
     imageUrl?: string,
-    createdAt: Date,
+    createdAt?: Date,
+}
+
+export const defaultRecipe: Recipe = {
+    id: "1001",
+    name: "test"
 }
 
 export const fetchRecipes = async () => {
