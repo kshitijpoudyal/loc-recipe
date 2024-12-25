@@ -1,5 +1,12 @@
 import {addDoc, collection, doc, getDoc, getDocs} from "firebase/firestore";
 import {db, recipeTableName} from "@/app/lib/firebase";
+import {WeekDay} from "@/app/data/DailySchedule";
+
+export type Ingredients = {
+    name: string;
+    quantity: number;
+    unit: string
+}
 
 export interface Recipe {
     id: string;
@@ -8,7 +15,7 @@ export interface Recipe {
     cookTime?: number;
     servings: number;
     mealType: string[];
-    ingredients: { name: string; quantity: number; unit: string }[] | undefined;
+    ingredients: Ingredients[] | undefined;
     steps: string[];
     ageGroup: string[];
     nutrition?: {
@@ -18,7 +25,7 @@ export interface Recipe {
         fats?: number; // in grams
         sugar?: number; // in grams
     };
-    daysOfTheWeek?: string[]
+    daysOfTheWeek?: WeekDay[]
     createdAt: Date,
 }
 
@@ -63,7 +70,7 @@ export const addRecipe = async (recipe: Recipe) => {
         steps: recipe.steps,
         ageGroup: recipe.ageGroup,
         nutrition: recipe.nutrition,
-        daysOfTheWeek: recipe.daysOfTheWeek,
+        daysOfTheWeek: recipe.daysOfTheWeek?.map((day) => day.value),
         createdAt: new Date()
     });
 }

@@ -1,3 +1,9 @@
+export type WeekDay = {
+    id: number;
+    name: string;
+    value: string;
+};
+
 export const daysOfWeek: string[] = [
     "monday",
     "tuesday",
@@ -8,7 +14,7 @@ export const daysOfWeek: string[] = [
     "sunday",
 ];
 
-export const weekDays = [
+export const weekDays: WeekDay[] = [
     {id: 0, name: 'Monday', value: "monday"},
     {id: 1, name: 'Tuesday', value: "tuesday"},
     {id: 2, name: 'Wednesday', value: "wednesday"},
