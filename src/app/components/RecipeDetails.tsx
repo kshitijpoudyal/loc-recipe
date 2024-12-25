@@ -1,20 +1,13 @@
 'use client'
 
-import {useState} from 'react'
 import {
     Dialog,
     DialogBackdrop,
     DialogPanel,
-    DialogTitle,
-    Menu,
-    MenuButton, MenuItem,
-    MenuItems,
-    TransitionChild
+    DialogTitle
 } from '@headlessui/react'
-import {HeartIcon, XMarkIcon} from '@heroicons/react/24/outline'
-import {PencilIcon, PlusIcon} from '@heroicons/react/20/solid'
+import {XMarkIcon} from '@heroicons/react/24/outline'
 import {Recipe} from "@/app/data/Recipe";
-import {EllipsisVerticalIcon} from "@heroicons/react/16/solid";
 
 interface RecipeDetailsProps {
     isOpen: boolean;
@@ -41,7 +34,7 @@ export default ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) => (
                             <div className="px-4 py-6 sm:px-6">
                                 <div className="flex items-start justify-between">
                                     <DialogTitle
-                                        className="text-base font-semibold text-gray-900">Profile</DialogTitle>
+                                        className="text-base font-semibold text-gray-900">{recipe.name}</DialogTitle>
                                     <div className="ml-3 flex h-7 items-center">
                                         <button
                                             type="button"
@@ -55,149 +48,139 @@ export default ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) => (
                                     </div>
                                 </div>
                             </div>
-                            <div className="divide-y divide-gray-200">
-                                <div className="pb-6">
-                                    <div
-                                        className="-mt-12 flow-root px-4 sm:-mt-8 sm:flex sm:items-end sm:px-6 lg:-mt-16">
-                                        <div>
-                                            <div className="-m-1 flex">
-                                                <div
-                                                    className="inline-flex overflow-hidden rounded-lg border-4 border-white">
-                                                    <img
-                                                        alt={recipe.name}
-                                                        src={recipe.imageUrl}
-                                                        className="size-24 shrink-0 sm:size-40 lg:size-48"
-                                                    />
-                                                </div>
-                                                <div className="p-4 bg-gray-100">
-                                                    <div className="space-y-2">
-                                                        {/*{recipe.daysOfTheWeek != null && (*/}
-                                                        {/*    <div className="flex justify-between">*/}
-                                                        {/*        <span className="font-medium">Days Assigned:</span>*/}
-                                                        {/*        <span>{recipe.daysOfTheWeek}</span>*/}
-                                                        {/*    </div>*/}
-                                                        {/*)}*/}
+                            <div
+                                className="inline-flex overflow-hidden rounded-lg border-4 border-white">
+                                <img
+                                    alt={recipe.name}
+                                    src={recipe.imageUrl}
+                                    className="w-full h-auto object-cover"
+                                />
+                            </div>
+                            <div className="p-4 bg-gray-100">
+                                <div className="space-y-2">
+                                    {/*{recipe.daysOfTheWeek != null && (*/}
+                                    {/*    <div className="flex justify-between">*/}
+                                    {/*        <span className="font-medium">Days Assigned:</span>*/}
+                                    {/*        <span>{recipe.daysOfTheWeek}</span>*/}
+                                    {/*    </div>*/}
+                                    {/*)}*/}
 
-                                                        {recipe.prepTime != null && (
-                                                            <div className="flex justify-between">
-                                                                <span className="font-medium">Preparation Time:</span>
-                                                                <span>{recipe.prepTime} minutes</span>
-                                                            </div>
-                                                        )}
+                                    {recipe.prepTime != null && (
+                                        <div className="flex justify-between">
+                                                                    <span
+                                                                        className="font-medium">Preparation Time:</span>
+                                            <span>{recipe.prepTime} minutes</span>
+                                        </div>
+                                    )}
 
-                                                        {recipe.cookTime != null && (
-                                                            <div className="flex justify-between">
-                                                                <span className="font-medium">Cooking Time:</span>
-                                                                <span>{recipe.cookTime} minutes</span>
-                                                            </div>
-                                                        )}
+                                    {recipe.cookTime != null && (
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Cooking Time:</span>
+                                            <span>{recipe.cookTime} minutes</span>
+                                        </div>
+                                    )}
 
-                                                        {recipe.servings != null && (
-                                                            <div className="flex justify-between">
-                                                                <span className="font-medium">Servings:</span>
-                                                                <span>{recipe.servings}</span>
-                                                            </div>
-                                                        )}
+                                    {recipe.servings != null && (
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Servings:</span>
+                                            <span>{recipe.servings}</span>
+                                        </div>
+                                    )}
 
-                                                        {recipe.mealType && recipe.mealType.length > 0 && (
-                                                            <div className="space-y-1">
-                                                                <span className="font-medium">Meal Type:</span>
-                                                                <div className="flex space-x-2">
-                                                                    {recipe.mealType.map((type) => (
-                                                                        <span
-                                                                            key={type}
-                                                                            className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-md"
-                                                                        >
+                                    {recipe.mealType && recipe.mealType.length > 0 && (
+                                        <div className="space-y-1">
+                                            <span className="font-medium">Meal Type:</span>
+                                            <div className="flex space-x-2">
+                                                {recipe.mealType.map((type) => (
+                                                    <span
+                                                        key={type}
+                                                        className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-md"
+                                                    >
                                                         {type}
                                                     </span>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        )}
-
-                                                        {recipe.ageGroup && recipe.ageGroup.length > 0 && (
-                                                            <div className="space-y-1">
-                                                                <span className="font-medium">Age Group:</span>
-                                                                <div className="flex space-x-2">
-                                                                    {recipe.ageGroup.map((age) => (
-                                                                        <span
-                                                                            key={age}
-                                                                            className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-md"
-                                                                        >
-                                                        {age}
-                                                    </span>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        )}
-
-                                                        {recipe.ingredients && recipe.ingredients.length > 0 && (
-                                                            <div className="space-y-1">
-                                                                <span className="font-medium">Ingredients:</span>
-                                                                <ul className="list-disc pl-6">
-                                                                    {recipe.ingredients.map((ingredient, idx) => (
-                                                                        <li key={idx}>
-                                                                            {ingredient.quantity} {ingredient.unit} of{' '}
-                                                                            {ingredient.name}
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
-                                                            </div>
-                                                        )}
-
-                                                        {recipe.steps && recipe.steps.length > 0 && (
-                                                            <div className="space-y-1">
-                                                                <span className="font-medium">Steps:</span>
-                                                                <ol className="list-decimal pl-6">
-                                                                    {recipe.steps.map((step, idx) => (
-                                                                        <li key={idx}>{step}</li>
-                                                                    ))}
-                                                                </ol>
-                                                            </div>
-                                                        )}
-
-                                                        {recipe.nutrition && (
-                                                            <div className="space-y-1">
-                                                                <span className="font-medium">Nutrition:</span>
-                                                                <ul className="list-disc pl-6">
-                                                                    {recipe.nutrition.calories != null && (
-                                                                        <li>
-                                                        <span
-                                                            className="font-medium">Calories:</span> {recipe.nutrition.calories} kcal
-                                                                        </li>
-                                                                    )}
-                                                                    {recipe.nutrition.protein != null && (
-                                                                        <li>
-                                                        <span
-                                                            className="font-medium">Protein:</span> {recipe.nutrition.protein} g
-                                                                        </li>
-                                                                    )}
-                                                                    {recipe.nutrition.carbohydrates != null && (
-                                                                        <li>
-                                                        <span
-                                                            className="font-medium">Carbohydrates:</span> {recipe.nutrition.carbohydrates} g
-                                                                        </li>
-                                                                    )}
-                                                                    {recipe.nutrition.fats != null && (
-                                                                        <li>
-                                                        <span
-                                                            className="font-medium">Fats:</span> {recipe.nutrition.fats} g
-                                                                        </li>
-                                                                    )}
-                                                                    {recipe.nutrition.sugar != null && (
-                                                                        <li>
-                                                        <span
-                                                            className="font-medium">Sugar:</span> {recipe.nutrition.sugar} g
-                                                                        </li>
-                                                                    )}
-                                                                </ul>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
+                                                ))}
                                             </div>
                                         </div>
-                                    </div>
+                                    )}
+
+                                    {recipe.ageGroup && recipe.ageGroup.length > 0 && (
+                                        <div className="space-y-1">
+                                            <span className="font-medium">Age Group:</span>
+                                            <div className="flex space-x-2">
+                                                {recipe.ageGroup.map((age) => (
+                                                    <span
+                                                        key={age}
+                                                        className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-md"
+                                                    >
+                                                        {age}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {recipe.ingredients && recipe.ingredients.length > 0 && (
+                                        <div className="space-y-1">
+                                            <span className="font-medium">Ingredients:</span>
+                                            <ul className="list-disc pl-6">
+                                                {recipe.ingredients.map((ingredient, idx) => (
+                                                    <li key={idx}>
+                                                        {ingredient.quantity} {ingredient.unit} of{' '}
+                                                        {ingredient.name}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {recipe.steps && recipe.steps.length > 0 && (
+                                        <div className="space-y-1">
+                                            <span className="font-medium">Steps:</span>
+                                            <ol className="list-decimal pl-6">
+                                                {recipe.steps.map((step, idx) => (
+                                                    <li key={idx}>{step}</li>
+                                                ))}
+                                            </ol>
+                                        </div>
+                                    )}
+
+                                    {recipe.nutrition && (
+                                        <div className="space-y-1">
+                                            <span className="font-medium">Nutrition:</span>
+                                            <ul className="list-disc pl-6">
+                                                {recipe.nutrition.calories != null && (
+                                                    <li>
+                                                        <span
+                                                            className="font-medium">Calories:</span> {recipe.nutrition.calories} kcal
+                                                    </li>
+                                                )}
+                                                {recipe.nutrition.protein != null && (
+                                                    <li>
+                                                        <span
+                                                            className="font-medium">Protein:</span> {recipe.nutrition.protein} g
+                                                    </li>
+                                                )}
+                                                {recipe.nutrition.carbohydrates != null && (
+                                                    <li>
+                                                        <span
+                                                            className="font-medium">Carbohydrates:</span> {recipe.nutrition.carbohydrates} g
+                                                    </li>
+                                                )}
+                                                {recipe.nutrition.fats != null && (
+                                                    <li>
+                                                        <span
+                                                            className="font-medium">Fats:</span> {recipe.nutrition.fats} g
+                                                    </li>
+                                                )}
+                                                {recipe.nutrition.sugar != null && (
+                                                    <li>
+                                                        <span
+                                                            className="font-medium">Sugar:</span> {recipe.nutrition.sugar} g
+                                                    </li>
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
