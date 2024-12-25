@@ -98,8 +98,7 @@ export default function AddRecipeComponent() {
                 steps: stepsList,
                 ageGroup: ageGroup,
                 nutrition: nutritionData,
-                daysOfTheWeek: daysOfWeek,
-                createdAt: new Date()
+                daysOfTheWeek: daysOfWeek
             }
             console.log("new recipe", recipe)
 
