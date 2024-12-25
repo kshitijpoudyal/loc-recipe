@@ -1,12 +1,12 @@
 import {useEffect, useState} from 'react';
-import {fetchRecipes, Recipe} from "@/app/data/Recipe";
+import {fetchAllRecipes, Recipe} from "@/app/data/Recipe";
 
 export default function ListRecipeComponent() {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     useEffect(() => {
-        fetchRecipes().then((recipes) => {
+        fetchAllRecipes().then((recipes) => {
             setRecipes(recipes)
         })
     }, []);
@@ -30,12 +30,12 @@ export default function ListRecipeComponent() {
                         {openIndex === index && (
                             <div className="p-4 bg-gray-100">
                                 <div className="space-y-2">
-                                    {recipe.daysOfTheWeek != null && (
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Days Assigned:</span>
-                                            <span>{recipe.daysOfTheWeek}</span>
-                                        </div>
-                                    )}
+                                    {/*{recipe.daysOfTheWeek != null && (*/}
+                                    {/*    <div className="flex justify-between">*/}
+                                    {/*        <span className="font-medium">Days Assigned:</span>*/}
+                                    {/*        <span>{recipe.daysOfTheWeek}</span>*/}
+                                    {/*    </div>*/}
+                                    {/*)}*/}
 
                                     {recipe.prepTime != null && (
                                         <div className="flex justify-between">
@@ -58,7 +58,7 @@ export default function ListRecipeComponent() {
                                         </div>
                                     )}
 
-                                    {recipe.mealType.length > 0 && (
+                                    {recipe.mealType && recipe.mealType.length > 0 && (
                                         <div className="space-y-1">
                                             <span className="font-medium">Meal Type:</span>
                                             <div className="flex space-x-2">
@@ -74,7 +74,7 @@ export default function ListRecipeComponent() {
                                         </div>
                                     )}
 
-                                    {recipe.ageGroup.length > 0 && (
+                                    {recipe.ageGroup && recipe.ageGroup.length > 0 && (
                                         <div className="space-y-1">
                                             <span className="font-medium">Age Group:</span>
                                             <div className="flex space-x-2">
@@ -104,7 +104,7 @@ export default function ListRecipeComponent() {
                                         </div>
                                     )}
 
-                                    {recipe.steps.length > 0 && (
+                                    {recipe.steps && recipe.steps.length > 0 && (
                                         <div className="space-y-1">
                                             <span className="font-medium">Steps:</span>
                                             <ol className="list-decimal pl-6">
