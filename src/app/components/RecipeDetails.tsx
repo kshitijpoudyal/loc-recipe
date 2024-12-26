@@ -16,7 +16,7 @@ interface RecipeDetailsProps {
     setIsOpen: (open: boolean) => void;
 }
 
-export default ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) => (
+export const RecipeDetails = ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) => (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-10">
         <DialogBackdrop
             transition
