@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
                 port: '', // Leave empty for default ports
                 pathname: '/**', // Match all paths under this domain
             },
+            {
+                protocol: 'https',
+                hostname: 'firebasestorage.googleapis.com',
+                port: '', // Leave empty for default ports
+                pathname: '/**', // Match all paths under this domain
+            },
         ],
     },
 };

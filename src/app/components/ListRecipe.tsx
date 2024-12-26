@@ -51,8 +51,8 @@ export default function ListRecipeComponent() {
                                 <Image
                                     alt={recipe.name}
                                     src={recipe.imageUrl}
-                                    height={100}
-                                    width={100}
+                                    height={400}
+                                    width={400}
                                     className="aspect-square w-full rounded-lg bg-gray-100 object-cover"
                                 />
                             )}
