@@ -1,5 +1,4 @@
-import {WeekDay} from "@/app/data/firebaseController/DailySchedule";
-import {Recipe} from "@/app/data/DataInterface";
+import {Recipe, WeekDay} from "@/app/data/DataInterface";
 
 export const WEEK_DAYS: WeekDay[] = [
     {id: 0, name: 'Monday', value: "monday"},
