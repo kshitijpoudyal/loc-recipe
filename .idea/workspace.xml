@@ -5,22 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b35be50f-5ad2-45ad-9e84-9099623e45d3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/data/ConstData.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/data/DataInterface.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/data/firebaseController/DailySchedule.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/AddRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/AddRecipe.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/ListRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/ListRecipe.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/ListRecipeTemplate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/ListRecipeTemplate.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/NavigationMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/NavigationMenu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/ListRecipeTemplate.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/RecipeDetails.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/RecipeDetails.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/daily-schedule/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/daily-schedule/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/data/DailySchedule.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/DailySchedule.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/data/Recipe.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/Recipe.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/DailySchedule.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/Recipe.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/firebaseController/Recipe.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/Util.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/Util.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/data/mockData/DailyScheduleMockData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/mockData/DailyScheduleMockData.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/data/mockData/RecipeMockData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/mockData/RecipeMockData.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/lib/firebase.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/lib/firebase.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/lib/firebase.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/firebaseController/firebase.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/list-recipe/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/list-recipe/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/pages/MockDataPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/pages/MockDataPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,11 +63,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app/data/firebaseController" />
       <recent name="$PROJECT_DIR$/src/app/components" />
       <recent name="$PROJECT_DIR$/src/app/add-recipe" />
       <recent name="$PROJECT_DIR$/src/app" />
       <recent name="$PROJECT_DIR$/src/app/404" />
-      <recent name="$PROJECT_DIR$/src/app/pages" />
     </key>
   </component>
   <component name="SharedIndexes">

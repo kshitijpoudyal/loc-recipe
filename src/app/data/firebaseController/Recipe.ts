@@ -1,40 +1,7 @@
 import {addDoc, collection, doc, getDoc, getDocs} from "firebase/firestore";
-import {db, RECIPE_TABLE_NAME} from "@/app/lib/firebase";
-import {WeekDay} from "@/app/data/DailySchedule";
-
-export type Ingredients = {
-    name: string;
-    quantity: number;
-    unit: string
-}
-
-export interface Recipe {
-    _id?: string; //server side id
-    recipeId: number;
-    name: string;
-    prepTime?: number;
-    cookTime?: number;
-    servings?: number;
-    mealType?: string[];
-    ingredients?: Ingredients[];
-    steps?: string[];
-    ageGroup?: string[];
-    nutrition?: {
-        calories?: number;
-        protein?: number; // in grams
-        carbohydrates?: number; // in grams
-        fats?: number; // in grams
-        sugar?: number; // in grams
-    };
-    daysOfTheWeek?: WeekDay[],
-    imageUrl?: string,
-    createdAt?: Date,
-}
-
-export const defaultRecipe: Recipe = {
-    recipeId: 1001,
-    name: "test"
-}
+import {db, RECIPE_TABLE_NAME, storage} from "@/app/data/firebaseController/firebase";
+import {getDownloadURL, ref, uploadBytes} from "@firebase/storage";
+import {Recipe} from "@/app/data/DataInterface";
 
 export const fetchAllRecipes = async () => {
     const recipesCollection = collection(db, RECIPE_TABLE_NAME);
@@ -69,7 +36,13 @@ export const fetchRecipeById = async (id: string): Promise<Recipe | null> => {
     }
 };
 
-export const addRecipe = async (recipe: Recipe) => {
+export const uploadImage = async (imageFile: File) => {
+    const storageRef = ref(storage, `${RECIPE_TABLE_NAME}/${imageFile.name}`);
+    const snapshot = await uploadBytes(storageRef, imageFile);
+    return await getDownloadURL(snapshot.ref);
+}
+
+export const addRecipeToFirebase = async (recipe: Recipe) => {
     await addDoc(collection(db, RECIPE_TABLE_NAME), {
         recipeId: recipe.recipeId,
         name: recipe.name,

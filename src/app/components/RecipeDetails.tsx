@@ -5,10 +5,10 @@ import {
     DialogBackdrop,
     DialogPanel,
     DialogTitle
-} from '@headlessui/react'
-import {XMarkIcon} from '@heroicons/react/24/outline'
-import {Recipe} from "@/app/data/Recipe";
+} from '@headlessui/react';
+import {XMarkIcon} from '@heroicons/react/24/outline';
 import Image from "next/image";
+import {Recipe} from "@/app/data/DataInterface";
 
 interface RecipeDetailsProps {
     isOpen: boolean;
