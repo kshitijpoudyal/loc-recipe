@@ -1,14 +1,23 @@
 import React, {useState, useEffect} from 'react';
-import {fetchAllRecipes, findRecipeById} from "@/app/data/firebaseController/Recipe";
-import {fetchAllDailySchedules} from "@/app/data/firebaseController/DailySchedule";
 import {Recipe} from "@/app/data/DataInterface";
-import {WEEK_DAYS} from "@/app/data/ConstData"; // Adjust path for fetching recipes
+import {WEEK_DAYS} from "@/app/data/ConstData";
+import {mapAllRecipesToSchedule} from "@/app/data/firebaseController/DailySchedule"; // Adjust path for fetching recipes
 
-interface DailyScheduleProps {
-    recipesMap: Record<string, Recipe[]>; // A map of days to recipe arrays
-}
+export default function DailyScheduleComponent() {
+    const [recipesMap, setRecipesMap] = useState<Record<string, Recipe[]>>({});
 
-const DailyScheduleTemplate: React.FC<DailyScheduleProps> = ({recipesMap}) => {
+    useEffect(() => {
+        const loadSchedule = async () => {
+            const dailySchedule = await mapAllRecipesToSchedule();
+            setRecipesMap(dailySchedule);
+        };
+
+        loadSchedule().then(() => {
+            //TODO add loading state
+            console.log(recipesMap)
+        })
+    }, []);
+
     return (
         <div className="max-w-4xl mx-auto p-6">
             <div className="space-y-6">
@@ -44,48 +53,4 @@ const DailyScheduleTemplate: React.FC<DailyScheduleProps> = ({recipesMap}) => {
             </div>
         </div>
     );
-};
-
-const fetchDailySchedule = async (): Promise<Record<string, Recipe[]>> => {
-    const recipes = await fetchAllRecipes();
-    const dailySchedules = await fetchAllDailySchedules();
-
-    //create empty map of weekday and associated recipe
-    const scheduleLocal: Record<number, Recipe[]> = WEEK_DAYS.reduce((acc, day) => {
-        acc[day.id] = [];
-        return acc;
-    }, {} as Record<number, Recipe[]>);
-
-    dailySchedules.forEach((schedule) => {
-        const addRecipes = (meal: number[]) => {
-            meal.forEach((recipeId) => {
-                const recipe = findRecipeById(recipes, recipeId);
-                if (recipe) scheduleLocal[schedule.weekday.id].push(recipe);
-            });
-        };
-
-        addRecipes(schedule.breakfast);
-        addRecipes(schedule.lunch);
-        addRecipes(schedule.dinner);
-    });
-
-    return scheduleLocal;
-};
-
-export default function DailyScheduleComponent() {
-    const [recipesMap, setRecipesMap] = useState<Record<string, Recipe[]>>({});
-
-    useEffect(() => {
-        const loadSchedule = async () => {
-            const dailySchedule = await fetchDailySchedule();
-            setRecipesMap(dailySchedule);
-        };
-
-        loadSchedule().then(() => {
-            //TODO add loading state
-            console.log(recipesMap)
-        })
-    }, []);
-
-    return <DailyScheduleTemplate recipesMap={recipesMap}/>;
 }

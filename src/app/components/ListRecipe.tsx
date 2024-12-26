@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
 import {fetchAllRecipes} from "@/app/data/firebaseController/Recipe";
-import ExampleDetails from "@/app/components/RecipeDetails";
 import Image from "next/image";
 import {DEFAULT_RECIPE} from "@/app/data/ConstData";
 import {Recipe} from "@/app/data/DataInterface";
+import {RecipeDetails} from "@/app/components/RecipeDetails";
 
 export default function ListRecipeComponent() {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -19,7 +19,7 @@ export default function ListRecipeComponent() {
     return (
         <div>
             {open && (
-                <ExampleDetails isOpen={open} recipe={selectedRecipe} setIsOpen={setOpen}/>
+                <RecipeDetails isOpen={open} recipe={selectedRecipe} setIsOpen={setOpen}/>
             )}
             <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:px-8">
                 <div

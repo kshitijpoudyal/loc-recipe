@@ -16,6 +16,7 @@ export const findRecipeById = (_recipes: Recipe[], recipeId: number): Recipe | u
     return _recipes.find((recipe) => recipe.recipeId === recipeId);
 };
 
+// @typescript-eslint/no-unused-vars
 export const fetchRecipeById = async (id: string): Promise<Recipe | null> => {
     try {
         const recipeDocRef = doc(db, RECIPE_TABLE_NAME, id);
