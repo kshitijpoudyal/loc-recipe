@@ -50,6 +50,7 @@ const fetchDailySchedule = async (): Promise<Record<string, Recipe[]>> => {
     const recipes = await fetchAllRecipes();
     const dailySchedules = await fetchAllDailySchedules();
 
+    //create empty map of weekday and associated recipe
     const scheduleLocal: Record<number, Recipe[]> = WEEK_DAYS.reduce((acc, day) => {
         acc[day.id] = [];
         return acc;

@@ -34,7 +34,7 @@ const mockRecipe: Recipe[] = [
             fats: 5
         },
         daysOfTheWeek: [WEEK_DAYS[0]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fpancake.jpeg?alt=media&token=40eb95ab-bafb-482c-ae5e-0cc5d1108b2f"
     },
     {
         recipeId: 1003,
@@ -172,7 +172,7 @@ const mockRecipe: Recipe[] = [
             fats: 10
         },
         daysOfTheWeek: [WEEK_DAYS[6]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fchocolate_chips_cookie.jpeg?alt=media&token=b9f3f53d-37e0-433e-bf41-3227765accd3"
     },
     {
         recipeId: 1007,
@@ -231,7 +231,7 @@ const mockRecipe: Recipe[] = [
             fats: 15,
         },
         daysOfTheWeek: [WEEK_DAYS[6]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fgrilled_cheese.jpeg?alt=media&token=d01a1138-5869-4b86-990b-951a428942ae"
     },
     {
         recipeId: 1009,
@@ -262,7 +262,7 @@ const mockRecipe: Recipe[] = [
             fats: 4,
         },
         daysOfTheWeek: [WEEK_DAYS[0], WEEK_DAYS[6]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Ftomato_soup.jpeg?alt=media&token=c832aed8-894a-4ade-ad04-65e6559570c0"
     },
     {
         recipeId: 1010,
@@ -292,7 +292,7 @@ const mockRecipe: Recipe[] = [
             fats: 14,
         },
         daysOfTheWeek: [WEEK_DAYS[6], WEEK_DAYS[2]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fscrambled_egg.jpeg?alt=media&token=480a6494-79cd-49dc-94c3-5f5695825b28"
     },
     {
         recipeId: 1011,
@@ -322,7 +322,7 @@ const mockRecipe: Recipe[] = [
             fats: 8,
         },
         daysOfTheWeek: [WEEK_DAYS[5], WEEK_DAYS[6]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fveggie_wrap.jpeg?alt=media&token=cbf13c0d-7657-42b1-9921-08720541a6f9"
     },
     {
         recipeId: 1012,
@@ -353,7 +353,7 @@ const mockRecipe: Recipe[] = [
             fats: 1,
         },
         daysOfTheWeek: [WEEK_DAYS[1], WEEK_DAYS[6]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Ffruit_salad.jpeg?alt=media&token=1546d00c-f4ae-40e6-94f7-ace3964afb88"
     },
 ];
 
