@@ -11,8 +11,7 @@ export type WeekDay = {
 };
 
 export interface Recipe {
-    _id?: string; //server side id
-    recipeId: number;
+    recipeId?: string; //autogenerate server side id
     name: string;
     prepTime?: number;
     cookTime?: number;
@@ -34,10 +33,9 @@ export interface Recipe {
 }
 
 export interface DailySchedule {
-    _id?: string, //server side id
-    scheduleId: number,
+    scheduleId: string, //autogenerate server side id
     weekday: WeekDay,
-    breakfast: number[],
-    lunch: number[],
-    dinner: number[]
+    breakfast: string[],
+    lunch: string[],
+    dinner: string[]
 }
