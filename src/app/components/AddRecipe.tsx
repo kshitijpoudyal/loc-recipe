@@ -1,11 +1,12 @@
 'use client'
 
-import React, {useState} from 'react'
-import {ChevronUpDownIcon} from '@heroicons/react/16/solid'
-import {CheckIcon} from '@heroicons/react/20/solid'
-import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/react'
-import {addRecipeToFirebase, Ingredients, Recipe, uploadImage} from "@/app/data/firebaseController/Recipe";
-import {WeekDay, WEEK_DAYS} from "@/app/data/firebaseController/DailySchedule";
+import React, {useState} from 'react';
+import {ChevronUpDownIcon} from '@heroicons/react/16/solid';
+import {CheckIcon} from '@heroicons/react/20/solid';
+import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/react';
+import {addRecipeToFirebase, uploadImage} from "@/app/data/firebaseController/Recipe";
+import {WEEK_DAYS} from "@/app/data/ConstData";
+import {Ingredients, Recipe, WeekDay} from "@/app/data/DataInterface";
 
 export default function AddRecipeComponent() {
     const [name, setName] = useState('');
