@@ -4,8 +4,8 @@ import React, {useState} from 'react'
 import {ChevronUpDownIcon} from '@heroicons/react/16/solid'
 import {CheckIcon} from '@heroicons/react/20/solid'
 import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/react'
-import {addRecipe, Ingredients, Recipe} from "@/app/data/Recipe";
-import {WeekDay, WEEK_DAYS} from "@/app/data/DailySchedule";
+import {addRecipeToFirebase, Ingredients, Recipe, uploadImage} from "@/app/data/firebaseController/Recipe";
+import {WeekDay, WEEK_DAYS} from "@/app/data/firebaseController/DailySchedule";
 
 export default function AddRecipeComponent() {
     const [name, setName] = useState('');
@@ -26,6 +26,7 @@ export default function AddRecipeComponent() {
     const [fats, setFats] = useState('');
     const [sugar, setSugar] = useState('');
     const [daysOfWeek, setDaysOfWeek] = useState<WeekDay[]>([WEEK_DAYS[0], WEEK_DAYS[1]]);
+    const [imageFile, setImageFile] = useState<File | null>(null);
 
 
     const handleMealTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +73,14 @@ export default function AddRecipeComponent() {
         setFats('');
         setSugar('');
         setDaysOfWeek([WEEK_DAYS[0]]);
+        setImageFile(null);
     }
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setImageFile(e.target.files[0]);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -88,22 +96,26 @@ export default function AddRecipeComponent() {
         };
 
         try {
-            const recipe: Recipe = {
-                id: id,
-                name: name,
-                prepTime: prepTime,
-                cookTime: cookTime,
-                servings: servings,
-                mealType: mealType,
-                ingredients: ingredients,
-                steps: stepsList,
-                ageGroup: ageGroup,
-                nutrition: nutritionData,
-                daysOfTheWeek: daysOfWeek
-            }
-            console.log("new recipe", recipe)
 
-            addRecipe(recipe).then(() => {
+            const recipe: Recipe = {
+                ageGroup: ageGroup,
+                cookTime: cookTime,
+                daysOfTheWeek: daysOfWeek,
+                ingredients: ingredients,
+                mealType: mealType,
+                name: name,
+                nutrition: nutritionData,
+                prepTime: prepTime,
+                recipeId: id,
+                servings: servings,
+                steps: stepsList,
+            }
+
+            if (imageFile) {
+                recipe.imageUrl = await uploadImage(imageFile)
+            }
+
+            addRecipeToFirebase(recipe).then(() => {
                 alert('Recipe added successfully!');
                 clearForm();
             })
@@ -532,10 +544,20 @@ export default function AddRecipeComponent() {
                         </fieldset>
                     </div>
                     <div className="sm:col-span-2">
+                        <label htmlFor="imageUpload">Upload Image</label>
+                        <input
+                            id="imageUpload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            required
+                        />
+                    </div>
+                    <div className="sm:col-span-2">
                         <fieldset>
                             <legend className="text-sm/6 font-semibold text-gray-900">Age Group</legend>
                             <div className="mt-6 flex gap-6">
-                                <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
                                     <div className="group grid size-4 grid-cols-1">
                                         <input
                                             id="adult"

@@ -1,47 +1,8 @@
-import {DAILY_SCHEDULE_TABLE_NAME, db} from '../../lib/firebase';
-import {addDoc, collection, doc, setDoc} from 'firebase/firestore';
-import {DailySchedule, WEEK_DAYS} from "@/app/data/DailySchedule";
+import {addScheduleToFirestore} from "@/app/data/firebaseController/DailySchedule";
+import {WEEK_DAYS} from "@/app/data/ConstData";
+import {DailySchedule} from "@/app/data/DataInterface";
 
-// Schedule data for each day with meal types
-export const daysData = {
-    Monday: {
-        breakfast: 1001, // Recipe ID range from 1001 to 1006
-        lunch: 1002,
-        dinner: 1003,
-    },
-    Tuesday: {
-        breakfast: 1004,
-        lunch: 1005,
-        dinner: 1006,
-    },
-    Wednesday: {
-        breakfast: 1001,
-        lunch: 1002,
-        dinner: 1003,
-    },
-    Thursday: {
-        breakfast: 1004,
-        lunch: 1005,
-        dinner: 1006,
-    },
-    Friday: {
-        breakfast: 1001,
-        lunch: 1002,
-        dinner: 1003,
-    },
-    Saturday: {
-        breakfast: 1004,
-        lunch: 1005,
-        dinner: 1006,
-    },
-    Sunday: {
-        breakfast: 1001,
-        lunch: 1002,
-        dinner: 1003,
-    },
-};
-
-const mockSchedule: DailySchedule[] = [
+export const mockSchedule: DailySchedule[] = [
     {
         scheduleId: 1000,
         weekday: WEEK_DAYS[0],
@@ -94,18 +55,10 @@ const mockSchedule: DailySchedule[] = [
 ]
 
 export const addMockScheduleToFirestore = async () => {
-    const scheduleCollection = collection(db, DAILY_SCHEDULE_TABLE_NAME); // Replace "schedules" with your desired Firestore collection name
 
     try {
         for (const schedule of mockSchedule) {
-            await addDoc(scheduleCollection, {
-                scheduleId: schedule.scheduleId,
-                weekday: schedule.weekday, // Optionally, save the name and value only if needed
-                breakfast: schedule.breakfast,
-                lunch: schedule.lunch,
-                dinner: schedule.dinner,
-                createdAt: new Date(),
-            });
+            await addScheduleToFirestore(schedule);
         }
         console.log("Mock schedule data added successfully!");
     } catch (error) {

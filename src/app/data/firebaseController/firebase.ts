@@ -1,6 +1,7 @@
 // Import the necessary functions from Firebase SDK
 import {initializeApp} from 'firebase/app';
 import {getFirestore} from 'firebase/firestore';
+import { getStorage } from "firebase/storage";
 
 // Firebase configuration (replace with your own Firebase project config)
 const firebaseConfig = {
@@ -22,3 +23,4 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 export const db = getFirestore(app);
+export const storage = getStorage(app); // Firebase Storage instance
