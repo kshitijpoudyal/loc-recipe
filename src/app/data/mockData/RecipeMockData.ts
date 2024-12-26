@@ -1,4 +1,3 @@
-
 // Mock recipe data with added 'id' field starting from 1002
 import {WEEK_DAYS} from "@/app/data/ConstData";
 import {Recipe} from "@/app/data/DataInterface";
@@ -70,7 +69,7 @@ const mockRecipe: Recipe[] = [
             fats: 15
         },
         daysOfTheWeek: [WEEK_DAYS[1], WEEK_DAYS[2]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fchicken_curry.webp?alt=media&token=87a6d7fe-d860-4da7-9392-65381d89fa56"
     },
     {
         recipeId: 1004,
@@ -105,7 +104,7 @@ const mockRecipe: Recipe[] = [
             fats: 8
         },
         daysOfTheWeek: [WEEK_DAYS[4]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fvegetable_stir_fry.webp?alt=media&token=80d302f6-4a4d-4b32-8cd8-8e434085875c"
     },
     {
         recipeId: 1005,
@@ -139,7 +138,7 @@ const mockRecipe: Recipe[] = [
             fats: 10
         },
         daysOfTheWeek: [WEEK_DAYS[5]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fspaghetti_aglio_e_olio.webp?alt=media&token=bf3ac16c-4244-4e5b-8501-b200e9a7c7ea"
     },
     {
         recipeId: 1006,
@@ -165,7 +164,7 @@ const mockRecipe: Recipe[] = [
             "Scoop dough onto a baking sheet and bake for 10-12 minutes.",
         ],
         ageGroup: ["kids", "adult"],
-        createdAt:new Date,
+        createdAt: new Date,
         nutrition: {
             calories: 200,
             protein: 3,
@@ -203,7 +202,7 @@ const mockRecipe: Recipe[] = [
             fats: 12,
         },
         daysOfTheWeek: [WEEK_DAYS[5]],
-        imageUrl: "https://picsum.photos/600/600"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fcaesar_salad.webp?alt=media&token=26f96a84-c132-4caf-88ca-7ab27c3efff2"
     },
     {
         recipeId: 1008,

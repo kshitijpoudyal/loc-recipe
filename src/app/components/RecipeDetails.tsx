@@ -55,8 +55,8 @@ export default ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) => (
                                     <Image
                                         alt={recipe.name}
                                         src={recipe.imageUrl}
-                                        height={100}
-                                        width={100}
+                                        height={600}
+                                        width={600}
                                         className="w-full h-auto object-cover"
                                     />
                                 )}
