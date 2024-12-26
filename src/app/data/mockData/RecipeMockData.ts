@@ -1,7 +1,9 @@
-import {addRecipe, Recipe} from "@/app/data/Recipe";
-import {WEEK_DAYS} from "@/app/data/DailySchedule";
 
 // Mock recipe data with added 'id' field starting from 1002
+import {WEEK_DAYS} from "@/app/data/ConstData";
+import {Recipe} from "@/app/data/DataInterface";
+import {addRecipeToFirebase} from "@/app/data/firebaseController/Recipe";
+
 const mockRecipe: Recipe[] = [
     {
         recipeId: 1002,
@@ -362,7 +364,7 @@ export const addMockRecipesToFirebase = async () => {
     try {
         // Loop through mockRecipe array and save each recipe to Firestore
         for (const recipe of mockRecipe) {
-            await addRecipe(recipe)
+            await addRecipeToFirebase(recipe)
         }
         console.log('Mock recipes saved successfully!');
     } catch (error) {

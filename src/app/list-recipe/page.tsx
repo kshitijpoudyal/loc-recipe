@@ -1,8 +1,8 @@
 "use client";
 import React, {useEffect, useState} from 'react';
 import NavigationMenu from "@/app/components/NavigationMenu";
-import ListRecipeComponent from "@/app/components/ListRecipe";
 import HeroTitle from "@/app/components/HeroTitle";
+import ListRecipeComponent from "@/app/components/ListRecipe";
 
 export default function ListRecipePage() {
 
@@ -18,7 +18,7 @@ export default function ListRecipePage() {
                     <NavigationMenu></NavigationMenu>
                     <main className="mx-auto p-6">
                         <HeroTitle title={"All Recipe"}/>
-                        <ListRecipeComponent/>
+                        <ListRecipeComponent></ListRecipeComponent>
                     </main>
                 </div>
             )

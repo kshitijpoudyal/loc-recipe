@@ -1,5 +1,5 @@
 import {doc, getDoc} from "firebase/firestore";
-import {db} from "@/app/lib/firebase";
+import {db} from "@/app/data/firebaseController/firebase";
 
 export const fetchSpecificDocument = async (collectionName: string, documentId: string) => {
     try {
