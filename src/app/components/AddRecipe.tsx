@@ -2,11 +2,12 @@
 
 import React, {useState} from 'react';
 import {ChevronUpDownIcon} from '@heroicons/react/16/solid';
-import {CheckIcon} from '@heroicons/react/20/solid';
+import {CheckIcon, PhotoIcon} from '@heroicons/react/20/solid';
 import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/react';
 import {addRecipeToFirebase, uploadImage} from "@/app/data/firebaseController/Recipe";
 import {WEEK_DAYS} from "@/app/data/ConstData";
 import {Ingredients, Recipe, WeekDay} from "@/app/data/DataInterface";
+import Image from "next/image";
 
 export default function AddRecipeComponent() {
     const [name, setName] = useState('');
@@ -28,6 +29,7 @@ export default function AddRecipeComponent() {
     const [sugar, setSugar] = useState('');
     const [daysOfWeek, setDaysOfWeek] = useState<WeekDay[]>([WEEK_DAYS[0], WEEK_DAYS[1]]);
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
 
     const handleMealTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,6 +81,11 @@ export default function AddRecipeComponent() {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setSelectedImage(reader.result as string);
+            };
+            reader.readAsDataURL(e.target.files[0]);
             setImageFile(e.target.files[0]);
         }
     };
@@ -545,20 +552,10 @@ export default function AddRecipeComponent() {
                         </fieldset>
                     </div>
                     <div className="sm:col-span-2">
-                        <label htmlFor="imageUpload">Upload Image</label>
-                        <input
-                            id="imageUpload"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            required
-                        />
-                    </div>
-                    <div className="sm:col-span-2">
                         <fieldset>
                             <legend className="text-sm/6 font-semibold text-gray-900">Age Group</legend>
                             <div className="mt-6 flex gap-6">
-                            <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
                                     <div className="group grid size-4 grid-cols-1">
                                         <input
                                             id="adult"
@@ -632,6 +629,47 @@ export default function AddRecipeComponent() {
                                 </div>
                             </div>
                         </fieldset>
+                    </div>
+                    <div className="sm:col-span-2">
+                        <div className="col-span-full">
+                            <label htmlFor="cover-photo" className="block text-sm/6 font-semibold text-gray-900">
+                                Recipe image
+                            </label>
+                            <div
+                                className="mt-2.5 flex justify-center content-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                                <div className="text-center">
+                                    {selectedImage ? (
+                                        <Image
+                                            src={selectedImage}
+                                            alt="Selected"
+                                            width={400}
+                                            height={400}
+                                            aria-hidden="true"
+                                            className="mb-4 mx-auto size-fit object-cover rounded-lg"
+                                        />
+                                    ) : (
+                                        <PhotoIcon aria-hidden="true" className="mx-auto size-12 text-gray-300"/>
+                                    )}
+                                    <div className="mt-4 flex text-center text-sm/6 text-gray-600">
+                                        <label
+                                            htmlFor="imageUpload"
+                                            className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                        >
+                                            <span>Upload an image</span>
+                                            <input
+                                                id="imageUpload"
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                className="sr-only"
+                                            />
+                                        </label>
+                                        <p className="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p className="text-xs/5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="mt-10">
