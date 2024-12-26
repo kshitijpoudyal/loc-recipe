@@ -1,6 +1,7 @@
 'use client'
 
 import NavigationMenu from "@/app/components/NavigationMenu";
+import Link from "next/link";
 
 export default function NotFound() {
 
@@ -18,9 +19,9 @@ export default function NotFound() {
                         Sorry, we couldn’t find the page you’re looking for.
                     </p>
                     <div className="mt-10">
-                        <a href="/" className="text-sm/7 font-semibold text-indigo-600">
+                        <Link href="/" className="text-sm/7 font-semibold text-indigo-600">
                             <span aria-hidden="true">&larr;</span> Back to home
-                        </a>
+                        </Link>
                     </div>
                 </main>
             </div>
