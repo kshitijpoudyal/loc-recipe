@@ -25,7 +25,7 @@ export default function ListRecipeComponent() {
                 <div
                     className="mt-11 grid grid-cols-1 items-start gap-x-6 gap-y-16 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
                     {recipes.map((recipe) => (
-                        <div key={recipe.name} className="flex flex-col-reverse" onClick={() => {
+                        <div key={recipe.recipeId} className="flex flex-col-reverse" onClick={() => {
                             console.log("clicked", open, selectedRecipe)
                             setOpen(!open)
                             setSelectedRecipe(recipe)

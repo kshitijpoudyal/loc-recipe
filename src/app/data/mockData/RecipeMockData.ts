@@ -5,7 +5,6 @@ import {addRecipeToFirebase} from "@/app/data/firebaseController/Recipe";
 
 const mockRecipe: Recipe[] = [
     {
-        recipeId: 1002,
         name: "Pancakes",
         prepTime: 15,
         cookTime: 10,
@@ -37,7 +36,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fpancake.jpeg?alt=media&token=40eb95ab-bafb-482c-ae5e-0cc5d1108b2f"
     },
     {
-        recipeId: 1003,
         name: "Chicken Curry",
         prepTime: 20,
         cookTime: 40,
@@ -72,7 +70,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fchicken_curry.webp?alt=media&token=87a6d7fe-d860-4da7-9392-65381d89fa56"
     },
     {
-        recipeId: 1004,
         name: "Vegetable Stir Fry",
         prepTime: 10,
         cookTime: 15,
@@ -107,7 +104,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fvegetable_stir_fry.webp?alt=media&token=80d302f6-4a4d-4b32-8cd8-8e434085875c"
     },
     {
-        recipeId: 1005,
         name: "Spaghetti Aglio e Olio",
         prepTime: 10,
         cookTime: 15,
@@ -141,7 +137,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fspaghetti_aglio_e_olio.webp?alt=media&token=bf3ac16c-4244-4e5b-8501-b200e9a7c7ea"
     },
     {
-        recipeId: 1006,
         name: "Chocolate Chip Cookies",
         prepTime: 15,
         cookTime: 10,
@@ -175,7 +170,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fchocolate_chips_cookie.jpeg?alt=media&token=b9f3f53d-37e0-433e-bf41-3227765accd3"
     },
     {
-        recipeId: 1007,
         name: "Caesar Salad",
         prepTime: 15,
         cookTime: 0,
@@ -205,7 +199,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fcaesar_salad.webp?alt=media&token=26f96a84-c132-4caf-88ca-7ab27c3efff2"
     },
     {
-        recipeId: 1008,
         name: "Grilled Cheese Sandwich",
         prepTime: 5,
         cookTime: 10,
@@ -234,7 +227,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fgrilled_cheese.jpeg?alt=media&token=d01a1138-5869-4b86-990b-951a428942ae"
     },
     {
-        recipeId: 1009,
         name: "Tomato Soup",
         prepTime: 10,
         cookTime: 20,
@@ -265,7 +257,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Ftomato_soup.jpeg?alt=media&token=c832aed8-894a-4ade-ad04-65e6559570c0"
     },
     {
-        recipeId: 1010,
         name: "Scrambled Eggs",
         prepTime: 5,
         cookTime: 5,
@@ -295,7 +286,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fscrambled_egg.jpeg?alt=media&token=480a6494-79cd-49dc-94c3-5f5695825b28"
     },
     {
-        recipeId: 1011,
         name: "Veggie Wrap",
         prepTime: 10,
         cookTime: 0,
@@ -325,7 +315,6 @@ const mockRecipe: Recipe[] = [
         imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fveggie_wrap.jpeg?alt=media&token=cbf13c0d-7657-42b1-9921-08720541a6f9"
     },
     {
-        recipeId: 1012,
         name: "Fruit Salad",
         prepTime: 10,
         cookTime: 0,
