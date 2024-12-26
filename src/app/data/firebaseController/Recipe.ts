@@ -7,12 +7,12 @@ export const fetchAllRecipes = async () => {
     const recipesCollection = collection(db, RECIPE_TABLE_NAME);
     const recipeSnapshot = await getDocs(recipesCollection);
     return recipeSnapshot.docs.map((doc) => ({
-        _id: doc.id,
+        recipeId: doc.id,
         ...doc.data(),
     })) as Recipe[];
 };
 
-export const findRecipeById = (_recipes: Recipe[], recipeId: number): Recipe | undefined => {
+export const findRecipeById = (_recipes: Recipe[], recipeId: string): Recipe | undefined => {
     return _recipes.find((recipe) => recipe.recipeId === recipeId);
 };
 
@@ -24,7 +24,7 @@ export const fetchRecipeById = async (id: string): Promise<Recipe | null> => {
 
         if (recipeSnapshot.exists()) {
             return {
-                _id: recipeSnapshot.id,
+                recipeId: recipeSnapshot.id,
                 ...recipeSnapshot.data(),
             } as Recipe;
         } else {
@@ -45,7 +45,6 @@ export const uploadImage = async (imageFile: File) => {
 
 export const addRecipeToFirebase = async (recipe: Recipe) => {
     await addDoc(collection(db, RECIPE_TABLE_NAME), {
-        recipeId: recipe.recipeId,
         name: recipe.name,
         prepTime: recipe.prepTime,
         cookTime: recipe.cookTime,
