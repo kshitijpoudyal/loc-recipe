@@ -16,7 +16,7 @@ export default function NavigationMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     return (
-        <header className="items-center">
+        <header className="items-center bg-green-100">
             <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
                 <div className="flex lg:hidden">
                     <button
