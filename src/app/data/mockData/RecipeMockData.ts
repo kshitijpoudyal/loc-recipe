@@ -1,5 +1,3 @@
-// Mock recipe data with added 'id' field starting from 1002
-import {WEEK_DAYS} from "@/app/data/ConstData";
 import {Recipe} from "@/app/data/DataInterface";
 import {addRecipeToFirebase} from "@/app/data/firebaseController/Recipe";
 
