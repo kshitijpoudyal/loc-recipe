@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b35be50f-5ad2-45ad-9e84-9099623e45d3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/components/RecipeCard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/RecipeSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/RecipeSelector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/firebaseController/DailySchedule.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/firebaseController/DailySchedule.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
