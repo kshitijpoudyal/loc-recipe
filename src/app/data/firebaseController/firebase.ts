@@ -2,6 +2,7 @@
 import {initializeApp} from 'firebase/app';
 import {getFirestore} from 'firebase/firestore';
 import { getStorage } from "firebase/storage";
+import { getAuth } from 'firebase/auth';
 
 // Firebase configuration (replace with your own Firebase project config)
 const firebaseConfig = {
@@ -24,3 +25,4 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firestore
 export const db = getFirestore(app);
 export const storage = getStorage(app); // Firebase Storage instance
+export const auth = getAuth(app);
