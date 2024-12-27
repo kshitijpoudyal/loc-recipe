@@ -1,18 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {Recipe} from "@/app/data/DataInterface";
+import {MealType, Recipe, WeekDay} from "@/app/data/DataInterface";
 import {WEEK_DAYS} from "@/app/data/ConstData";
 import {mapAllRecipesToSchedule} from "@/app/data/firebaseController/DailySchedule";
 import {fetchAllRecipes} from "@/app/data/firebaseController/Recipe";
 import {SelectorForMealType} from "@/app/components/RecipeSelector";
+import RecipeCard from "@/app/components/RecipeCard";
 
 interface DailyScheduleComponentTemplateProps {
-    recipes: Recipe[];
+    schedule: Record<string, Record<MealType, Recipe[]>>;
+    weekDay: WeekDay;
 }
 
 export default function DailyScheduleComponent() {
-    const [recipesMap, setRecipesMap] = useState<Record<string, Recipe[]>>({});
+    const [recipesMap, setRecipesMap] = useState<Record<string, Record<MealType, Recipe[]>>>({});
     const [allRecipe, setAllRecipe] = useState<Recipe[]>([]);
-    const [loading, setLoading] = useState(true); // Loading state
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadSchedule = async () => {
@@ -43,36 +45,41 @@ export default function DailyScheduleComponent() {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
-            <div className="space-y-6">
+            <div className="space-y-8">
                 {WEEK_DAYS.map((day) => (
-                    <div key={day.id} className="border-b pb-4">
-                        <h2 className="text-xl font-semibold text-indigo-600">{day.name}</h2>
-                        <ul className="space-y-2">
-                            <DailyScheduleComponentTemplate recipes={recipesMap[day.value]}/>
+                    <div key={day.id} className="border-b pb-6">
+                        <h2 className="text-2xl font-bold text-indigo-600">{day.name}</h2>
+                        <DailyScheduleComponentTemplate schedule={recipesMap} weekDay={day}/>
+                        <div className="mt-6">
                             <SelectorForMealType recipes={allRecipe} weekDay={day}/>
-                        </ul>
+                        </div>
                     </div>
                 ))}
             </div>
         </div>
+
     );
 }
 
-const DailyScheduleComponentTemplate: React.FC<DailyScheduleComponentTemplateProps> = ({recipes}) => {
+const DailyScheduleComponentTemplate: React.FC<DailyScheduleComponentTemplateProps> = ({schedule, weekDay}) => {
     return (
-        <div>
-            {recipes?.length > 0 ? (
-                recipes.map((recipe) => (
-                    <li key={recipe.recipeId} className="bg-gray-100 p-4 rounded-md shadow-sm">
-                        <h3 className="font-medium">{recipe.name}</h3>
-                        <p>Preparation Time: {recipe.prepTime} minutes</p>
-                        <p>Cooking Time: {recipe.cookTime} minutes</p>
-                        <p>Servings: {recipe.servings}</p>
-                    </li>
-                ))
-            ) : (
-                <p>No recipes for today!</p>
-            )}
+        <div className="mt-4 space-y-4">
+            {(["breakfast", "lunch", "dinner"] as MealType[]).map((mealType) => (
+                <div key={mealType} className="bg-white rounded-lg shadow p-4">
+                    <h3 className="text-lg font-semibold text-gray-800 capitalize mb-2">
+                        {mealType}
+                    </h3>
+                    <ul className="flex flex-wrap gap-4">
+                        {schedule[weekDay.value]?.[mealType]?.length > 0 ? (
+                            schedule[weekDay.value][mealType].map((recipe) => (
+                                <RecipeCard key={recipe.recipeId} recipe={recipe} isPreview={true}/>
+                            ))
+                        ) : (
+                            <p className="text-gray-500 italic text-sm">Not yet scheduled!</p>
+                        )}
+                    </ul>
+                </div>
+            ))}
         </div>
     );
 };

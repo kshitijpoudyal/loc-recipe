@@ -49,27 +49,35 @@ export const addScheduleToFirestore = async (dailySchedule: DailySchedule) => {
     }
 };
 
-export const mapAllRecipesToSchedule = async (recipes: Recipe[]): Promise<Record<string, Recipe[]>> => {
+export const mapAllRecipesToSchedule = async (
+    recipes: Recipe[]
+): Promise<Record<string, Record<MealType, Recipe[]>>> => {
     const dailySchedules = await fetchAllDailySchedules();
 
-    //create empty map of weekday and associated recipe
-    const scheduleLocal: Record<string, Recipe[]> = WEEK_DAYS.reduce((acc, day) => {
-        acc[day.value] = [];
+    // Create an empty schedule map with nested structure for meal types
+    const scheduleLocal: Record<string, Record<MealType, Recipe[]>> = WEEK_DAYS.reduce((acc, day) => {
+        acc[day.value] = {
+            breakfast: [],
+            lunch: [],
+            dinner: [],
+        };
         return acc;
-    }, {} as Record<string, Recipe[]>);
+    }, {} as Record<string, Record<MealType, Recipe[]>>);
 
     dailySchedules.forEach((schedule) => {
-        const addRecipes = (recipeIds: string[]) => {
+        const addRecipes = (mealType: MealType, recipeIds: string[]) => {
             recipeIds.forEach((recipeId) => {
                 const recipe = findRecipeById(recipes, recipeId);
-                if (recipe) scheduleLocal[schedule.weekday].push(recipe);
+                if (recipe) scheduleLocal[schedule.weekday][mealType].push(recipe);
             });
         };
 
-        addRecipes(schedule.breakfast);
-        addRecipes(schedule.lunch);
-        addRecipes(schedule.dinner);
+        // Add recipes for each meal type
+        addRecipes("breakfast", schedule.breakfast);
+        addRecipes("lunch", schedule.lunch);
+        addRecipes("dinner", schedule.dinner);
     });
+
     return scheduleLocal;
 };
 
