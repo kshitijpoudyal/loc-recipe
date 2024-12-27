@@ -5,21 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b35be50f-5ad2-45ad-9e84-9099623e45d3" name="Changes" comment="update project">
-      <change afterPath="$PROJECT_DIR$/src/app/components/LoaderView.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/components/RecipeDetailsTemplate.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/lochu_s_cafe.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/lochu_s_cafe_icon.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/add-recipe/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/add-recipe/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/AddRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/AddRecipe.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/ListRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/ListRecipe.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/Login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/RecipeDetails.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/RecipeDetails.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/daily-schedule/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/daily-schedule/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/NavigationMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/NavigationMenu.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/data/Util.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/Util.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/list-recipe/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/list-recipe/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/login/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/not-found.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/not-found.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,11 +53,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/src/app/data/firebaseController" />
       <recent name="$PROJECT_DIR$/src/app/components" />
       <recent name="$PROJECT_DIR$/src/app/add-recipe" />
       <recent name="$PROJECT_DIR$/src/app" />
-      <recent name="$PROJECT_DIR$/src/app/404" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -86,7 +78,7 @@
       <workItem from="1734926307091" duration="1301000" />
       <workItem from="1734928278332" duration="423000" />
       <workItem from="1734928790378" duration="16601000" />
-      <workItem from="1735324238326" duration="4582000" />
+      <workItem from="1735324238326" duration="5739000" />
     </task>
     <servers />
   </component>

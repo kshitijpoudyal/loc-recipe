@@ -21,19 +21,16 @@ export const LoginComponent = () => {
         }
     }
     return (
-        <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:px-8">
+        <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:px-8 bg-">
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <Image
                         alt="Lochu's Cafe"
-                        width={50}
-                        height={50}
-                        src="https://tailwindui.com/plus/img/logos/mark.svg?color=green&shade=600"
-                        className="mx-auto h-10 w-auto"
+                        width={400}
+                        height={200}
+                        src="/lochu_s_cafe.png"
+                        className="mx-auto w-auto"
                     />
-                    <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-                        Sign in to your account
-                    </h2>
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
