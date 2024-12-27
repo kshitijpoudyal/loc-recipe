@@ -11,6 +11,6 @@ export const WEEK_DAYS: WeekDay[] = [
 ]
 
 export const DEFAULT_RECIPE: Recipe = {
-    recipeId: 1001,
+    recipeId: "1001",
     name: "test"
 }
