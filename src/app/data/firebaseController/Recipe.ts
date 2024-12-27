@@ -16,27 +16,6 @@ export const findRecipeById = (_recipes: Recipe[], recipeId: string): Recipe | u
     return _recipes.find((recipe) => recipe.recipeId === recipeId);
 };
 
-// @typescript-eslint/no-unused-vars
-export const fetchRecipeById = async (id: string): Promise<Recipe | null> => {
-    try {
-        const recipeDocRef = doc(db, RECIPE_TABLE_NAME, id);
-        const recipeSnapshot = await getDoc(recipeDocRef);
-
-        if (recipeSnapshot.exists()) {
-            return {
-                recipeId: recipeSnapshot.id,
-                ...recipeSnapshot.data(),
-            } as Recipe;
-        } else {
-            console.warn(`Recipe with ID ${id} does not exist.`);
-            return null;
-        }
-    } catch (error) {
-        console.error("Error fetching recipe by ID:", error);
-        throw error;
-    }
-};
-
 export const uploadImage = async (imageFile: File) => {
     const storageRef = ref(storage, `${RECIPE_TABLE_NAME}/${imageFile.name}`);
     const snapshot = await uploadBytes(storageRef, imageFile);
@@ -54,7 +33,6 @@ export const addRecipeToFirebase = async (recipe: Recipe) => {
         steps: recipe.steps,
         ageGroup: recipe.ageGroup,
         nutrition: recipe.nutrition,
-        daysOfTheWeek: recipe.daysOfTheWeek,
         createdAt: new Date(),
         imageUrl: recipe.imageUrl
     });

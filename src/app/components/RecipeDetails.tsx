@@ -13,11 +13,11 @@ import {Recipe} from "@/app/data/DataInterface";
 interface RecipeDetailsProps {
     isOpen: boolean;
     recipe: Recipe;
-    setIsOpen: (open: boolean) => void;
+    setIsOpenAction: (open: boolean) => void;
 }
 
-export const RecipeDetails = ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) => (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-10">
+export const RecipeDetails = ({isOpen, recipe, setIsOpenAction}: RecipeDetailsProps) => (
+    <Dialog open={isOpen} onClose={() => setIsOpenAction(false)} className="relative z-10">
         <DialogBackdrop
             transition
             className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
@@ -39,7 +39,7 @@ export const RecipeDetails = ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) =
                                     <div className="ml-3 flex h-7 items-center">
                                         <button
                                             type="button"
-                                            onClick={() => setIsOpen(false)}
+                                            onClick={() => setIsOpenAction(false)}
                                             className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500"
                                         >
                                             <span className="absolute -inset-2.5"/>
@@ -63,19 +63,19 @@ export const RecipeDetails = ({isOpen, recipe, setIsOpen}: RecipeDetailsProps) =
                             </div>
                             <div className="p-4 bg-gray-100">
                                 <div className="space-y-2">
-                                    {recipe.daysOfTheWeek && recipe.daysOfTheWeek.length > 0 && (
-                                        <div className="flex justify-between">
-                                            <span className="font-medium">Days Assigned:</span>
-                                            {recipe.daysOfTheWeek.map((day) => (
-                                                <span
-                                                    key={day.id}
-                                                    className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-md"
-                                                >
-                                                    {day.name}
-                                                </span>
-                                            ))}
-                                </div>
-                                    )}
+                                    {/*{recipe.daysOfTheWeek && recipe.daysOfTheWeek.length > 0 && (*/}
+                                    {/*    <div className="flex justify-between">*/}
+                                    {/*        <span className="font-medium">Days Assigned:</span>*/}
+                                    {/*        {recipe.daysOfTheWeek.map((day) => (*/}
+                                    {/*            <span*/}
+                                    {/*                key={day.id}*/}
+                                    {/*                className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-md"*/}
+                                    {/*            >*/}
+                                    {/*                {day.name}*/}
+                                    {/*            </span>*/}
+                                    {/*        ))}*/}
+                                    {/*    </div>*/}
+                                    {/*)}*/}
 
                                     {recipe.prepTime != null && (
                                         <div className="flex justify-between">

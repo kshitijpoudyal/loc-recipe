@@ -26,7 +26,7 @@ export default function AddRecipeComponent() {
     const [carbohydrates, setCarbohydrates] = useState('');
     const [fats, setFats] = useState('');
     const [sugar, setSugar] = useState('');
-    const [daysOfWeek, setDaysOfWeek] = useState<WeekDay[]>([WEEK_DAYS[0], WEEK_DAYS[1]]);
+    // const [daysOfWeek, setDaysOfWeek] = useState<WeekDay[]>([WEEK_DAYS[0], WEEK_DAYS[1]]);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -73,7 +73,7 @@ export default function AddRecipeComponent() {
         setCarbohydrates('');
         setFats('');
         setSugar('');
-        setDaysOfWeek([WEEK_DAYS[0]]);
+        // setDaysOfWeek([WEEK_DAYS[0]]);
         setImageFile(null);
     }
 
@@ -103,7 +103,7 @@ export default function AddRecipeComponent() {
             const recipe: Recipe = {
                 ageGroup: ageGroup,
                 cookTime: cookTime,
-                daysOfTheWeek: daysOfWeek,
+                // daysOfTheWeek: daysOfWeek,
                 ingredients: ingredients,
                 mealType: mealType,
                 name: name,
@@ -375,42 +375,42 @@ export default function AddRecipeComponent() {
                         <label className="block text-sm/6 font-semibold text-gray-900">
                             Select Day/s
                         </label>
-                        <Listbox value={daysOfWeek} onChange={setDaysOfWeek} multiple>
-                            <div className="relative mt-2.5">
-                                <ListboxButton
-                                    className="grid w-full cursor-default grid-cols-1 rounded-md bg-white px-3.5 py-2 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                                    <span className="col-start-1 row-start-1 truncate pr-6">
-                                        {daysOfWeek.map((day) => day.name).join(', ')}
-                                    </span>
-                                    <ChevronUpDownIcon
-                                        aria-hidden="true"
-                                        className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                                    />
-                                </ListboxButton>
+                        {/*<Listbox value={daysOfWeek} onChange={setDaysOfWeek} multiple>*/}
+                        {/*    <div className="relative mt-2.5">*/}
+                        {/*        <ListboxButton*/}
+                        {/*            className="grid w-full cursor-default grid-cols-1 rounded-md bg-white px-3.5 py-2 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">*/}
+                        {/*            <span className="col-start-1 row-start-1 truncate pr-6">*/}
+                        {/*                /!*{daysOfWeek.map((day) => day.name).join(', ')}*!/*/}
+                        {/*            </span>*/}
+                        {/*            <ChevronUpDownIcon*/}
+                        {/*                aria-hidden="true"*/}
+                        {/*                className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"*/}
+                        {/*            />*/}
+                        {/*        </ListboxButton>*/}
 
-                                <ListboxOptions
-                                    transition
-                                    className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
-                                >
-                                    {WEEK_DAYS.map((day) => (
-                                        <ListboxOption
-                                            key={day.id}
-                                            value={day}
-                                            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white data-[focus]:outline-none"
-                                        >
-                                            <span
-                                                className="block truncate font-normal group-data-[selected]:font-semibold">
-                                                {day.name}
-                                            </span>
-                                            <span
-                                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-[&:not([data-selected])]:hidden group-data-[focus]:text-white">
-                                                <CheckIcon aria-hidden="true" className="size-5"/>
-                                            </span>
-                                        </ListboxOption>
-                                    ))}
-                                </ListboxOptions>
-                            </div>
-                        </Listbox>
+                        {/*        <ListboxOptions*/}
+                        {/*            transition*/}
+                        {/*            className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"*/}
+                        {/*        >*/}
+                        {/*            {WEEK_DAYS.map((day) => (*/}
+                        {/*                <ListboxOption*/}
+                        {/*                    key={day.id}*/}
+                        {/*                    value={day}*/}
+                        {/*                    className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white data-[focus]:outline-none"*/}
+                        {/*                >*/}
+                        {/*                    <span*/}
+                        {/*                        className="block truncate font-normal group-data-[selected]:font-semibold">*/}
+                        {/*                        {day.name}*/}
+                        {/*                    </span>*/}
+                        {/*                    <span*/}
+                        {/*                        className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-[&:not([data-selected])]:hidden group-data-[focus]:text-white">*/}
+                        {/*                        <CheckIcon aria-hidden="true" className="size-5"/>*/}
+                        {/*                    </span>*/}
+                        {/*                </ListboxOption>*/}
+                        {/*            ))}*/}
+                        {/*        </ListboxOptions>*/}
+                        {/*    </div>*/}
+                        {/*</Listbox>*/}
                     </div>
                     <div className="sm:col-span-2">
                         <fieldset>
