@@ -10,7 +10,7 @@ import {XMarkIcon} from '@heroicons/react/24/outline';
 import Image from "next/image";
 import {Recipe} from "@/app/data/DataInterface";
 
-interface RecipeDetailsProps {
+export interface RecipeDetailsProps {
     isOpen: boolean;
     recipe: Recipe;
     setIsOpenAction: (open: boolean) => void;
@@ -40,7 +40,7 @@ export const RecipeDetails = ({isOpen, recipe, setIsOpenAction}: RecipeDetailsPr
                                         <button
                                             type="button"
                                             onClick={() => setIsOpenAction(false)}
-                                            className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500"
+                                            className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-green-500"
                                         >
                                             <span className="absolute -inset-2.5"/>
                                             <span className="sr-only">Close panel</span>

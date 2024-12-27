@@ -5,6 +5,13 @@ import {PhotoIcon} from '@heroicons/react/20/solid';
 import {addRecipeToFirebase, uploadImage} from "@/app/data/firebaseController/Recipe";
 import {Ingredients, Recipe} from "@/app/data/DataInterface";
 import Image from "next/image";
+import {
+    classNames,
+    getCheckBoxFieldCss,
+    getInputFieldCss,
+    getLinkTextCss,
+    getPrimaryButtonCss
+} from "@/app/data/Util";
 
 export default function AddRecipeComponent() {
     const [name, setName] = useState('');
@@ -137,7 +144,7 @@ export default function AddRecipeComponent() {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
-                                className="block w-full rounded-md px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                className={classNames("block w-full", getInputFieldCss())}
                             />
                         </div>
                     </div>
@@ -152,7 +159,7 @@ export default function AddRecipeComponent() {
                                 type="number"
                                 value={prepTime}
                                 onChange={(e) => setPrepTime(parseInt(e.target.value))}
-                                className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                className={classNames("block w-full", getInputFieldCss())}
                             />
                         </div>
                     </div>
@@ -168,7 +175,7 @@ export default function AddRecipeComponent() {
                                 value={cookTime}
                                 onChange={(e) => setCookTime(parseInt(e.target.value))}
                                 required
-                                className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                className={classNames("block w-full", getInputFieldCss())}
                             />
                         </div>
                     </div>
@@ -184,7 +191,7 @@ export default function AddRecipeComponent() {
                                 value={servings}
                                 onChange={(e) => setServings(parseInt(e.target.value))}
                                 required
-                                className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                className={classNames("block w-full", getInputFieldCss())}
                             />
                         </div>
                     </div>
@@ -207,7 +214,7 @@ export default function AddRecipeComponent() {
                                             type="text"
                                             value={ingredientName}
                                             onChange={(e) => setIngredientName(e.target.value)}
-                                            className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                            className={classNames("w-full", getInputFieldCss())}
                                         />
                                     </div>
                                     <div className="relative">
@@ -222,7 +229,7 @@ export default function AddRecipeComponent() {
                                             type="number"
                                             value={ingredientQuantity}
                                             onChange={(e) => setIngredientQuantity(parseFloat(e.target.value))}
-                                            className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                            className={classNames("w-full", getInputFieldCss())}
                                         />
                                     </div>
                                 </div>
@@ -240,7 +247,7 @@ export default function AddRecipeComponent() {
                                             type="text"
                                             value={ingredientUnit}
                                             onChange={(e) => setIngredientUnit(e.target.value)}
-                                            className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                            className={classNames("w-full", getInputFieldCss())}
                                         />
                                     </div>
                                 </div>
@@ -249,7 +256,7 @@ export default function AddRecipeComponent() {
                                         <button
                                             type="button"
                                             onClick={handleAddIngredient}
-                                            className="text-sm/6 font-semibold text-indigo-600 hover:text-indigo-500">
+                                            className={getLinkTextCss()}>
                                             <span aria-hidden="true">+</span> Ingredients
                                         </button>
                                     </div>
@@ -303,7 +310,7 @@ export default function AddRecipeComponent() {
                                         type="number"
                                         value={calories}
                                         onChange={(e) => setCalories(e.target.value)}
-                                        className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-700 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                        className={`${classNames("w-full", getInputFieldCss())}`}
                                     />
                                 </div>
                                 <div className="relative">
@@ -317,7 +324,7 @@ export default function AddRecipeComponent() {
                                         type="number"
                                         value={protein}
                                         onChange={(e) => setProtein(e.target.value)}
-                                        className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                        className={`${classNames("w-full", getInputFieldCss())}`}
                                     />
                                 </div>
                             </div>
@@ -333,7 +340,7 @@ export default function AddRecipeComponent() {
                                         type="number"
                                         value={carbohydrates}
                                         onChange={(e) => setCarbohydrates(e.target.value)}
-                                        className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                        className={`${classNames("w-full", getInputFieldCss())}`}
                                     />
                                 </div>
                                 <div className="relative">
@@ -347,7 +354,7 @@ export default function AddRecipeComponent() {
                                         type="number"
                                         value={fats}
                                         onChange={(e) => setFats(e.target.value)}
-                                        className="w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                                        className={`${classNames("w-full", getInputFieldCss())}`}
                                     />
                                 </div>
                             </div>
@@ -362,7 +369,7 @@ export default function AddRecipeComponent() {
                               id="steps"
                               name="steps"
                               rows={4}
-                              className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                              className={`${classNames("block w-full", getInputFieldCss())}`}
                               value={steps}
                               onChange={(e) => setSteps(e.target.value)}
                           />
@@ -422,7 +429,7 @@ export default function AddRecipeComponent() {
                                             value="breakfast"
                                             onChange={handleMealTypeChange}
                                             aria-describedby="mealtype-breakfast"
-                                            className="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
                                         />
                                         <svg
                                             fill="none"
@@ -458,7 +465,7 @@ export default function AddRecipeComponent() {
                                             value="lunch"
                                             onChange={handleMealTypeChange}
                                             aria-describedby="mealtype-lunch"
-                                            className="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
                                         />
                                         <svg
                                             fill="none"
@@ -494,7 +501,7 @@ export default function AddRecipeComponent() {
                                             value="dinner"
                                             onChange={handleMealTypeChange}
                                             aria-describedby="mealtype-dinner"
-                                            className="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
                                         />
                                         <svg
                                             fill="none"
@@ -537,7 +544,7 @@ export default function AddRecipeComponent() {
                                             value="adult"
                                             onChange={handleAgeGroupChange}
                                             aria-describedby="agegroup-adult"
-                                            className="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
                                         />
                                         <svg
                                             fill="none"
@@ -573,7 +580,7 @@ export default function AddRecipeComponent() {
                                             value="kids"
                                             onChange={handleAgeGroupChange}
                                             aria-describedby="agegroup-kids"
-                                            className="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
                                         />
                                         <svg
                                             fill="none"
@@ -626,7 +633,7 @@ export default function AddRecipeComponent() {
                                     <div className="mt-4 flex text-center text-sm/6 text-gray-600">
                                         <label
                                             htmlFor="imageUpload"
-                                            className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                            className={classNames("relative cursor-pointer", getLinkTextCss())}
                                         >
                                             <span>Upload an image</span>
                                             <input
@@ -648,7 +655,7 @@ export default function AddRecipeComponent() {
                 <div className="mt-10">
                     <button
                         type="submit"
-                        className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className={classNames("block w-full", getPrimaryButtonCss())}
                     >
                         Add Recipe
                     </button>
