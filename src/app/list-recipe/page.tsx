@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import NavigationMenu from "@/app/components/NavigationMenu";
 import HeroTitle from "@/app/components/HeroTitle";
 import ListRecipeComponent from "@/app/components/ListRecipe";
+import {getMainBodyCss} from "@/app/data/Util";
 
 export default function ListRecipePage() {
 
@@ -16,7 +17,7 @@ export default function ListRecipePage() {
             {domLoaded && (
                 <div>
                     <NavigationMenu></NavigationMenu>
-                    <main className="mx-auto p-6">
+                    <main className={getMainBodyCss()}>
                         <HeroTitle title={"All Recipe"}/>
                         <ListRecipeComponent></ListRecipeComponent>
                     </main>
