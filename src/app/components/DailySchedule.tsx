@@ -12,19 +12,35 @@ interface DailyScheduleComponentTemplateProps {
 export default function DailyScheduleComponent() {
     const [recipesMap, setRecipesMap] = useState<Record<string, Recipe[]>>({});
     const [allRecipe, setAllRecipe] = useState<Recipe[]>([]);
+    const [loading, setLoading] = useState(true); // Loading state
 
     useEffect(() => {
         const loadSchedule = async () => {
-            const recipes = await fetchAllRecipes();
-            setAllRecipe(recipes);
-            return await mapAllRecipesToSchedule(recipes);
+            try {
+                const recipes = await fetchAllRecipes();
+                setAllRecipe(recipes);
+                const mappedRecipes = await mapAllRecipesToSchedule(recipes);
+                setRecipesMap(mappedRecipes);
+            } catch (error) {
+                console.error("Error loading schedule:", error);
+            } finally {
+                setLoading(false);
+            }
         };
 
-        loadSchedule().then((_recipesMap) => {
-            //TODO add loading state
-            setRecipesMap(_recipesMap);
+        loadSchedule().then(() => {
+            setLoading(false);
         })
     }, []);
+
+    if (loading) {
+        // Display loader while loading
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-4xl mx-auto p-6">
@@ -60,4 +76,4 @@ const DailyScheduleComponentTemplate: React.FC<DailyScheduleComponentTemplatePro
             )}
         </div>
     );
-}
+};

@@ -1,17 +1,16 @@
-import React, {useState} from 'react';
+import React, {useState} from "react";
 import {MealType, Recipe, WeekDay} from "@/app/data/DataInterface";
 import {
+    Disclosure,
     DisclosureButton,
     DisclosurePanel,
     Listbox,
     ListboxButton,
     ListboxOption,
-    ListboxOptions
+    ListboxOptions,
 } from "@headlessui/react";
-import {Disclosure} from "@headlessui/react";
-import {CheckIcon, ChevronDownIcon} from "@heroicons/react/20/solid";
+import {CheckIcon, ChevronDownIcon, ChevronUpDownIcon} from "@heroicons/react/20/solid";
 import {updateSchedule} from "@/app/data/firebaseController/DailySchedule";
-import {ChevronUpDownIcon} from "@heroicons/react/16/solid";
 
 interface RecipeSelectorProps {
     recipes: Recipe[];
@@ -24,6 +23,7 @@ interface SelectorForMealTypeProps {
     weekDay: WeekDay;
 }
 
+// Recipe Selector Component
 export const RecipeSelector: React.FC<RecipeSelectorProps> = ({recipes, mealType, weekDay}) => {
     const [selectedRecipes, setSelectedRecipes] = useState<Recipe[]>([]);
 
@@ -36,7 +36,7 @@ export const RecipeSelector: React.FC<RecipeSelectorProps> = ({recipes, mealType
                     recipeIds.push(r.recipeId);
                 }
             })
-            alert(`Recipes assigned to ${weekDay.name}!`);
+            alert("Recipes assigned to ${weekDay.name}!");
             await updateSchedule(weekDay.value, mealType, recipeIds);
         } catch (error) {
             console.error('Error assigning recipes to schedule:', error);
@@ -96,66 +96,29 @@ export const RecipeSelector: React.FC<RecipeSelectorProps> = ({recipes, mealType
     );
 };
 
+// Accordion Component for Meal Types
 export const SelectorForMealType: React.FC<SelectorForMealTypeProps> = ({recipes, weekDay}) => {
     return (
-        <div className="p-4">
-            <div className="p-4">
-                <div className="sm:col-span-2">
-                    {/* Breakfast Accordion */}
-                    <Disclosure>
-                        {({open}) => (
-                            <>
-                                <DisclosureButton
-                                    className="w-full text-left flex items-center justify-between p-4 bg-gray-200 text-gray-900 font-semibold rounded-md">
-                                    <span>Select Recipes for Breakfast</span>
-                                    <ChevronDownIcon
-                                        className={`h-5 w-5 ${open ? "transform rotate-180" : ""}`}
-                                    />
-                                </DisclosureButton>
-                                <DisclosurePanel className="p-4">
-                                    <RecipeSelector recipes={recipes} mealType="breakfast" weekDay={weekDay}/>
-                                </DisclosurePanel>
-                            </>
-                        )}
-                    </Disclosure>
-
-                    {/* Lunch Accordion */}
-                    <Disclosure>
-                        {({open}) => (
-                            <>
-                                <DisclosureButton
-                                    className="w-full text-left flex items-center justify-between p-4 bg-gray-200 text-gray-900 font-semibold rounded-md mt-2">
-                                    <span>Select Recipes for Lunch</span>
-                                    <ChevronDownIcon
-                                        className={`h-5 w-5 ${open ? "transform rotate-180" : ""}`}
-                                    />
-                                </DisclosureButton>
-                                <DisclosurePanel className="p-4">
-                                    <RecipeSelector recipes={recipes} mealType="lunch" weekDay={weekDay}/>
-                                </DisclosurePanel>
-                            </>
-                        )}
-                    </Disclosure>
-
-                    {/* Dinner Accordion */}
-                    <Disclosure>
-                        {({open}) => (
-                            <>
-                                <DisclosureButton
-                                    className="w-full text-left flex items-center justify-between p-4 bg-gray-200 text-gray-900 font-semibold rounded-md mt-2">
-                                    <span>Select Recipes for Dinner</span>
-                                    <ChevronDownIcon
-                                        className={`h-5 w-5 ${open ? "transform rotate-180" : ""}`}
-                                    />
-                                </DisclosureButton>
-                                <DisclosurePanel className="p-4">
-                                    <RecipeSelector recipes={recipes} mealType="dinner" weekDay={weekDay}/>
-                                </DisclosurePanel>
-                            </>
-                        )}
-                    </Disclosure>
+        <Disclosure>
+            {({open}) => (
+                <div className="border rounded-md shadow-sm">
+                    <DisclosureButton
+                        className="w-full text-left flex items-center justify-between p-4 bg-gray-200 text-gray-900 font-semibold rounded-md"
+                    >
+                        <span>Assign Recipes</span>
+                        <ChevronDownIcon
+                            className={`h-5 w-5 transform transition-transform duration-200 ${
+                                open ? "rotate-180" : ""
+                            }`}
+                        />
+                    </DisclosureButton>
+                    <DisclosurePanel className="p-4">
+                        <RecipeSelector recipes={recipes} mealType="breakfast" weekDay={weekDay}/>
+                        <RecipeSelector recipes={recipes} mealType="lunch" weekDay={weekDay}/>
+                        <RecipeSelector recipes={recipes} mealType="dinner" weekDay={weekDay}/>
+                    </DisclosurePanel>
                 </div>
-            </div>
-        </div>
+            )}
+        </Disclosure>
     );
-}
+};
