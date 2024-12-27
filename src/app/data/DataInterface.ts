@@ -10,6 +10,8 @@ export type WeekDay = {
     value: string;
 };
 
+export type MealType = "breakfast" | "lunch" | "dinner";
+
 export interface Recipe {
     recipeId?: string; //autogenerate server side id
     name: string;
@@ -27,14 +29,13 @@ export interface Recipe {
         fats?: number; // in grams
         sugar?: number; // in grams
     };
-    daysOfTheWeek?: WeekDay[],
     imageUrl?: string,
     createdAt?: Date,
 }
 
 export interface DailySchedule {
-    scheduleId: string, //autogenerate server side id
-    weekday: WeekDay,
+    scheduleId?: string, //autogenerate server side id
+    weekday: string,
     breakfast: string[],
     lunch: string[],
     dinner: string[]
