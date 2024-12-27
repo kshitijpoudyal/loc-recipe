@@ -3,6 +3,7 @@ import React from 'react';
 import NavigationMenu from "@/app/components/NavigationMenu";
 import DailyScheduleComponent from "@/app/components/DailySchedule";
 import HeroTitle from "@/app/components/HeroTitle";
+import {getMainBodyCss} from "@/app/data/Util";
 
 
 export default function DailySchedulePage() {
@@ -10,7 +11,7 @@ export default function DailySchedulePage() {
         <>
             <div>
                 <NavigationMenu></NavigationMenu>
-                <main className="mx-auto p-6">
+                <main className={getMainBodyCss()}>
                     <HeroTitle title={"Daily Schedule"}/>
                     <DailyScheduleComponent/>
                 </main>

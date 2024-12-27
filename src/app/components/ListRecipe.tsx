@@ -2,8 +2,9 @@ import React, {useEffect, useState} from "react";
 import {fetchAllRecipes} from "@/app/data/firebaseController/Recipe";
 import {DEFAULT_RECIPE} from "@/app/data/ConstData";
 import {Recipe} from "@/app/data/DataInterface";
-import {RecipeDetails} from "@/app/components/RecipeDetails";
 import RecipeCard from "@/app/components/RecipeCard";
+import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
+import {LoaderComponent} from "@/app/components/LoaderView";
 
 export default function ListRecipeComponent() {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -19,18 +20,16 @@ export default function ListRecipeComponent() {
     }, []);
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
-            </div>
-        );
+        return (<LoaderComponent loading={loading}/>);
     }
 
     return (
         <div>
             {open && (
-                <RecipeDetails isOpen={open} recipe={selectedRecipe} setIsOpenAction={setOpen}/>
+                // <RecipeDetails isOpen={open} recipe={selectedRecipe} setIsOpenAction={setOpen}/>
+                <RecipeDetailsTemplate isOpen={open} recipe={selectedRecipe} setIsOpenAction={setOpen}/>
             )}
+
             <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:px-8">
                 <div
                     className="mt-11 grid grid-cols-1 items-start gap-x-6 gap-y-16 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
