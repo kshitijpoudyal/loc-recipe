@@ -34,7 +34,6 @@ export default function DailyScheduleComponent() {
     }, []);
 
     if (loading) {
-        // Display loader while loading
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
@@ -49,8 +48,8 @@ export default function DailyScheduleComponent() {
                     <div key={day.id} className="border-b pb-4">
                         <h2 className="text-xl font-semibold text-indigo-600">{day.name}</h2>
                         <ul className="space-y-2">
-                            <SelectorForMealType recipes={allRecipe} weekDay={day}/>
                             <DailyScheduleComponentTemplate recipes={recipesMap[day.value]}/>
+                            <SelectorForMealType recipes={allRecipe} weekDay={day}/>
                         </ul>
                     </div>
                 ))}
