@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {fetchAllRecipes} from "@/app/data/firebaseController/Recipe";
-import Image from "next/image";
 import {DEFAULT_RECIPE} from "@/app/data/ConstData";
 import {Recipe} from "@/app/data/DataInterface";
 import {RecipeDetails} from "@/app/components/RecipeDetails";
@@ -20,7 +19,6 @@ export default function ListRecipeComponent() {
     }, []);
 
     if (loading) {
-        // Display loader while loading
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
