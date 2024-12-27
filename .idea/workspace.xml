@@ -7,7 +7,6 @@
     <list default="true" id="b35be50f-5ad2-45ad-9e84-9099623e45d3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/ListRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/ListRecipe.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/RecipeSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/RecipeSelector.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
