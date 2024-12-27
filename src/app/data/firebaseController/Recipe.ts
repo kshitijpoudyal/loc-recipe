@@ -1,4 +1,4 @@
-import {addDoc, collection, doc, getDoc, getDocs} from "firebase/firestore";
+import {addDoc, collection, getDocs} from "firebase/firestore";
 import {db, RECIPE_TABLE_NAME, storage} from "@/app/data/firebaseController/firebase";
 import {getDownloadURL, ref, uploadBytes} from "@firebase/storage";
 import {Recipe} from "@/app/data/DataInterface";

@@ -1,12 +1,9 @@
 'use client'
 
 import React, {useState} from 'react';
-import {ChevronUpDownIcon} from '@heroicons/react/16/solid';
-import {CheckIcon, PhotoIcon} from '@heroicons/react/20/solid';
-import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/react';
+import {PhotoIcon} from '@heroicons/react/20/solid';
 import {addRecipeToFirebase, uploadImage} from "@/app/data/firebaseController/Recipe";
-import {WEEK_DAYS} from "@/app/data/ConstData";
-import {Ingredients, Recipe, WeekDay} from "@/app/data/DataInterface";
+import {Ingredients, Recipe} from "@/app/data/DataInterface";
 import Image from "next/image";
 
 export default function AddRecipeComponent() {

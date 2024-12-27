@@ -1,4 +1,4 @@
-import {addDoc, arrayUnion, collection, doc, getDocs, getFirestore, setDoc, updateDoc} from "firebase/firestore";
+import {arrayUnion, collection, doc, getDocs, setDoc, updateDoc} from "firebase/firestore";
 import {DAILY_SCHEDULE_TABLE_NAME, db} from "@/app/data/firebaseController/firebase";
 import {DailySchedule, MealType, Recipe} from "@/app/data/DataInterface";
 import {findRecipeById} from "@/app/data/firebaseController/Recipe";
