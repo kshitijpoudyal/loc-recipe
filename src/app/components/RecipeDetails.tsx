@@ -57,7 +57,7 @@ export const RecipeDetails = ({isOpen, recipe, setIsOpenAction}: RecipeDetailsPr
                                         src={recipe.imageUrl}
                                         height={600}
                                         width={600}
-                                        className="w-full h-auto object-cover"
+                                        className="absolute inset-0 size-full rounded-2xl bg-gray-50 object-cover"
                                     />
                                 )}
                             </div>

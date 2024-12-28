@@ -1,9 +1,15 @@
 import {Dialog, DialogBackdrop, DialogPanel} from '@headlessui/react'
 import {XMarkIcon} from '@heroicons/react/24/outline'
-import {RecipeDetailsProps} from "@/app/components/RecipeDetails";
 import Image from "next/image";
+import {Recipe} from "@/app/data/DataInterface";
 
-export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction}: RecipeDetailsProps) {
+export interface RecipeDetailsTemplate {
+    isOpen: boolean;
+    recipe: Recipe;
+    setIsOpenAction: (open: boolean) => void;
+}
+
+export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction}: RecipeDetailsTemplate) {
     return (
         <Dialog open={isOpen} onClose={() => setIsOpenAction(false)} className="relative z-10">
             <DialogBackdrop
@@ -38,7 +44,7 @@ export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction}:
                                             src={recipe.imageUrl}
                                             height={600}
                                             width={600}
-                                            className="w-full h-auto object-cover"
+                                            className="w-full h-auto aspect-square rounded-lg bg-gray-100 object-cover"
                                         />
                                     </div>
                                 )}
@@ -50,13 +56,14 @@ export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction}:
                                             <div className="space-x-2">
                                                 {recipe.prepTime != null && recipe.prepTime > 0 && (
                                                     <span
-                                                        className="inline-flex items-center gap-x-2 rounded-full px-2 py-2 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+                                                        className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+                                                    >
                                                         Prep Time: {recipe.prepTime} minutes
                                                     </span>
                                                 )}
                                                 {recipe.cookTime != null && recipe.cookTime > 0 && (
                                                     <span
-                                                        className="inline-flex items-center gap-x-2 rounded-full px-2 py-2 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+                                                        className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
                                                     >
                                                         Cook Time: {recipe.cookTime} minutes
                                                     </span>
@@ -65,11 +72,42 @@ export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction}:
                                             <div className="space-x-2">
                                                 {recipe.servings != null && recipe.servings > 0 && (
                                                     <span
-                                                        className="inline-flex items-center gap-x-2 rounded-full px-2 py-2 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+                                                        className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+                                                    >
                                                         {recipe.servings} servings
                                                     </span>
                                                 )}
                                             </div>
+                                        </div>
+
+                                        <div className="mt-6">
+                                            {recipe.ageGroup && recipe.ageGroup.length > 0 && (
+                                                <div className="space-y-1">
+                                                    <span className="font-medium">Age Group:</span>
+                                                    <div className="flex space-x-2">
+                                                        {recipe.ageGroup.map((age) => {
+                                                            if (age.toLowerCase() === "kids") {
+                                                                return (
+                                                                    <span
+                                                                        key={age}
+                                                                        className="inline-flex items-center rounded-full bg-pink-100 px-2 py-1 text-xs font-medium text-pink-700"
+                                                                    >
+                                                                        {age}
+                                                                    </span>
+                                                                )
+                                                            } else {
+                                                                return (
+                                                                    <span
+                                                                        key={age}
+                                                                        className="inline-flex items-center rounded-full bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700"
+                                                                    >
+                                                                        {age}
+                                                                    </span>)
+                                                            }
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="mt-6">
@@ -78,7 +116,7 @@ export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction}:
                                                     <div>
                                                         <span className="font-medium">Ingredients:</span>
                                                     </div>
-                                                    <div className="space-y-2 space-x-1 mt-4">
+                                                    <div className="space-y-2 space-x-1">
                                                         {recipe.ingredients.map((ingredient, idx) => (
                                                             <span
                                                                 key={idx}
