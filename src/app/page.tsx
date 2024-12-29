@@ -1,8 +1,9 @@
 "use client";
 import React, {useEffect, useState} from "react";
 import NavigationMenu from "@/app/components/NavigationMenu";
-import {LoginComponent} from "@/app/components/Login";
 import {getMainBodyCss} from "@/app/data/Util";
+import HeroTitle from "@/app/components/HeroTitle";
+import ListRecipeComponent from "@/app/components/ListRecipe";
 
 export default function Home() {
 
@@ -17,7 +18,8 @@ export default function Home() {
                 <div>
                     <NavigationMenu></NavigationMenu>
                     <main className={getMainBodyCss()}>
-                        <LoginComponent/>
+                        <HeroTitle title={"All Recipe"}/>
+                        <ListRecipeComponent></ListRecipeComponent>
                     </main>
                 </div>
             )}

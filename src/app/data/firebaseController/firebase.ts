@@ -6,17 +6,16 @@ import { getAuth } from 'firebase/auth';
 
 // Firebase configuration (replace with your own Firebase project config)
 const firebaseConfig = {
-    apiKey: "AIzaSyCIQ6Fdv7mxpib9ykhCYw0Em0xdddhwWII",
-    authDomain: "loc-recipe.firebaseapp.com",
-    projectId: "loc-recipe",
-    storageBucket: "loc-recipe.firebasestorage.app",
-    messagingSenderId: "397427942472",
-    appId: "1:397427942472:web:be949bc3d231689691247d",
-    measurementId: "G-BGF2SSQLCM"
+    apiKey: process.env.NEXT_PUBLIC_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_APP_ID,
 };
 
-export const RECIPE_TABLE_NAME = "recipe";
 
+export const RECIPE_TABLE_NAME = "recipe";
 export const DAILY_SCHEDULE_TABLE_NAME = "dailySchedule";
 
 // Initialize Firebase
