@@ -1,4 +1,4 @@
-import {addScheduleToFirestore} from "@/app/data/firebaseController/DailySchedule";
+import {addScheduleToFirestore} from "@/app/utils/firebaseUtils/DailySchedule";
 import {WEEK_DAYS} from "@/app/data/ConstData";
 import {DailySchedule} from "@/app/data/DataInterface";
 

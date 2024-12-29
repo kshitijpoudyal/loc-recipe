@@ -1,7 +1,7 @@
 import {collection, doc, getDocs, setDoc, updateDoc} from "firebase/firestore";
-import {DAILY_SCHEDULE_TABLE_NAME, db} from "@/app/data/firebaseController/firebase";
+import {dailyScheduleTable, db} from "@/app/config/firebase";
 import {DailySchedule, MealType, Recipe} from "@/app/data/DataInterface";
-import {findRecipeById} from "@/app/data/firebaseController/Recipe";
+import {findRecipeById} from "@/app/utils/firebaseUtils/Recipe";
 import {WEEK_DAYS} from "@/app/data/ConstData";
 
 export const updateSchedule = async (
@@ -12,7 +12,7 @@ export const updateSchedule = async (
     console.log("updateSchedule called")
     try {
         // Reference the document for the specified weekday
-        const scheduleDocRef = doc(db, DAILY_SCHEDULE_TABLE_NAME, weekdayValue);
+        const scheduleDocRef = doc(db, dailyScheduleTable, weekdayValue);
 
         // Update the breakfast array with the new recipeId
         await updateDoc(scheduleDocRef, {
@@ -26,7 +26,7 @@ export const updateSchedule = async (
 };
 
 export const fetchAllDailySchedules = async () => {
-    const dailyScheduleCollection = collection(db, DAILY_SCHEDULE_TABLE_NAME);
+    const dailyScheduleCollection = collection(db, dailyScheduleTable);
     const dailyScheduleSnapshot = await getDocs(dailyScheduleCollection);
     return dailyScheduleSnapshot.docs.map((doc) => ({
         scheduleId: doc.id,
@@ -35,7 +35,7 @@ export const fetchAllDailySchedules = async () => {
 };
 
 export const addScheduleToFirestore = async (dailySchedule: DailySchedule) => {
-    const scheduleCollection = collection(db, DAILY_SCHEDULE_TABLE_NAME); // Replace "schedules" with your desired Firestore collection name
+    const scheduleCollection = collection(db, dailyScheduleTable); // Replace "schedules" with your desired Firestore collection name
     const scheduleDocRef = doc(scheduleCollection, dailySchedule.weekday);
     try {
         await setDoc(scheduleDocRef, {

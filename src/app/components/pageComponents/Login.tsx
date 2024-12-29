@@ -2,10 +2,10 @@
 import React, {useState} from 'react';
 import Image from "next/image";
 import 'firebase/auth';
-import {authenticateUser} from "@/app/data/firebaseController/User";
+import {authenticateUser} from "@/app/utils/firebaseUtils/User";
 import {
     classNames, getInputFieldCss, getLinkTextCss, getPrimaryButtonCss
-} from "@/app/data/Util";
+} from "@/app/utils/CssUtils";
 
 export const LoginComponent = () => {
     const [email, setEmail] = useState('');

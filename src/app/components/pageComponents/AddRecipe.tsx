@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import {PhotoIcon} from '@heroicons/react/20/solid';
-import {addRecipeToFirebase, uploadImage} from "@/app/data/firebaseController/Recipe";
+import {addRecipeToFirebase, uploadImage} from "@/app/utils/firebaseUtils/Recipe";
 import {Ingredients, Recipe} from "@/app/data/DataInterface";
 import Image from "next/image";
 import {
@@ -11,7 +11,7 @@ import {
     getInputFieldCss,
     getLinkTextCss,
     getPrimaryButtonCss
-} from "@/app/data/Util";
+} from "@/app/utils/CssUtils";
 
 export default function AddRecipeComponent() {
     const [name, setName] = useState('');

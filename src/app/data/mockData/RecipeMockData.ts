@@ -1,5 +1,5 @@
 import {Recipe} from "@/app/data/DataInterface";
-import {addRecipeToFirebase} from "@/app/data/firebaseController/Recipe";
+import {addRecipeToFirebase} from "@/app/utils/firebaseUtils/Recipe";
 
 const mockRecipe: Recipe[] = [
     {

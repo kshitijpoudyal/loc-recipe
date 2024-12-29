@@ -1,4 +1,4 @@
-import {auth} from "@/app/data/firebaseController/firebase";
+import {auth} from "@/app/config/firebase";
 import {signInWithEmailAndPassword, createUserWithEmailAndPassword} from 'firebase/auth';
 
 export const registerUser = async (email: string, password: string) => {

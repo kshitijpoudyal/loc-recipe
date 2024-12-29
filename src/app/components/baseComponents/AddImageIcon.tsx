@@ -1,4 +1,4 @@
-export default function AddImage() {
+export default function AddImageIcon() {
     return (
         <div className="flex flex-col-reverse">
             <div

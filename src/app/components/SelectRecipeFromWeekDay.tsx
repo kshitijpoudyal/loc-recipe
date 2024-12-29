@@ -2,8 +2,8 @@ import {MealType, Recipe, WeekDay} from "@/app/data/DataInterface";
 import React, {useState} from "react";
 import {Dialog, DialogBackdrop, DialogPanel} from "@headlessui/react";
 import {XMarkIcon} from "@heroicons/react/20/solid";
-import RecipeCard from "@/app/components/RecipeCard";
-import {updateSchedule} from "@/app/data/firebaseController/DailySchedule";
+import RecipeCard from "@/app/components/baseComponents/RecipeCard";
+import {updateSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
 
 export interface AssignRecipeToWeekDayProps {
     isOpen: boolean;
