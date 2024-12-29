@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {fetchAllRecipes} from "@/app/data/firebaseController/Recipe";
+import {fetchAllRecipes} from "@/app/utils/firebaseUtils/Recipe";
 import {DEFAULT_RECIPE} from "@/app/data/ConstData";
 import {Recipe} from "@/app/data/DataInterface";
-import RecipeCard from "@/app/components/RecipeCard";
+import RecipeCard from "@/app/components/baseComponents/RecipeCard";
 import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
-import {LoaderComponent} from "@/app/components/LoaderView";
+import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
 
 export default function ListRecipeComponent() {
     const [recipes, setRecipes] = useState<Recipe[]>([]);

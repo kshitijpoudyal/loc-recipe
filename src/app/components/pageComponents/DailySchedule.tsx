@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {MealType, Recipe, WeekDay} from "@/app/data/DataInterface";
 import {DEFAULT_RECIPE, MEAL_TYPES, WEEK_DAYS} from "@/app/data/ConstData";
-import {mapAllRecipesToSchedule} from "@/app/data/firebaseController/DailySchedule";
-import {fetchAllRecipes} from "@/app/data/firebaseController/Recipe";
-import RecipeCard from "@/app/components/RecipeCard";
-import {LoaderComponent} from "@/app/components/LoaderView";
-import AddImage from "@/app/components/AddImage";
+import {mapAllRecipesToSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
+import {fetchAllRecipes} from "@/app/utils/firebaseUtils/Recipe";
+import RecipeCard from "@/app/components/baseComponents/RecipeCard";
+import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
+import AddImageIcon from "@/app/components/baseComponents/AddImageIcon";
 import {AssignRecipeToWeekDay, AssignRecipeToWeekDayProps} from "@/app/components/SelectRecipeFromWeekDay";
 
 export default function DailyScheduleComponent() {
@@ -94,13 +94,13 @@ export default function DailyScheduleComponent() {
                                                     ))}
                                                     <li className="flex flex-col h-full w-40"
                                                         onClick={() => handleAddImageClick(day, mealType, recipesMap[day.value][mealType])}>
-                                                        <AddImage/>
+                                                        <AddImageIcon/>
                                                     </li>
                                                 </>
                                             ) : (
                                                 <li className="flex flex-col h-full w-40"
                                                     onClick={() => handleAddImageClick(day, mealType, recipesMap[day.value][mealType])}>
-                                                    <AddImage/>
+                                                    <AddImageIcon/>
                                                 </li>
                                             )}
                                         </ul>
