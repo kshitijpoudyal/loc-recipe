@@ -26,7 +26,6 @@ export default function ListRecipeComponent() {
     return (
         <div>
             {open && (
-                // <RecipeDetails isOpen={open} recipe={selectedRecipe} setIsOpenAction={setOpen}/>
                 <RecipeDetailsTemplate isOpen={open} recipe={selectedRecipe} setIsOpenAction={setOpen}/>
             )}
 

@@ -20,7 +20,7 @@ export default function RecipeCard({recipe, isPreview}: RecipeCardProps) {
 
     return (
         <div className="flex flex-col-reverse">
-            <div className="mt-6">
+            <div className="mt-3">
                 <h3 className="text-sm font-medium text-gray-900">
                     {recipe.name}
                 </h3>
