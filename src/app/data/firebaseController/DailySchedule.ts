@@ -1,4 +1,4 @@
-import {arrayUnion, collection, doc, getDocs, setDoc, updateDoc} from "firebase/firestore";
+import {collection, doc, getDocs, setDoc, updateDoc} from "firebase/firestore";
 import {DAILY_SCHEDULE_TABLE_NAME, db} from "@/app/data/firebaseController/firebase";
 import {DailySchedule, MealType, Recipe} from "@/app/data/DataInterface";
 import {findRecipeById} from "@/app/data/firebaseController/Recipe";
@@ -9,16 +9,17 @@ export const updateSchedule = async (
     mealType: MealType,
     recipeId: string[],
 ): Promise<void> => {
+    console.log("updateSchedule called")
     try {
         // Reference the document for the specified weekday
         const scheduleDocRef = doc(db, DAILY_SCHEDULE_TABLE_NAME, weekdayValue);
 
         // Update the breakfast array with the new recipeId
         await updateDoc(scheduleDocRef, {
-            [mealType]: arrayUnion(recipeId[0]),
+            [mealType]: recipeId,
         });
 
-        console.log(`RecipeId ${recipeId} successfully added to ${weekdayValue}'s breakfast.`);
+        console.log(`RecipeId ${recipeId} successfully added to ${weekdayValue}'s ${mealType}.`);
     } catch (error) {
         console.error("Error updating breakfast schedule:", error);
     }

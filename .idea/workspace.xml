@@ -5,14 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b35be50f-5ad2-45ad-9e84-9099623e45d3" name="Changes" comment="update project">
-      <change afterPath="$PROJECT_DIR$/src/app/components/AddImage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/components/Divider.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/components/SelectRecipeFromWeekDay.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/DailySchedule.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/RecipeDetails.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/RecipeDetails.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/RecipeDetailsTemplate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/RecipeDetailsTemplate.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/ListRecipe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/ListRecipe.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/RecipeCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/RecipeCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/RecipeDetails.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/RecipeSelector.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/SelectRecipeFromWeekDay.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/SelectRecipeFromWeekDay.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/data/ConstData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/ConstData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/data/firebaseController/DailySchedule.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/data/firebaseController/DailySchedule.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +80,8 @@
       <workItem from="1734926307091" duration="1301000" />
       <workItem from="1734928278332" duration="423000" />
       <workItem from="1734928790378" duration="16601000" />
-      <workItem from="1735324238326" duration="14448000" />
+      <workItem from="1735324238326" duration="14769000" />
+      <workItem from="1735405544201" duration="11903000" />
     </task>
     <servers />
   </component>
