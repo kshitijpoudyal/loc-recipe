@@ -3,7 +3,7 @@ export default function AddImageIcon() {
         <div className="flex flex-col-reverse">
             <div
                 style={{height: 162, width: 162}}
-                className="flex items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200"
+                className="flex items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200 hover:drop-shadow-xl"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

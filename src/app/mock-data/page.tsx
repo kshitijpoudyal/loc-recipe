@@ -9,7 +9,7 @@ import {
     getTextColor
 } from "@/app/utils/CssUtils";
 import HeroTitle from "@/app/components/baseComponents/HeroTitle";
-import {AuthenticationGate} from "@/app/components/baseComponents/AuthenticationGate";
+import {AuthenticationGate} from "@/app/components/AuthenticationGate";
 
 export default function AddMockDataForm() {
     const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export default function AddMockDataForm() {
     return (
         <AuthenticationGate>
             <HeroTitle title={"Mock Data"}/>
-            <div className="flex flex-row space-x-10">
+            <div className="flex flex-row space-x-10 max-w-4xl mx-auto p-6">
                 <button
                     type="button"
                     onClick={() => handleAction(addMockRecipesToFirebase, "Mock Recipes added successfully!")}
