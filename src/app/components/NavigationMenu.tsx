@@ -15,6 +15,7 @@ export default function NavigationMenu() {
         { href: "/daily-schedule", label: "Daily Schedule" },
         { href: "/login", label: "Login", showWhen:!user },
         { href: "/add-recipe", label: "Add Recipe", showWhen: !!user },
+        { href: "/mock-data", label: "Add MockData", showWhen: !!user },
         { href: "/logout", label: "Logout", showWhen: !!user },
     ];
 
