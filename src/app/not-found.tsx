@@ -6,7 +6,7 @@ import {getLinkTextCss, getMainBodyCss} from "@/app/utils/CssUtils";
 export default function NotFound() {
     return (
         <section className={getMainBodyCss()}>
-            <div className="flex w-full max-w-7xl flex-auto flex-col justify-center px-6 py-24 sm:py-64 lg:px-32">
+            <div className="max-w-4xl mx-auto p-6">
                 <p className="text-base/8 font-semibold text-red-500">404</p>
                 <h1 className="mt-4 text-pretty text-5xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
                     Page not found

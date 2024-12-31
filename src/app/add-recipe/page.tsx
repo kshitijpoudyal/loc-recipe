@@ -6,7 +6,7 @@ import HeroTitle from "@/app/components/baseComponents/HeroTitle";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {useRouter} from "next/navigation";
 import {redirectToLogin} from "@/app/utils/routerUtils/RouterUtils";
-import {AuthenticationGate} from "@/app/components/baseComponents/AuthenticationGate";
+import {AuthenticationGate} from "@/app/components/AuthenticationGate";
 
 export default function AddRecipePage() {
     const router = useRouter();

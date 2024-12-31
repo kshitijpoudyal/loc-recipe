@@ -4,11 +4,12 @@ import {Dialog, DialogBackdrop, DialogPanel} from "@headlessui/react";
 import {XMarkIcon} from "@heroicons/react/20/solid";
 import RecipeCard from "@/app/components/baseComponents/RecipeCard";
 import {updateSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
+import {getImageCheckBoxCss} from "@/app/utils/CssUtils";
 
 export interface AssignRecipeToWeekDayProps {
     isOpen: boolean;
     recipes: Recipe[];
-    setIsOpenAction: (open: boolean) => void;
+    setIsOpenAction: (open: boolean, reload?: boolean) => void;
     weekDay: WeekDay;
     mealType: MealType;
     selectedRecipeList: Recipe[]
@@ -36,11 +37,11 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = (assi
                     if (r.recipeId != null) {
                         recipeIds.push(r.recipeId);
                     }
-                })
-                alert(`Recipes assigned to ${assignRecipeToWeekDayProps.weekDay.value}!`);
+                });
             }
-            await updateSchedule(assignRecipeToWeekDayProps.weekDay.value, assignRecipeToWeekDayProps.mealType, recipeIds);
-            assignRecipeToWeekDayProps.setIsOpenAction(false)
+            updateSchedule(assignRecipeToWeekDayProps.weekDay.value, assignRecipeToWeekDayProps.mealType, recipeIds).then(() => {
+                assignRecipeToWeekDayProps.setIsOpenAction(false, true);
+            })
         } catch (error) {
             console.error('Error assigning recipes to schedule:', error);
         }
@@ -73,42 +74,35 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = (assi
 
                             <div
                                 className="grid w-full items-start gap-x-6 gap-y-8 lg:gap-x-8">
-                                <div>
-                                    <section aria-labelledby="information-heading" className="mt-4">
-                                        <h3 id="information-heading">
-                                            Product information
-                                        </h3>
-                                    </section>
-                                    <section aria-labelledby="options-heading" className="mt-6">
-                                        <div className="flex justify-center">
-                                            <fieldset>
-                                                <div className="mt-1 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                                                    {assignRecipeToWeekDayProps.recipes.map((recipe) => (
-                                                        <div
-                                                            key={recipe.name}
-                                                            onClick={() => toggleSelection(recipe)}
-                                                            className={`cursor-pointer rounded-lg border p-4 ${
-                                                                selectedRecipes.includes(recipe)
-                                                                    ? "border-green-500 bg-green-100"
-                                                                    : "border-gray-300 bg-white"
-                                                            }`}
-                                                        >
-                                                            <RecipeCard recipe={recipe} isPreview={true}/>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </fieldset>
-                                        </div>
-                                        <div className="mt-6">
-                                            <button
-                                                onClick={handleUpdateSchedule}
-                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-                                            >
-                                                Assign
-                                            </button>
-                                        </div>
-                                    </section>
-                                </div>
+                                <section aria-labelledby="options-heading" className="mt-6">
+                                    <div className="flex justify-center">
+                                        <fieldset>
+                                            <div className="mt-1 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                                                {assignRecipeToWeekDayProps.recipes.map((recipe) => (
+                                                    <div
+                                                        key={recipe.recipeId}
+                                                        onClick={() => toggleSelection(recipe)}
+                                                        className={`cursor-pointer rounded-lg border p-4 ${
+                                                            selectedRecipes.includes(recipe)
+                                                                ? getImageCheckBoxCss()
+                                                                : getImageCheckBoxCss(false)
+                                                        }`}
+                                                    >
+                                                        <RecipeCard recipe={recipe} isPreview={true}/>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div className="mt-6">
+                                        <button
+                                            onClick={handleUpdateSchedule}
+                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                        >
+                                            Assign
+                                        </button>
+                                    </div>
+                                </section>
                             </div>
                         </div>
                     </DialogPanel>

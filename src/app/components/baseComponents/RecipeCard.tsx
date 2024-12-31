@@ -31,7 +31,7 @@ export default function RecipeCard({recipe, isPreview}: RecipeCardProps) {
                     src={recipe.imageUrl}
                     height={imageSize}
                     width={imageSize}
-                    className="aspect-square w-full rounded-lg bg-gray-100 object-cover"
+                    className="aspect-square w-full rounded-lg bg-gray-100 object-cover hover:drop-shadow-xl"
                 />
             )}
         </div>
