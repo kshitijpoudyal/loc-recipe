@@ -8,6 +8,7 @@ import {useRouter} from "next/navigation";
 
 interface AuthProviderProps {
     children: React.ReactNode;
+    shouldRedirectToLogin: boolean;
 }
 
 interface AuthContextType {
@@ -18,19 +19,19 @@ const AuthContext = createContext<AuthContextType>({
     user: null,
 });
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({children, shouldRedirectToLogin}) => {
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (authUser) => {
             setUser(authUser);
-            if (!authUser) {
+            if (!authUser && shouldRedirectToLogin) {
                 redirectToLogin(router);
             }
         });
         return () => unsubscribe();
-    }, [router, user]);
+    }, [router, shouldRedirectToLogin, user]);
 
     return (
         <AuthContext.Provider value={{user}}>

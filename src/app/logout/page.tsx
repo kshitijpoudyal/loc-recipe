@@ -1,8 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { logoutUser } from "@/app/utils/firebaseUtils/User";
+import React, {useEffect} from "react";
+import {useRouter} from "next/navigation";
+import {logoutUser} from "@/app/utils/firebaseUtils/User";
 import {redirectToHome} from "@/app/utils/routerUtils/RouterUtils";
+import {getMainBodyCss} from "@/app/utils/CssUtils";
+import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
 
 export default function LogoutPage() {
     const router = useRouter();
@@ -10,19 +12,19 @@ export default function LogoutPage() {
     useEffect(() => {
         const handleLogout = async () => {
             try {
-                await logoutUser();
-                redirectToHome(router);
+                await logoutUser()
             } catch (err) {
                 alert(`An error occurred while logging out: ${err}`);
             }
         };
-
-        handleLogout();
+        handleLogout().then(() => {
+            redirectToHome(router);
+        })
     }, [router]);
 
     return (
-        <div className="flex items-center justify-center h-screen">
-            <p>Logging you out...</p>
-        </div>
+        <section className={getMainBodyCss()}>
+            <LoaderComponent loading={true} message={"Logging you out..."}/>
+        </section>
     );
 }

@@ -20,7 +20,7 @@ export default function ListRecipeComponent() {
     }, []);
 
     if (loading) {
-        return (<LoaderComponent loading={loading}/>);
+        // return (<LoaderComponent loading={loading}/>);
     }
 
     return (

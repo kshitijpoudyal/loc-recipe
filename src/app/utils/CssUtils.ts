@@ -31,24 +31,26 @@ export function getInputBoxFocusOutlineColor(isFocusVisible = false, boldness = 
 
 // Input Field Styles
 export function getInputFieldCss(): string {
-    return classNames(
-        "rounded-md bg-white px-3.5 py-2 text-base text-gray-900",
-        "outline outline-1 -outline-offset-1 outline-gray-300",
-        "placeholder:text-gray-400",
-        getInputBoxFocusOutlineColor(true)
-    );
+    return "rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-green-600"
+    // return classNames(
+    //     "rounded-md bg-white px-3.5 py-2 text-base text-gray-900",
+    //     "outline outline-1 -outline-offset-1 outline-gray-300",
+    //     "placeholder:text-gray-400",
+    //     getInputBoxFocusOutlineColor(true)
+    // );
 }
 
 // Checkbox Field Styles
 export function getCheckBoxFieldCss(): string {
-    return classNames(
-        "appearance-none rounded border border-gray-300 bg-white",
-        `checked:border-${getPrimaryColorName()}-600 checked:bg-${getPrimaryColorName()}-600`,
-        `indeterminate:border-${getPrimaryColorName()}-600 indeterminate:bg-${getPrimaryColorName()}-600`,
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
-        "disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100",
-        "forced-colors:appearance-auto"
-    );
+    return "appearance-none rounded border border-gray-300 bg-white checked:border-green-600 checked:bg-green-600 indeterminate:border-green-600 indeterminate:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+    // return classNames(
+    //     "appearance-none rounded border border-gray-300 bg-white",
+    //     `checked:border-${getPrimaryColorName()}-600 checked:bg-${getPrimaryColorName()}-600`,
+    //     `indeterminate:border-${getPrimaryColorName()}-600 indeterminate:bg-${getPrimaryColorName()}-600`,
+    //     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
+    //     "disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100",
+    //     "forced-colors:appearance-auto"
+    // );
 }
 
 // Link Text Styles
@@ -70,12 +72,27 @@ export function getPrimaryButtonCss(): string {
     );
 }
 
-// Main Body Styles
-export function getMainBodyCss(): string {
+export function getImportantButtonCss(): string {
     return classNames(
-        "mx-auto p-6 h-screen flex-grow",
-        "bg-gradient-to-b",
-        `from-${getPrimaryColorName()}-100`,
-        `to-${getSecondaryColorName()}`
+        "rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm bg-red-600 hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
     );
+}
+
+
+// Main Body Styles
+// export function getMainBodyCss(): string {
+//     return classNames(
+//         "mx-auto p-6 h-screen flex-grow",
+//         "bg-gradient-to-b",
+//         `from-${getPrimaryColorName()}-100`,
+//         `to-${getSecondaryColorName()}`
+//     );
+// }
+
+export function getMainBodyCss() {
+    return `mx-auto p-6 h-screen flex-grow bg-gradient-to-b from-green-100 to-white`
+}
+
+export function getInputTextAttachedLabelCss() {
+    return "absolute -top-2 left-2 inline-block rounded-lg bg-green-200 px-1 text-xs font-medium text-gray-500"
 }

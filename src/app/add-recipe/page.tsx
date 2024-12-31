@@ -1,17 +1,30 @@
-import React from "react";
+"use client"
+
+import React, {useEffect} from "react";
 import AddRecipe from "@/app/components/pageComponents/AddRecipe";
-import NavigationMenu from "@/app/components/NavigationMenu";
 import HeroTitle from "@/app/components/baseComponents/HeroTitle";
-import {getMainBodyCss} from "@/app/utils/CssUtils";
+import {useAuth} from "@/app/components/baseComponents/AuthProvider";
+import {useRouter} from "next/navigation";
+import {redirectToLogin} from "@/app/utils/routerUtils/RouterUtils";
+import {AuthenticationGate} from "@/app/components/baseComponents/AuthenticationGate";
 
 export default function AddRecipePage() {
+    const router = useRouter();
+    const {user} = useAuth();
+
+    useEffect(() => {
+        if (!user) {
+            redirectToLogin(router);
+        }
+
+    }, [router, user]);
+
     return (
-        <div>
-            <NavigationMenu/>
-            <main className={getMainBodyCss()}>
+        <AuthenticationGate>
+            <div>
                 <HeroTitle title="Add Recipe"/>
                 <AddRecipe/>
-            </main>
-        </div>
+            </div>
+        </AuthenticationGate>
     );
 }
