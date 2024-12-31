@@ -8,44 +8,51 @@ export const mockSchedule: DailySchedule[] = [
         breakfast: ["1001", "1002"],
         lunch: ["1003", "1004"],
         dinner: ["1005"],
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3",
     },
     {
         weekday: WEEK_DAYS[1].value,
         breakfast: ["1002"],
         lunch: ["1005"],
-        dinner: ["1006"]
+        dinner: ["1006"],
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3",
     },
     {
         weekday: WEEK_DAYS[2].value,
         breakfast: ["1003"],
         lunch: ["1004"],
-        dinner: ["1005"]
+        dinner: ["1005"],
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3",
     },
     {
         weekday: WEEK_DAYS[3].value,
         breakfast: ["1003"],
         lunch: ["1004"],
-        dinner: ["1005"]
+        dinner: ["1005"],
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3",
     },
     {
         weekday: WEEK_DAYS[4].value,
         breakfast: ["1006"],
         lunch: ["1004"],
-        dinner: ["1005"]
+        dinner: ["1005"],
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3",
     },
     {
         weekday: WEEK_DAYS[5].value,
         breakfast: [""],
         lunch: [""],
-        dinner: [""]
+        dinner: [""],
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3",
     },
     {
         weekday: WEEK_DAYS[6].value,
         breakfast: [""],
         lunch: [""],
-        dinner: [""]
-    }
-]
+        dinner: [""],
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3",
+    },
+];
 
 export const addMockScheduleToFirestore = async () => {
 
