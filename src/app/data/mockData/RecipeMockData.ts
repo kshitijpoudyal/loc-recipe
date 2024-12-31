@@ -31,7 +31,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 20,
             fats: 5
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fpancake.jpeg?alt=media&token=40eb95ab-bafb-482c-ae5e-0cc5d1108b2f"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fpancake.jpeg?alt=media&token=40eb95ab-bafb-482c-ae5e-0cc5d1108b2f",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1003",
@@ -65,7 +66,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 10,
             fats: 15
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fchicken_curry.webp?alt=media&token=87a6d7fe-d860-4da7-9392-65381d89fa56"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fchicken_curry.webp?alt=media&token=87a6d7fe-d860-4da7-9392-65381d89fa56",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1004",
@@ -99,7 +101,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 15,
             fats: 8
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fvegetable_stir_fry.webp?alt=media&token=80d302f6-4a4d-4b32-8cd8-8e434085875c"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fvegetable_stir_fry.webp?alt=media&token=80d302f6-4a4d-4b32-8cd8-8e434085875c",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1005",
@@ -132,7 +135,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 45,
             fats: 10
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fspaghetti_aglio_e_olio.webp?alt=media&token=bf3ac16c-4244-4e5b-8501-b200e9a7c7ea"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fspaghetti_aglio_e_olio.webp?alt=media&token=bf3ac16c-4244-4e5b-8501-b200e9a7c7ea",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1006",
@@ -165,7 +169,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 25,
             fats: 10
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fchocolate_chips_cookie.jpeg?alt=media&token=b9f3f53d-37e0-433e-bf41-3227765accd3"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fchocolate_chips_cookie.jpeg?alt=media&token=b9f3f53d-37e0-433e-bf41-3227765accd3",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1007",
@@ -222,7 +227,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 25,
             fats: 15,
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fgrilled_cheese.jpeg?alt=media&token=d01a1138-5869-4b86-990b-951a428942ae"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fgrilled_cheese.jpeg?alt=media&token=d01a1138-5869-4b86-990b-951a428942ae",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1009",
@@ -252,7 +258,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 15,
             fats: 4,
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Ftomato_soup.jpeg?alt=media&token=c832aed8-894a-4ade-ad04-65e6559570c0"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Ftomato_soup.jpeg?alt=media&token=c832aed8-894a-4ade-ad04-65e6559570c0",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1010",
@@ -281,7 +288,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 2,
             fats: 14,
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fscrambled_egg.jpeg?alt=media&token=480a6494-79cd-49dc-94c3-5f5695825b28"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fscrambled_egg.jpeg?alt=media&token=480a6494-79cd-49dc-94c3-5f5695825b28",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1011",
@@ -310,7 +318,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 30,
             fats: 8,
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fveggie_wrap.jpeg?alt=media&token=cbf13c0d-7657-42b1-9921-08720541a6f9"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fveggie_wrap.jpeg?alt=media&token=cbf13c0d-7657-42b1-9921-08720541a6f9",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
         recipeId: "1012",
@@ -340,7 +349,8 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 35,
             fats: 1,
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Ffruit_salad.jpeg?alt=media&token=1546d00c-f4ae-40e6-94f7-ace3964afb88"
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Ffruit_salad.jpeg?alt=media&token=1546d00c-f4ae-40e6-94f7-ace3964afb88",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
 ];
 

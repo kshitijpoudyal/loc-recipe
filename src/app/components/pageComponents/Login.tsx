@@ -6,8 +6,11 @@ import {authenticateUser} from "@/app/utils/firebaseUtils/User";
 import {
     classNames, getInputFieldCss, getLinkTextCss, getPrimaryButtonCss
 } from "@/app/utils/CssUtils";
+import {redirectToHome} from "@/app/utils/routerUtils/RouterUtils";
+import {useRouter} from "next/navigation";
 
 export const LoginComponent = () => {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -16,6 +19,7 @@ export const LoginComponent = () => {
         e.preventDefault();
         try {
             await authenticateUser(email, password);
+            redirectToHome(router);
         } catch (err) {
             setError(`Invalid credentials or error occurred. ${err}`,);
         }
@@ -23,12 +27,12 @@ export const LoginComponent = () => {
     return (
         <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:px-8 bg-">
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                <div className="sm:mx-auto w-12">
                     <Image
                         alt="Lochu's Cafe"
-                        width={400}
-                        height={200}
-                        src="/lochu_s_cafe.png"
+                        width={50}
+                        height={50}
+                        src="/lochu_s_cafe_icon.svg"
                         className="mx-auto w-auto"
                     />
                 </div>
