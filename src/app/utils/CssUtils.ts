@@ -53,6 +53,10 @@ export function getCheckBoxFieldCss(): string {
     // );
 }
 
+export function getImageCheckBoxCss(selected: boolean = true): string {
+    return selected ? "border-green-500 bg-green-100" : "border-gray-300 bg-white"
+}
+
 // Link Text Styles
 export function getLinkTextCss(): string {
     return "text-sm/6 font-semibold text-green-600 hover:text-green-500"

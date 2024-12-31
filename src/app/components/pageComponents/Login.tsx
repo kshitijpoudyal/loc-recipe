@@ -14,8 +14,8 @@ import {Alert} from "@/app/components/Alerts";
 
 export const LoginComponent = () => {
     const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("kcp@gmail.com");
+    const [password, setPassword] = useState("test123");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
