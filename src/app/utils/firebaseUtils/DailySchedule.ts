@@ -43,6 +43,7 @@ export const addScheduleToFirestore = async (dailySchedule: DailySchedule) => {
             breakfast: dailySchedule.breakfast,
             lunch: dailySchedule.lunch,
             dinner: dailySchedule.dinner,
+            createdBy: dailySchedule.createdBy,
             createdAt: new Date(),
         });
     } catch (error) {

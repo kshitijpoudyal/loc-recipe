@@ -12,6 +12,5 @@ export const LoaderComponent: React.FC<LoaderComponentProps> = ({loading}) => {
             </div>
         );
     }
-
     return <></>;
 };

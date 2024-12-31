@@ -4,9 +4,14 @@ import React, {useState} from "react";
 import {addMockRecipesToFirebase} from "@/app/data/mockData/RecipeMockData";
 import {addMockScheduleToFirestore} from "@/app/data/mockData/DailyScheduleMockData";
 import NavigationMenu from "@/app/components/NavigationMenu";
-import {getMainBodyCss} from "@/app/utils/CssUtils";
+import {
+    classNames,
+    getAccentTextColorName,
+    getMainBodyCss,
+    getPrimaryButtonCss,
+    getTextColor
+} from "@/app/utils/CssUtils";
 import HeroTitle from "@/app/components/baseComponents/HeroTitle";
-import {AuthenticatedPage} from "@/app/components/baseComponents/AuthenticatedPage";
 
 export default function AddMockDataForm() {
     const [loading, setLoading] = useState(false);
@@ -27,7 +32,7 @@ export default function AddMockDataForm() {
     };
 
     return (
-        <AuthenticatedPage>
+        <div>
             <NavigationMenu></NavigationMenu>
             <main className={getMainBodyCss()}>
                 <HeroTitle title={"Mock Data"}/>
@@ -35,7 +40,7 @@ export default function AddMockDataForm() {
                     <button
                         type="button"
                         onClick={() => handleAction(addMockRecipesToFirebase, "Mock Recipes added successfully!")}
-                        className="w-full py-3 mt-6 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className={classNames("w-full py-3 mt-6", getPrimaryButtonCss())}
                         disabled={loading}
                     >
                         {loading ? "Adding Mock Recipes..." : "Add Mock Recipe"}
@@ -44,15 +49,15 @@ export default function AddMockDataForm() {
                     <button
                         type="button"
                         onClick={() => handleAction(addMockScheduleToFirestore, "Mock Weekly Schedule added successfully!")}
-                        className="w-full py-3 mt-6 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className={classNames("w-full py-3 mt-6", getPrimaryButtonCss())}
                         disabled={loading}
                     >
                         {loading ? "Adding Mock Schedule..." : "Add Mock Weekly Schedule"}
                     </button>
 
-                    {message && <p className="text-center text-green-600 font-medium mt-4">{message}</p>}
+                    {message && <p className={classNames("text-center font-medium mt-4", getTextColor(false, getAccentTextColorName()))}>{message}</p>}
                 </div>
             </main>
-        </AuthenticatedPage>
+        </div>
     );
 }

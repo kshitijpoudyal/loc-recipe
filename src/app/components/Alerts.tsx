@@ -1,21 +1,22 @@
 import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import {ErrorType} from "@/app/data/DataInterface";
 
 interface AlertProps {
     message: string;
-    type: 'success' | 'error';
+    type: ErrorType;
     onDismiss?: () => void;
 }
 
 export function Alert({ message, type, onDismiss }: AlertProps) {
     const alertStyles = {
         success: {
-            bg: 'bg-green-50',
+            bg: 'bg-green-100',
             iconColor: 'text-green-400',
             textColor: 'text-green-800',
             buttonColor: 'text-green-500 hover:bg-green-100 focus:ring-green-600 focus:ring-offset-green-50',
         },
         error: {
-            bg: 'bg-red-50',
+            bg: 'bg-red-100',
             iconColor: 'text-red-400',
             textColor: 'text-red-800',
             buttonColor: 'text-red-500 hover:bg-red-100 focus:ring-red-600 focus:ring-offset-red-50',

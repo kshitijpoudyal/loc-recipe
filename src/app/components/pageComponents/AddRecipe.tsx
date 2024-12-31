@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import React, {useState} from 'react';
-import {PhotoIcon} from '@heroicons/react/20/solid';
+import React, {useState} from "react";
+import {PhotoIcon} from "@heroicons/react/20/solid";
 import {addRecipeToFirebase, uploadImage} from "@/app/utils/firebaseUtils/Recipe";
 import {Ingredients, Recipe} from "@/app/data/DataInterface";
 import Image from "next/image";
@@ -10,7 +10,7 @@ import {
     getCheckBoxFieldCss,
     getInputFieldCss,
     getLinkTextCss,
-    getPrimaryButtonCss
+    getPrimaryButtonCss,
 } from "@/app/utils/CssUtils";
 
 export default function AddRecipeComponent() {
@@ -33,7 +33,7 @@ export default function AddRecipeComponent() {
     // const [daysOfWeek, setDaysOfWeek] = useState<WeekDay[]>([WEEK_DAYS[0], WEEK_DAYS[1]]);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
+    const [loading, setLoading] = useState(false);
 
     const handleMealTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {value, checked} = e.target;
@@ -94,6 +94,7 @@ export default function AddRecipeComponent() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setLoading(true);
 
         const stepsList = steps.split('\n').map((step) => step.trim());
         const nutritionData = {
@@ -103,28 +104,31 @@ export default function AddRecipeComponent() {
             fats: fats ? parseFloat(fats) : 0,
             sugar: sugar ? parseFloat(sugar) : 0,
         };
+
         try {
             const recipe: Recipe = {
-                ageGroup: ageGroup,
-                cookTime: cookTime,
-                // daysOfTheWeek: daysOfWeek,
-                ingredients: ingredients,
-                mealType: mealType,
-                name: name,
-                nutrition: nutritionData,
-                prepTime: prepTime,
-                servings: servings,
+                name,
+                prepTime,
+                cookTime,
+                servings,
+                mealType,
+                ageGroup,
+                ingredients,
                 steps: stepsList,
-            }
+                nutrition: nutritionData,
+            };
+
             if (imageFile) {
-                recipe.imageUrl = await uploadImage(imageFile)
+                recipe.imageUrl = await uploadImage(imageFile);
             }
             addRecipeToFirebase(recipe).then(() => {
                 alert('Recipe added successfully!');
                 clearForm();
             })
         } catch (error) {
-            console.error('Error adding recipe: ', error);
+            console.error("Error adding recipe:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -655,12 +659,17 @@ export default function AddRecipeComponent() {
                 <div className="mt-10">
                     <button
                         type="submit"
-                        className={classNames("block w-full", getPrimaryButtonCss())}
+                        disabled={loading}
+                        className={classNames(
+                            "block w-full",
+                            getPrimaryButtonCss(),
+                            loading ? "opacity-50 cursor-not-allowed" : ""
+                        )}
                     >
-                        Add Recipe
+                        {loading ? "Adding Recipe..." : "Add Recipe"}
                     </button>
                 </div>
             </form>
         </div>
-    )
+    );
 }

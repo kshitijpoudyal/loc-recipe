@@ -12,7 +12,7 @@ export default function NavigationMenu() {
 
     const menuItems = [
         { href: "/", label: "Home" },
-        { href: "/daily-schedule", label: "Daily Schedule" },
+        { href: "/daily-schedule", label: "Daily Schedule", showWhen: !!user },
         { href: "/login", label: "Login", showWhen:!user },
         { href: "/add-recipe", label: "Add Recipe", showWhen: !!user },
         { href: "/mock-data", label: "Add MockData", showWhen: !!user },

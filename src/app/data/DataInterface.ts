@@ -12,6 +12,8 @@ export type WeekDay = {
 
 export type MealType = "breakfast" | "lunch" | "dinner";
 
+export type ErrorType = "success" | "error";
+
 export interface Recipe {
     recipeId?: string; //autogenerate server side id
     name: string;
@@ -39,5 +41,6 @@ export interface DailySchedule {
     weekday: string,
     breakfast: string[],
     lunch: string[],
-    dinner: string[]
+    dinner: string[],
+    createdBy?: string
 }
