@@ -3,15 +3,14 @@
 import React, {useState} from "react";
 import {addMockRecipesToFirebase} from "@/app/data/mockData/RecipeMockData";
 import {addMockScheduleToFirestore} from "@/app/data/mockData/DailyScheduleMockData";
-import NavigationMenu from "@/app/components/NavigationMenu";
 import {
     classNames,
-    getAccentTextColorName,
+    getAccentTextColorName, getImportantButtonCss,
     getMainBodyCss,
-    getPrimaryButtonCss,
     getTextColor
 } from "@/app/utils/CssUtils";
 import HeroTitle from "@/app/components/baseComponents/HeroTitle";
+import {AuthenticationGate} from "@/app/components/baseComponents/AuthenticationGate";
 
 export default function AddMockDataForm() {
     const [loading, setLoading] = useState(false);
@@ -32,32 +31,30 @@ export default function AddMockDataForm() {
     };
 
     return (
-        <div>
-            <NavigationMenu></NavigationMenu>
-            <main className={getMainBodyCss()}>
-                <HeroTitle title={"Mock Data"}/>
-                <div className="space-y-6">
-                    <button
-                        type="button"
-                        onClick={() => handleAction(addMockRecipesToFirebase, "Mock Recipes added successfully!")}
-                        className={classNames("w-full py-3 mt-6", getPrimaryButtonCss())}
-                        disabled={loading}
-                    >
-                        {loading ? "Adding Mock Recipes..." : "Add Mock Recipe"}
-                    </button>
+        <AuthenticationGate>
+            <HeroTitle title={"Mock Data"}/>
+            <div className="flex flex-row space-x-10">
+                <button
+                    type="button"
+                    onClick={() => handleAction(addMockRecipesToFirebase, "Mock Recipes added successfully!")}
+                    className={classNames("w-full py-3 mt-6", getImportantButtonCss())}
+                    disabled={loading}
+                >
+                    {loading ? "Adding Mock Recipes..." : "Add Mock Recipe"}
+                </button>
 
-                    <button
-                        type="button"
-                        onClick={() => handleAction(addMockScheduleToFirestore, "Mock Weekly Schedule added successfully!")}
-                        className={classNames("w-full py-3 mt-6", getPrimaryButtonCss())}
-                        disabled={loading}
-                    >
-                        {loading ? "Adding Mock Schedule..." : "Add Mock Weekly Schedule"}
-                    </button>
+                <button
+                    type="button"
+                    onClick={() => handleAction(addMockScheduleToFirestore, "Mock Weekly Schedule added successfully!")}
+                    className={classNames("w-full py-3 mt-6", getImportantButtonCss())}
+                    disabled={loading}
+                >
+                    {loading ? "Adding Mock Schedule..." : "Add Mock Weekly Schedule"}
+                </button>
 
-                    {message && <p className={classNames("text-center font-medium mt-4", getTextColor(false, getAccentTextColorName()))}>{message}</p>}
-                </div>
-            </main>
-        </div>
+                {message &&
+                    <p className={classNames("text-center font-medium mt-4", getTextColor(false, getAccentTextColorName()))}>{message}</p>}
+            </div>
+        </AuthenticationGate>
     );
 }
