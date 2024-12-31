@@ -97,3 +97,7 @@ export function getMainBodyCss() {
 export function getInputTextAttachedLabelCss() {
     return "absolute -top-2 left-2 inline-block rounded-lg bg-green-200 px-1 text-xs font-medium text-gray-500"
 }
+
+export function getSpinnerCss() {
+    return "animate-spin rounded-full h-12 w-12 border-t-4 border-green-600"
+}
