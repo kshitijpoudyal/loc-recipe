@@ -95,7 +95,7 @@ export function getImportantButtonCss(): string {
 // }
 
 export function getMainBodyCss() {
-    return `mx-auto p-6 h-screen flex-grow bg-gradient-to-b from-green-100 to-white`
+    return `mx-auto p-6 h-screen flex-grow bg-gradient-to-l from-green-100 to-white`
 }
 
 export function getInputTextAttachedLabelCss() {
