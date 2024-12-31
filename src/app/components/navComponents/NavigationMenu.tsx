@@ -5,7 +5,7 @@ import { Dialog, DialogPanel, PopoverGroup } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
-import {getBgColor, getPrimaryColorName} from "@/app/utils/CssUtils";
+import {classNames, getBgColor, getPrimaryColorName} from "@/app/utils/CssUtils";
 
 export default function NavigationMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -34,7 +34,7 @@ export default function NavigationMenu() {
             ));
 
     return (
-        <header className={getBgColor(false, getPrimaryColorName(), 100)}>
+        <header className={classNames("bg-gradient-to-l from-green-100 to-white")}>
             <nav
                 aria-label="Global"
                 className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
