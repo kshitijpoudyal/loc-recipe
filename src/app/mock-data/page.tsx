@@ -6,7 +6,6 @@ import {addMockScheduleToFirestore} from "@/app/data/mockData/DailyScheduleMockD
 import {
     classNames,
     getAccentTextColorName, getImportantButtonCss,
-    getMainBodyCss,
     getTextColor
 } from "@/app/utils/CssUtils";
 import HeroTitle from "@/app/components/baseComponents/HeroTitle";

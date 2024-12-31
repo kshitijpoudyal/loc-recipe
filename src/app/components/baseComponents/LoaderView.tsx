@@ -1,4 +1,5 @@
 import React from "react";
+import {getSpinnerCss} from "@/app/utils/CssUtils";
 
 interface LoaderComponentProps {
     loading: boolean;
@@ -9,7 +10,7 @@ export const LoaderComponent: React.FC<LoaderComponentProps> = ({loading, messag
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-green-600"></div>
+                <div className={getSpinnerCss()}></div>
                 <div>
                     {message && (
                         <p className="text-sm font-medium text-gray-900 mt-4">{message}</p>
