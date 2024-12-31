@@ -6,6 +6,7 @@ import {addMockScheduleToFirestore} from "@/app/data/mockData/DailyScheduleMockD
 import NavigationMenu from "@/app/components/NavigationMenu";
 import {getMainBodyCss} from "@/app/utils/CssUtils";
 import HeroTitle from "@/app/components/baseComponents/HeroTitle";
+import {AuthenticatedPage} from "@/app/components/baseComponents/AuthenticatedPage";
 
 export default function AddMockDataForm() {
     const [loading, setLoading] = useState(false);
@@ -25,9 +26,8 @@ export default function AddMockDataForm() {
         }
     };
 
-
     return (
-        <>
+        <AuthenticatedPage>
             <NavigationMenu></NavigationMenu>
             <main className={getMainBodyCss()}>
                 <HeroTitle title={"Mock Data"}/>
@@ -53,6 +53,6 @@ export default function AddMockDataForm() {
                     {message && <p className="text-center text-green-600 font-medium mt-4">{message}</p>}
                 </div>
             </main>
-        </>
+        </AuthenticatedPage>
     );
 }

@@ -6,7 +6,7 @@ import {fetchAllRecipes} from "@/app/utils/firebaseUtils/Recipe";
 import RecipeCard from "@/app/components/baseComponents/RecipeCard";
 import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
 import AddImageIcon from "@/app/components/baseComponents/AddImageIcon";
-import {AssignRecipeToWeekDay, AssignRecipeToWeekDayProps} from "@/app/components/SelectRecipeFromWeekDay";
+import {AssignRecipeToWeekDay, AssignRecipeToWeekDayProps} from "@/app/components/AssignRecipeToWeekDay";
 
 export default function DailyScheduleComponent() {
     const [recipesMap, setRecipesMap] = useState<Record<string, Record<MealType, Recipe[]>>>({});
