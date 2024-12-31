@@ -30,8 +30,6 @@ export const authenticateUser = async (email: string, password: string) => {
         });
 }
 
-
-// export const handleLogout = async () => {
-//     await auth().signOut();
-//     // Redirect to login page or home
-// };
+export const logoutUser = async () => {
+    await auth.signOut();
+};

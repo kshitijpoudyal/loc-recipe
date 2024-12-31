@@ -6,23 +6,22 @@ import ListRecipeComponent from "@/app/components/pageComponents/ListRecipe";
 import {getMainBodyCss} from "@/app/utils/CssUtils";
 
 export default function ListRecipePage() {
-
     const [domLoaded, setDomLoaded] = useState(false);
     useEffect(() => {
         setDomLoaded(true);
     }, []);
-
     return (
         <>
-            {domLoaded && (
-                <div>
-                    <NavigationMenu></NavigationMenu>
-                    <main className={getMainBodyCss()}>
-                        <HeroTitle title={"All Recipe"}/>
-                        <ListRecipeComponent></ListRecipeComponent>
-                    </main>
-                </div>
-            )
+            {domLoaded &&
+                (
+                    <div>
+                        <NavigationMenu></NavigationMenu>
+                        <main className={getMainBodyCss()}>
+                            <HeroTitle title={"All Recipe"}/>
+                            <ListRecipeComponent></ListRecipeComponent>
+                        </main>
+                    </div>
+                )
             }
         </>
     );
