@@ -55,11 +55,12 @@ export function getCheckBoxFieldCss(): string {
 
 // Link Text Styles
 export function getLinkTextCss(): string {
-    return classNames(
-        "text-sm/6 font-semibold",
-        getTextColor(false, getAccentTextColorName(), 600),
-        getTextColor(true, getAccentTextColorName(), 500)
-    );
+    return "text-sm/6 font-semibold text-green-600 hover:text-green-500"
+    // return classNames(
+    //     "text-sm/6 font-semibold",
+    //     getTextColor(false, getAccentTextColorName(), 600),
+    //     getTextColor(true, getAccentTextColorName(), 500)
+    // );
 }
 
 // Primary Button Styles
