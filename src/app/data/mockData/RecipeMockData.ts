@@ -4,34 +4,80 @@ import {addRecipeToFirebase} from "@/app/utils/firebaseUtils/Recipe";
 const mockRecipe: Recipe[] = [
     {
         recipeId: "1002",
-        name: "Pancakes",
+        name: "Banana Bread",
         prepTime: 15,
-        cookTime: 10,
+        cookTime: 30,
         servings: 4,
         mealType: ["breakfast"],
         ingredients: [
-            {name: "flour", quantity: 200, unit: "grams"},
-            {name: "milk", quantity: 300, unit: "ml"},
-            {name: "eggs", quantity: 2, unit: "pieces"},
-            {name: "baking powder", quantity: 1, unit: "tsp"},
+            {name: "banana", quantity: 3, unit: "count"},
+            {name: "sugar", quantity: 1, unit: "cup"},
+            {name: "eggs", quantity: 0.5, unit: "cup"},
+            {name: "ghee/butter", quantity: 0.5, unit: "cup"},
+            {name: "vinegar/lime", quantity: 1, unit: "tbsp"},
+            {name: "olive oil", quantity: 1, unit: "tbsp"},
+            {name: "vanilla", quantity: 1, unit: "tbsp"},
+            {name: "milk", quantity: 1, unit: "cup"},
+            {name: "flour", quantity: 1.5, unit: "cup"},
+            {name: "cinnamon", quantity: 1, unit: "tbsp"},
             {name: "salt", quantity: 1, unit: "pinch"},
+            {name: "baking powder", quantity: 1, unit: "tbsp"},
+            {name: "baking soda", quantity: 0.75, unit: "tbsp"},
         ],
         steps: [
-            "In a large bowl, whisk together flour, baking powder, and salt.",
-            "Add the milk and eggs, and mix until smooth.",
-            "Heat a non-stick pan over medium heat and pour in the batter.",
-            "Cook until bubbles form on the surface, then flip and cook the other side.",
-            "Serve with syrup and butter.",
+            "Preheat the oven to 350°F (175°C).",
+            "Mash the bananas until smooth.",
+            "In a bowl, mix together the wet ingredients: banana, eggs, ghee/butter, vinegar/lime, olive oil, vanilla, and milk.",
+            "In another bowl, mix together the dry ingredients: flour, cinnamon, salt, baking powder, and baking soda.",
+            "Combine the wet and dry mixtures and stir until just combined.",
+            "Pour the batter into a greased loaf pan.",
+            "Bake for 1 hour and 15 minutes or until a toothpick comes out clean.",
+            "Let the banana bread cool before slicing and serving."
         ],
         ageGroup: ["adult", "kids"],
-        createdAt: new Date,
+        createdAt: new Date(),
         nutrition: {
-            calories: 150,
-            protein: 6,
-            carbohydrates: 20,
-            fats: 5
+            calories: 150,       // Updated calories per serving
+            protein: 3,          // Updated protein per serving (grams)
+            carbohydrates: 30,   // Updated carbohydrates per serving (grams)
+            fats: 7              // Updated fats per serving (grams)
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fpancake.jpeg?alt=media&token=40eb95ab-bafb-482c-ae5e-0cc5d1108b2f",
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fbanana_bread.webp?alt=media&token=c34a5d85-3994-40cf-9d23-38b8aa45cb56",
+        createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
+    },
+    {
+        name: "Mac & Cheese",
+        prepTime: 2,
+        cookTime: 15,
+        servings: 2,
+        mealType: ["breakfast", "lunch"],
+        ingredients: [
+            {name: "macaroni", quantity: 1, unit: "cup"},
+            {name: "water", quantity: 2, unit: "cup"},
+            {name: "milk", quantity: 1, unit: "cup"},
+            {name: "cheese", quantity: 1, unit: "cup"},
+            {name: "basil", quantity: 1, unit: "tsp"},
+            {name: "oregano", quantity: 1, unit: "tsp"},
+            {name: "garlic salt", quantity: 0.5, unit: "tsp"},
+        ],
+        steps: [
+            "Boil water in a large pot, then add macaroni and cook according to package instructions.",
+            "While the pasta is cooking, heat the milk in a saucepan over medium heat.",
+            "Add cheese to the warm milk, stirring constantly until melted and smooth.",
+            "Add the cooked macaroni to the cheese sauce, stirring to combine.",
+            "Season with basil, oregano, and garlic salt to taste.",
+            "Stir well and cook for another 2-3 minutes until everything is heated through.",
+            "Serve hot and enjoy!"
+        ],
+        ageGroup: ["adult", "kids"],
+        createdAt: new Date(),
+        nutrition: {
+            calories: 220,        // Updated calories per serving
+            protein: 8,           // Updated protein per serving (grams)
+            carbohydrates: 30,    // Updated carbohydrates per serving (grams)
+            fats: 10              // Updated fats per serving (grams)
+        },
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fbanana_bread.webp?alt=media&token=c34a5d85-3994-40cf-9d23-38b8aa45cb56",
         createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
