@@ -75,15 +75,15 @@ export default function DailyScheduleComponent() {
         };
 
         return WEEK_DAYS.map((day) => (
-            <div key={day.id}>
+            <div key={day.id} className="p-4 space-y-4 shadow rounded-xl bg-white">
                 <button
-                    className="w-full text-left text-2xl font-bold text-green-700 p-4 rounded-lg border-b mb-4 flex"
+                    className="w-full text-left text-2xl font-bold text-green-700 p-4 rounded-lg flex"
                     onClick={() => toggleAccordion(day.id)}
                 >
-                    {day.name} <FolderOpenIcon aria-hidden="true" className="size-10 text-gray-500"/>
+                    {day.name} <FolderOpenIcon aria-hidden="true" className="size-6 text-gray-500 mt-2 ml-2"/>
                 </button>
                 {activeAccordion === day.id && (
-                    <div className="p-4 space-y-4 shadow rounded-xl bg-white">
+                    <div>
                         {MEAL_TYPES.map((mealType) => (
                             <div key={mealType} className="rounded-lg p-6">
                                 <h3 className="text-lg font-semibold text-gray-800 capitalize mb-2">

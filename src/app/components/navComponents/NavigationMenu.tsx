@@ -5,7 +5,7 @@ import { Dialog, DialogPanel, PopoverGroup } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
-import {classNames, getBgColor, getPrimaryColorName} from "@/app/utils/CssUtils";
+import {classNames} from "@/app/utils/CssUtils";
 
 export default function NavigationMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
