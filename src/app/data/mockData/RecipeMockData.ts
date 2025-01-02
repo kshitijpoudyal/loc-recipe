@@ -3,7 +3,6 @@ import {addRecipeToFirebase} from "@/app/utils/firebaseUtils/Recipe";
 
 const mockRecipe: Recipe[] = [
     {
-        recipeId: "1002",
         name: "Banana Bread",
         prepTime: 15,
         cookTime: 30,
@@ -61,7 +60,7 @@ const mockRecipe: Recipe[] = [
             {name: "garlic salt", quantity: 0.5, unit: "tsp"},
         ],
         steps: [
-            "Boil water in a large pot, then add macaroni and cook according to package instructions.",
+            "Boil water in a large pot, then add macaroni.",
             "While the pasta is cooking, heat the milk in a saucepan over medium heat.",
             "Add cheese to the warm milk, stirring constantly until melted and smooth.",
             "Add the cooked macaroni to the cheese sauce, stirring to combine.",
@@ -77,7 +76,7 @@ const mockRecipe: Recipe[] = [
             carbohydrates: 30,    // Updated carbohydrates per serving (grams)
             fats: 10              // Updated fats per serving (grams)
         },
-        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fbanana_bread.webp?alt=media&token=c34a5d85-3994-40cf-9d23-38b8aa45cb56",
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/loc-recipe.firebasestorage.app/o/recipe%2Fmac_and_cheese.webp?alt=media&token=541598b0-8368-4e54-8be6-07ce64f9d8d7",
         createdBy: "lFUQ3s8NTdbOnjlwJ2P7RYMmTyE3"
     },
     {
