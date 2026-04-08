@@ -1,19 +1,23 @@
 import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
+import {Noto_Serif, Work_Sans} from "next/font/google";
 
 import "./globals.css";
 import React from "react";
 import NavigationMenu from "@/app/components/navComponents/NavigationMenu";
 import {AuthProvider} from "@/app/components/baseComponents/AuthProvider";
+import {RecipeProvider} from "@/app/components/baseComponents/RecipeProvider";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
+const notoSerif = Noto_Serif({
+    variable: "--font-noto-serif",
     subsets: ["latin"],
+    weight: ["400", "700"],
+    style: ["normal", "italic"],
 });
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
+const workSans = Work_Sans({
+    variable: "--font-work-sans",
     subsets: ["latin"],
+    weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -29,11 +33,13 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${notoSerif.variable} ${workSans.variable} bg-surface font-body text-on-surface antialiased`}
         >
         <AuthProvider shouldRedirectToLogin={false}>
-            <NavigationMenu/>
-            <main>{children}</main>
+            <RecipeProvider>
+                <NavigationMenu/>
+                <main>{children}</main>
+            </RecipeProvider>
         </AuthProvider>
         </body>
         </html>

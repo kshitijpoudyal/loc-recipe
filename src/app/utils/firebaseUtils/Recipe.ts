@@ -1,4 +1,4 @@
-import {addDoc, collection, getDocs} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, getDocs} from "firebase/firestore";
 import {db, recipeTable, storage} from "@/app/config/firebase";
 import {getDownloadURL, ref, uploadBytes} from "@firebase/storage";
 import {Recipe} from "@/app/data/DataInterface";
@@ -23,7 +23,7 @@ export const uploadImage = async (imageFile: File) => {
 }
 
 export const addRecipeToFirebase = async (recipe: Recipe) => {
-    await addDoc(collection(db, recipeTable), {
+    const data: Record<string, unknown> = {
         name: recipe.name,
         prepTime: recipe.prepTime,
         cookTime: recipe.cookTime,
@@ -34,6 +34,13 @@ export const addRecipeToFirebase = async (recipe: Recipe) => {
         ageGroup: recipe.ageGroup,
         nutrition: recipe.nutrition,
         createdAt: new Date(),
-        imageUrl: recipe.imageUrl
-    });
+    };
+    if (recipe.imageUrl !== undefined) data.imageUrl = recipe.imageUrl;
+    if (recipe.createdBy !== undefined) data.createdBy = recipe.createdBy;
+    if (recipe.createdByName !== undefined) data.createdByName = recipe.createdByName;
+    await addDoc(collection(db, recipeTable), data);
+}
+
+export const deleteRecipeFromFirebase = async (recipeId: string) => {
+    await deleteDoc(doc(db, recipeTable, recipeId));
 }

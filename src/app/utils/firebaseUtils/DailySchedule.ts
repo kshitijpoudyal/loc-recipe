@@ -1,7 +1,6 @@
-import {collection, doc, getDocs, setDoc, updateDoc} from "firebase/firestore";
+import {collection, doc, getDocs, setDoc} from "firebase/firestore";
 import {dailyScheduleTable, db} from "@/app/config/firebase";
 import {DailySchedule, MealType, Recipe} from "@/app/data/DataInterface";
-import {findRecipeById} from "@/app/utils/firebaseUtils/Recipe";
 import {WEEK_DAYS} from "@/app/data/ConstData";
 
 export const updateSchedule = async (
@@ -14,10 +13,11 @@ export const updateSchedule = async (
         // Reference the document for the specified weekday
         const scheduleDocRef = doc(db, dailyScheduleTable, weekdayValue);
 
-        // Update the breakfast array with the new recipeId
-        await updateDoc(scheduleDocRef, {
+        // Create document if missing, otherwise update the specified meal type
+        await setDoc(scheduleDocRef, {
+            weekday: weekdayValue,
             [mealType]: recipeId,
-        });
+        }, {merge: true});
 
         console.log(`RecipeId ${recipeId} successfully added to ${weekdayValue}'s ${mealType}.`);
     } catch (error) {
@@ -51,33 +51,31 @@ export const addScheduleToFirestore = async (dailySchedule: DailySchedule) => {
     }
 };
 
-export const mapAllRecipesToSchedule = async (
-    recipes: Recipe[]
-): Promise<Record<string, Record<MealType, Recipe[]>>> => {
-    const dailySchedules = await fetchAllDailySchedules();
+export const mapAllRecipesToSchedule = (
+    recipes: Recipe[],
+    dailySchedules: DailySchedule[]
+): Record<string, Record<MealType, Recipe[]>> => {
+    const recipeMap = new Map(recipes.map(r => [r.recipeId!, r]));
 
-    // Create an empty schedule map with nested structure for meal types
     const scheduleLocal: Record<string, Record<MealType, Recipe[]>> = WEEK_DAYS.reduce((acc, day) => {
-        acc[day.value] = {
-            breakfast: [],
-            lunch: [],
-            dinner: [],
-        };
+        acc[day.value] = {breakfast: [], lunch: [], dinner: []};
         return acc;
     }, {} as Record<string, Record<MealType, Recipe[]>>);
 
     dailySchedules.forEach((schedule) => {
+        const weekdayKey = schedule.weekday ?? schedule.scheduleId;
+        if (!weekdayKey || !scheduleLocal[weekdayKey]) return;
+
         const addRecipes = (mealType: MealType, recipeIds: string[]) => {
             recipeIds.forEach((recipeId) => {
-                const recipe = findRecipeById(recipes, recipeId);
-                if (recipe) scheduleLocal[schedule.weekday][mealType].push(recipe);
+                const recipe = recipeMap.get(recipeId);
+                if (recipe) scheduleLocal[weekdayKey][mealType].push(recipe);
             });
         };
 
-        // Add recipes for each meal type
-        addRecipes("breakfast", schedule.breakfast);
-        addRecipes("lunch", schedule.lunch);
-        addRecipes("dinner", schedule.dinner);
+        addRecipes("breakfast", schedule.breakfast ?? []);
+        addRecipes("lunch", schedule.lunch ?? []);
+        addRecipes("dinner", schedule.dinner ?? []);
     });
 
     return scheduleLocal;
