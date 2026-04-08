@@ -33,7 +33,8 @@ export interface Recipe {
     };
     imageUrl?: string,
     createdAt?: Date,
-    createdBy?: string
+    createdBy?: string,
+    createdByName?: string
 }
 
 export interface DailySchedule {

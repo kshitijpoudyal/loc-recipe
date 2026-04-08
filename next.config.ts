@@ -9,14 +9,20 @@ const nextConfig: NextConfig = {
             {
                 protocol: 'https',
                 hostname: 'picsum.photos',
-                port: '', // Leave empty for default ports
-                pathname: '/**', // Match all paths under this domain
+                port: '',
+                pathname: '/**',
             },
             {
                 protocol: 'https',
                 hostname: 'firebasestorage.googleapis.com',
-                port: '', // Leave empty for default ports
-                pathname: '/**', // Match all paths under this domain
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com',
+                port: '',
+                pathname: '/**',
             },
         ],
     },

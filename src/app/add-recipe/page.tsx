@@ -1,12 +1,11 @@
-"use client"
+"use client";
 
 import React, {useEffect} from "react";
-import AddRecipe from "@/app/components/pageComponents/AddRecipe";
-import HeroTitle from "@/app/components/baseComponents/HeroTitle";
+import AddRecipeComponent from "@/app/components/pageComponents/AddRecipe";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {useRouter} from "next/navigation";
 import {redirectToLogin} from "@/app/utils/routerUtils/RouterUtils";
-import {AuthenticationGate} from "@/app/components/AuthenticationGate";
+import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
 
 export default function AddRecipePage() {
     const router = useRouter();
@@ -16,15 +15,15 @@ export default function AddRecipePage() {
         if (!user) {
             redirectToLogin(router);
         }
-
     }, [router, user]);
 
+    if (!user) {
+        return <LoaderComponent loading={true} message="Please Login! Redirecting..."/>;
+    }
+
     return (
-        <AuthenticationGate>
-            <div>
-                <HeroTitle title="Add Recipe"/>
-                <AddRecipe/>
-            </div>
-        </AuthenticationGate>
+        <section className="md:pt-24 min-h-screen bg-background">
+            <AddRecipeComponent/>
+        </section>
     );
 }
