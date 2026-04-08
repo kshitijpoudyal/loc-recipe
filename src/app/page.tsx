@@ -206,13 +206,13 @@ export default function HomePage() {
                                     </span>
                                     <h3 className="font-headline text-base md:text-xl mb-2 line-clamp-2">{featuredRecipe.name}</h3>
                                     <div className="flex items-center gap-3 text-sm text-outline flex-wrap">
-                                        {featuredRecipe.cookTime > 0 && (
+                                        {(featuredRecipe.cookTime ?? 0) > 0 && (
                                             <span className="flex items-center gap-1">
                                                 <span className="material-symbols-outlined text-sm">schedule</span>
                                                 {featuredRecipe.cookTime}m
                                             </span>
                                         )}
-                                        {featuredRecipe.servings > 0 && (
+                                        {(featuredRecipe.servings ?? 0) > 0 && (
                                             <span className="flex items-center gap-1">
                                                 <span className="material-symbols-outlined text-sm">restaurant_menu</span>
                                                 {featuredRecipe.servings}
@@ -340,22 +340,22 @@ export default function HomePage() {
                                             </div>
                                         )}
                                         <div className="flex items-center gap-4 text-sm text-outline font-label">
-                                            {recipe.cookTime > 0 && (
+                                            {(recipe.cookTime ?? 0) > 0 && (
                                                 <span className="flex items-center gap-1">
                                                     <span className="material-symbols-outlined text-lg">timer</span>
                                                     {recipe.cookTime}m
                                                 </span>
                                             )}
-                                            {recipe.servings > 0 && (
+                                            {(recipe.servings ?? 0) > 0 && (
                                                 <span className="flex items-center gap-1">
                                                     <span className="material-symbols-outlined text-lg">restaurant</span>
                                                     {recipe.servings} servings
                                                 </span>
                                             )}
-                                            {recipe.nutrition?.calories > 0 && (
+                                            {(recipe.nutrition?.calories ?? 0) > 0 && (
                                                 <span className="flex items-center gap-1">
                                                     <span className="material-symbols-outlined text-lg">local_fire_department</span>
-                                                    {recipe.nutrition.calories} kcal
+                                                    {recipe.nutrition!.calories} kcal
                                                 </span>
                                             )}
                                         </div>
