@@ -1,32 +1,42 @@
-import React, {useEffect, useState} from "react";
-import {fetchAllRecipes} from "@/app/utils/firebaseUtils/Recipe";
+import React, {useState} from "react";
+import {deleteRecipeFromFirebase} from "@/app/utils/firebaseUtils/Recipe";
 import {DEFAULT_RECIPE} from "@/app/data/ConstData";
 import {Recipe} from "@/app/data/DataInterface";
 import RecipeCard from "@/app/components/baseComponents/RecipeCard";
 import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
 import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
+import {useAuth} from "@/app/components/baseComponents/AuthProvider";
+import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
 
 export default function ListRecipeComponent() {
-    const [recipes, setRecipes] = useState<Recipe[]>([]);
+    const {recipes, loading, invalidate} = useRecipes();
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe>(DEFAULT_RECIPE);
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const {user} = useAuth();
 
-    useEffect(() => {
-        fetchAllRecipes().then((recipes) => {
-            setRecipes(recipes)
-            setLoading(false);
-        })
-    }, []);
+    const handleDelete = async (recipe: Recipe) => {
+        if (!recipe.recipeId) return;
+        if (!confirm(`Delete "${recipe.name}"?`)) return;
+        await deleteRecipeFromFirebase(recipe.recipeId);
+        invalidate();
+        setOpen(false);
+    };
 
     if (loading) {
         return (<LoaderComponent loading={loading}/>);
     }
 
+    const canDelete = user && selectedRecipe.createdBy === user.uid;
+
     return (
         <div>
             {open && (
-                <RecipeDetailsTemplate isOpen={open} recipe={selectedRecipe} setIsOpenAction={setOpen}/>
+                <RecipeDetailsTemplate
+                    isOpen={open}
+                    recipe={selectedRecipe}
+                    setIsOpenAction={setOpen}
+                    onDelete={canDelete ? () => handleDelete(selectedRecipe) : undefined}
+                />
             )}
 
             <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:px-8">

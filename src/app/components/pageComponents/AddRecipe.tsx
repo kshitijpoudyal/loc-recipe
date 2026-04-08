@@ -1,128 +1,127 @@
 "use client";
 
 import React, {useState} from "react";
-import {PhotoIcon} from "@heroicons/react/20/solid";
-import {addRecipeToFirebase, uploadImage} from "@/app/utils/firebaseUtils/Recipe";
-import {Ingredients, Recipe} from "@/app/data/DataInterface";
 import Image from "next/image";
-import {
-    classNames,
-    getCheckBoxFieldCss,
-    getInputFieldCss, getInputTextAttachedLabelCss,
-    getLinkTextCss,
-    getPrimaryButtonCss,
-} from "@/app/utils/CssUtils";
+import {addRecipeToFirebase, uploadImage} from "@/app/utils/firebaseUtils/Recipe";
+import {Recipe} from "@/app/data/DataInterface";
+import {useAuth} from "@/app/components/baseComponents/AuthProvider";
+import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
+
+const MEAL_TYPE_OPTIONS = ["Breakfast", "Lunch", "Dinner"];
+const AGE_GROUP_OPTIONS = ["Adult", "Kids"];
+
+type IngredientRow = { qty: string; name: string };
 
 export default function AddRecipeComponent() {
     const [name, setName] = useState('');
-    const [prepTime, setPrepTime] = useState(0);
-    const [cookTime, setCookTime] = useState(0);
-    const [servings, setServings] = useState(0);
+    const [prepTime, setPrepTime] = useState<number | ''>('');
+    const [cookTime, setCookTime] = useState<number | ''>('');
+    const [servings, setServings] = useState<number | ''>('');
     const [mealType, setMealType] = useState<string[]>([]);
-    const [ingredients, setIngredients] = useState<Ingredients[]>([]);
-    const [ingredientName, setIngredientName] = useState('');
-    const [ingredientQuantity, setIngredientQuantity] = useState(0);
-    const [ingredientUnit, setIngredientUnit] = useState('');
-    const [steps, setSteps] = useState('');
     const [ageGroup, setAgeGroup] = useState<string[]>([]);
+    const [ingredientRows, setIngredientRows] = useState<IngredientRow[]>([{qty: '', name: ''}, {qty: '', name: ''}]);
+    const [steps, setSteps] = useState<string[]>(['', '']);
     const [calories, setCalories] = useState('');
     const [protein, setProtein] = useState('');
     const [carbohydrates, setCarbohydrates] = useState('');
     const [fats, setFats] = useState('');
-    const [sugar, setSugar] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const {user} = useAuth();
+    const {invalidate} = useRecipes();
 
-    const handleMealTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {value, checked} = e.target;
-        setMealType((prev) =>
-            checked ? [...prev, value] : prev.filter((type) => type !== value)
-        );
+    const toggleChip = (value: string, list: string[], setList: (v: string[]) => void) => {
+        setList(list.includes(value) ? list.filter(v => v !== value) : [...list, value]);
     };
 
-    const handleAgeGroupChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {value, checked} = e.target;
-        setAgeGroup((prev) =>
-            checked ? [...prev, value] : prev.filter((group) => group !== value)
-        );
-    };
-
-    const handleAddIngredient = () => {
-        if (ingredientName && ingredientQuantity && ingredientUnit) {
-            setIngredients([
-                ...ingredients,
-                {name: ingredientName, quantity: ingredientQuantity, unit: ingredientUnit}
-            ]);
-            setIngredientName('');
-            setIngredientQuantity(0);
-            setIngredientUnit('');
-        } else {
-            alert('Please fill all fields for the ingredient.');
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files?.[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = () => setSelectedImage(reader.result as string);
+            reader.readAsDataURL(file);
+            setImageFile(file);
         }
+    };
+
+    const updateIngredientRow = (index: number, field: keyof IngredientRow, value: string) => {
+        setIngredientRows(rows => rows.map((r, i) => i === index ? {...r, [field]: value} : r));
+    };
+
+    const removeIngredientRow = (index: number) => {
+        setIngredientRows(rows => rows.filter((_, i) => i !== index));
+    };
+
+    const addIngredientRow = () => {
+        setIngredientRows(rows => [...rows, {qty: '', name: ''}]);
+    };
+
+    const updateStep = (index: number, value: string) => {
+        setSteps(s => s.map((step, i) => i === index ? value : step));
+    };
+
+    const removeStep = (index: number) => {
+        setSteps(s => s.filter((_, i) => i !== index));
+    };
+
+    const addStep = () => {
+        setSteps(s => [...s, '']);
     };
 
     const clearForm = () => {
         setName('');
-        setPrepTime(0);
-        setCookTime(0);
-        setServings(0);
+        setPrepTime('');
+        setCookTime('');
+        setServings('');
         setMealType([]);
-        setIngredients([]);
-        setSteps('');
         setAgeGroup([]);
+        setIngredientRows([{qty: '', name: ''}, {qty: '', name: ''}]);
+        setSteps(['', '']);
         setCalories('');
         setProtein('');
         setCarbohydrates('');
         setFats('');
-        setSugar('');
         setImageFile(null);
-    }
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                setSelectedImage(reader.result as string);
-            };
-            reader.readAsDataURL(e.target.files[0]);
-            setImageFile(e.target.files[0]);
-        }
+        setSelectedImage(null);
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
 
-        const stepsList = steps.split('\n').map((step) => step.trim());
-        const nutritionData = {
-            calories: calories ? parseInt(calories) : 0,
-            protein: protein ? parseFloat(protein) : 0,
-            carbohydrates: carbohydrates ? parseFloat(carbohydrates) : 0,
-            fats: fats ? parseFloat(fats) : 0,
-            sugar: sugar ? parseFloat(sugar) : 0,
-        };
-
         try {
+            const ingredients = ingredientRows
+                .filter(r => r.name.trim())
+                .map(r => ({name: r.name.trim(), quantity: 0, unit: r.qty.trim()}));
+
             const recipe: Recipe = {
                 name,
-                prepTime,
-                cookTime,
-                servings,
-                mealType,
-                ageGroup,
+                prepTime: prepTime !== '' ? Number(prepTime) : undefined,
+                cookTime: cookTime !== '' ? Number(cookTime) : undefined,
+                servings: servings !== '' ? Number(servings) : undefined,
+                mealType: mealType.map(m => m.toLowerCase()),
+                ageGroup: ageGroup.map(a => a.toLowerCase()),
+                createdBy: user?.uid,
+                createdByName: user?.displayName || user?.email || undefined,
                 ingredients,
-                steps: stepsList,
-                nutrition: nutritionData,
+                steps: steps.filter(s => s.trim()),
+                nutrition: {
+                    calories: calories ? parseInt(calories) : 0,
+                    protein: protein ? parseFloat(protein) : 0,
+                    carbohydrates: carbohydrates ? parseFloat(carbohydrates) : 0,
+                    fats: fats ? parseFloat(fats) : 0,
+                },
             };
 
             if (imageFile) {
                 recipe.imageUrl = await uploadImage(imageFile);
             }
-            addRecipeToFirebase(recipe).then(() => {
-                alert('Recipe added successfully!');
-                clearForm();
-            })
+
+            await addRecipeToFirebase(recipe);
+            invalidate();
+            alert('Recipe added successfully!');
+            clearForm();
         } catch (error) {
             console.error("Error adding recipe:", error);
         } finally {
@@ -131,502 +130,410 @@ export default function AddRecipeComponent() {
     };
 
     return (
-        <div className="px-6 pb-24 sm:pb-32 lg:px-8">
-            <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-xl sm:mt-20">
-                <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
-                        <label htmlFor="first-name" className="block text-sm/6 font-semibold text-gray-900">
-                            Recipe Name
-                        </label>
-                        <div className="mt-2.5">
-                            <input
-                                id="recipe-name"
-                                name="frecipe-name"
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                required
-                                className={classNames("block w-full", getInputFieldCss())}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label htmlFor="prepTime" className="block text-sm/6 font-semibold text-gray-900">
-                            Preparation Time
-                        </label>
-                        <div className="mt-2.5">
-                            <input
-                                id="prepTime"
-                                name="prepTime"
-                                type="number"
-                                value={prepTime}
-                                onChange={(e) => setPrepTime(parseInt(e.target.value))}
-                                className={classNames("block w-full", getInputFieldCss())}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label htmlFor="cookTime" className="block text-sm/6 font-semibold text-gray-900">
-                            Cooking Time
-                        </label>
-                        <div className="mt-2.5">
-                            <input
-                                id="cookTime"
-                                name="cookTime"
-                                type="number"
-                                value={cookTime}
-                                onChange={(e) => setCookTime(parseInt(e.target.value))}
-                                required
-                                className={classNames("block w-full", getInputFieldCss())}
-                            />
-                        </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <label htmlFor="servings" className="block text-sm/6 font-semibold text-gray-900">
-                            Servings
-                        </label>
-                        <div className="mt-2.5">
-                            <input
-                                id="servings"
-                                name="servings"
-                                type="number"
-                                value={servings}
-                                onChange={(e) => setServings(parseInt(e.target.value))}
-                                required
-                                className={classNames("block w-full", getInputFieldCss())}
-                            />
-                        </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <label htmlFor="ingredients" className="block text-sm font-semibold text-gray-900">
-                            Ingredients
-                        </label>
-                        <div id="ingredients">
-                            <div className="mt-2.5 grid grid-cols-2 gap-x-2.5">
-                                <div className="mt-4 flex flex-col md:flex-row md:space-x-2 space-y-4 md:space-y-0">
-                                    <div className="relative">
-                                        <label
-                                            htmlFor="ingredientName"
-                                            className={getInputTextAttachedLabelCss()}
-                                        >
-                                            Name
-                                        </label>
-                                        <input
-                                            id="ingredientName"
-                                            type="text"
-                                            value={ingredientName}
-                                            onChange={(e) => setIngredientName(e.target.value)}
-                                            className={classNames("w-full", getInputFieldCss())}
-                                        />
-                                    </div>
-                                    <div className="relative">
-                                        <label
-                                            htmlFor="ingredientQuantity"
-                                            className={getInputTextAttachedLabelCss()}
-                                        >
-                                            Quantity
-                                        </label>
-                                        <input
-                                            id="ingredientQuantity"
-                                            type="number"
-                                            value={ingredientQuantity}
-                                            onChange={(e) => setIngredientQuantity(parseFloat(e.target.value))}
-                                            className={classNames("w-full", getInputFieldCss())}
-                                        />
-                                    </div>
-                                </div>
+        <form onSubmit={handleSubmit}>
 
-                                <div className="mt-4 flex flex-col md:flex-row md:space-x-2 space-y-4 md:space-y-0">
-                                    <div className="relative md:w-1/2">
-                                        <label
-                                            htmlFor="ingredientUnit"
-                                            className={getInputTextAttachedLabelCss()}
-                                        >
-                                            Unit
-                                        </label>
-                                        <input
-                                            id="ingredientUnit"
-                                            type="text"
-                                            value={ingredientUnit}
-                                            onChange={(e) => setIngredientUnit(e.target.value)}
-                                            className={classNames("w-full", getInputFieldCss())}
-                                        />
-                                    </div>
-                                    <div className="relative md:w-1/2 content-center sm:content-center">
-                                        <div>
-                                            <button
-                                                type="button"
-                                                onClick={handleAddIngredient}
-                                                className={getLinkTextCss()}>
-                                                <span aria-hidden="true">+</span> Ingredients
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mt-6">
-                                <ul className="space-y-2">
-                                    {ingredients.map((ingredient, index) => (
-                                        <li
-                                            key={index}
-                                            className="flex items-center justify-between p-2 pl-4 pr-2 bg-gray-300 rounded-md shadow-sm"
-                                        >
-                                            <div>
-                                                <span className="block font-medium text-gray-800">
-                                                    {ingredient.name} {ingredient.quantity} {ingredient.unit}
-                                                </span>
-                                            </div>
-                                            <button
-                                                onClick={() =>
-                                                    setIngredients(ingredients.filter((_, i) => i !== index))
-                                                }
-                                                className="rounded bg-red-400 p-2 text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                     strokeWidth={1.5} stroke="currentColor" className="size-4">
-                                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                                          d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                                                </svg>
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
+            {/* ── Mobile layout ── */}
+            <div className="md:hidden pt-24 pb-40 px-6 max-w-2xl mx-auto space-y-10">
+
+                {/* 1. Hero image upload */}
+                <section>
+                    <label htmlFor="imageUploadMobile" className="cursor-pointer block">
+                        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-low border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center text-center p-8 transition-all hover:bg-surface-container-high/50">
+                            {selectedImage && (
+                                <Image src={selectedImage} alt="Recipe preview" fill className="object-cover"/>
+                            )}
+                            <div className={`relative z-10 ${selectedImage ? 'opacity-0' : ''}`}>
+                                <span className="material-symbols-outlined text-5xl text-primary-container mb-4 block" style={{fontVariationSettings: "'FILL' 1"}}>add_a_photo</span>
+                                <p className="font-headline italic text-lg text-on-surface-variant">Capture the soul of your dish</p>
+                                <p className="font-label text-sm text-outline tracking-wide mt-2">TAP TO UPLOAD HERO PHOTO</p>
                             </div>
                         </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <label htmlFor="nutrition" className="block text-sm font-semibold text-gray-900">
-                            Nutrition
-                        </label>
-                        <div id="nutrition" className="mt-2.5 grid grid-cols-2 gap-x-2.5">
-                            <div className="mt-4 flex flex-col md:flex-row md:space-x-2 space-y-4 md:space-y-0">
-                                <div className="relative">
-                                    <label
-                                        htmlFor="calories"
-                                        className={getInputTextAttachedLabelCss()}
-                                    >
-                                        Calories (kcal)
-                                    </label>
-                                    <input
-                                        id="calories"
-                                        type="number"
-                                        value={calories}
-                                        onChange={(e) => setCalories(e.target.value)}
-                                        className={`${classNames("w-full", getInputFieldCss())}`}
-                                    />
-                                </div>
-                                <div className="relative">
-                                    <label
-                                        htmlFor="protein"
-                                        className={getInputTextAttachedLabelCss()}
-                                    >
-                                        Protein (g)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        value={protein}
-                                        onChange={(e) => setProtein(e.target.value)}
-                                        className={`${classNames("w-full", getInputFieldCss())}`}
-                                    />
-                                </div>
-                            </div>
-                            <div className="mt-4 flex flex-col md:flex-row md:space-x-2 space-y-4 md:space-y-0">
-                                <div className="relative">
-                                    <label
-                                        htmlFor="carbohydrates"
-                                        className={getInputTextAttachedLabelCss()}
-                                    >
-                                        Carbohydrates (g)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        value={carbohydrates}
-                                        onChange={(e) => setCarbohydrates(e.target.value)}
-                                        className={`${classNames("w-full", getInputFieldCss())}`}
-                                    />
-                                </div>
-                                <div className="relative">
-                                    <label
-                                        htmlFor="fats"
-                                        className={getInputTextAttachedLabelCss()}
-                                    >
-                                        Fats (g)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        value={fats}
-                                        onChange={(e) => setFats(e.target.value)}
-                                        className={`${classNames("w-full", getInputFieldCss())}`}
-                                    />
-                                </div>
+                    </label>
+                    <input id="imageUploadMobile" type="file" accept="image/*" onChange={handleImageChange} className="sr-only"/>
+                </section>
+
+                {/* 2. Recipe title */}
+                <section>
+                    <label className="block font-label text-xs uppercase tracking-[0.15em] font-semibold text-primary mb-3">
+                        Recipe Title
+                    </label>
+                    <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        placeholder="e.g. Heirloom Tomato & Basil Tart"
+                        className="w-full font-headline text-2xl bg-surface-container-low border-none rounded-xl p-5 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-highest transition-all placeholder:text-outline-variant placeholder:italic outline-none"
+                    />
+                </section>
+
+                {/* 3. Prep Time / Cook Time / Servings */}
+                <div className="grid grid-cols-3 gap-4">
+                    {[
+                        {label: 'Prep Time', icon: 'schedule', value: prepTime, onChange: (v: string) => setPrepTime(v === '' ? '' : parseInt(v)), placeholder: '30'},
+                        {label: 'Cook Time', icon: 'cooking', value: cookTime, onChange: (v: string) => setCookTime(v === '' ? '' : parseInt(v)), placeholder: '20'},
+                        {label: 'Servings', icon: 'restaurant', value: servings, onChange: (v: string) => setServings(v === '' ? '' : parseInt(v)), placeholder: '4'},
+                    ].map(field => (
+                        <div key={field.label} className="bg-surface-container-low rounded-xl p-4">
+                            <label className="block font-label text-[10px] uppercase tracking-widest font-bold text-outline mb-2">{field.label}</label>
+                            <div className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-primary text-sm">{field.icon}</span>
+                                <input
+                                    type="number"
+                                    value={field.value}
+                                    onChange={e => field.onChange(e.target.value)}
+                                    placeholder={field.placeholder}
+                                    className="w-full bg-transparent border-none p-0 focus:ring-0 font-headline text-lg font-bold outline-none"
+                                />
                             </div>
                         </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <label htmlFor="steps" className="block text-sm/6 font-semibold text-gray-900">
-                            Steps (one step per line)
-                        </label>
-                        <div className="mt-2.5">
-                          <textarea
-                              id="steps"
-                              name="steps"
-                              rows={4}
-                              className={`${classNames("block w-full", getInputFieldCss())}`}
-                              value={steps}
-                              onChange={(e) => setSteps(e.target.value)}
-                          />
-                        </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <fieldset>
-                            <legend className="text-sm/6 font-semibold text-gray-900">Meal Type</legend>
-                            <div className="mt-6 flex gap-6">
-                                <div className="flex items-center gap-2">
-                                    <div className="group grid size-4 grid-cols-1">
-                                        <input
-                                            id="breakfast"
-                                            name="breakfast"
-                                            type="checkbox"
-                                            value="breakfast"
-                                            onChange={handleMealTypeChange}
-                                            aria-describedby="mealtype-breakfast"
-                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
-                                        />
-                                        <svg
-                                            fill="none"
-                                            viewBox="0 0 14 14"
-                                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-[:disabled]:stroke-gray-950/25"
-                                        >
-                                            <path
-                                                d="M3 8L6 11L11 3.5"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:checked]:opacity-100"
-                                            />
-                                            <path
-                                                d="M3 7H11"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:indeterminate]:opacity-100"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <label htmlFor="breakfast" className="font-medium text-gray-900">
-                                        Breakfast
-                                    </label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="group grid size-4 grid-cols-1">
-                                        <input
-                                            id="lunch"
-                                            name="lunch"
-                                            type="checkbox"
-                                            value="lunch"
-                                            onChange={handleMealTypeChange}
-                                            aria-describedby="mealtype-lunch"
-                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
-                                        />
-                                        <svg
-                                            fill="none"
-                                            viewBox="0 0 14 14"
-                                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-[:disabled]:stroke-gray-950/25"
-                                        >
-                                            <path
-                                                d="M3 8L6 11L11 3.5"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:checked]:opacity-100"
-                                            />
-                                            <path
-                                                d="M3 7H11"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:indeterminate]:opacity-100"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <label htmlFor="lunch" className="font-medium text-gray-900">
-                                        Lunch
-                                    </label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="group grid size-4 grid-cols-1">
-                                        <input
-                                            id="dinner"
-                                            name="dinner"
-                                            type="checkbox"
-                                            value="dinner"
-                                            onChange={handleMealTypeChange}
-                                            aria-describedby="mealtype-dinner"
-                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
-                                        />
-                                        <svg
-                                            fill="none"
-                                            viewBox="0 0 14 14"
-                                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-[:disabled]:stroke-gray-950/25"
-                                        >
-                                            <path
-                                                d="M3 8L6 11L11 3.5"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:checked]:opacity-100"
-                                            />
-                                            <path
-                                                d="M3 7H11"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:indeterminate]:opacity-100"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <label htmlFor="dinner" className="font-medium text-gray-900">
-                                        Dinner
-                                    </label>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <fieldset>
-                            <legend className="text-sm/6 font-semibold text-gray-900">Age Group</legend>
-                            <div className="mt-6 flex gap-6">
-                                <div className="flex items-center gap-2">
-                                    <div className="group grid size-4 grid-cols-1">
-                                        <input
-                                            id="adult"
-                                            name="adult"
-                                            type="checkbox"
-                                            value="adult"
-                                            onChange={handleAgeGroupChange}
-                                            aria-describedby="agegroup-adult"
-                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
-                                        />
-                                        <svg
-                                            fill="none"
-                                            viewBox="0 0 14 14"
-                                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-[:disabled]:stroke-gray-950/25"
-                                        >
-                                            <path
-                                                d="M3 8L6 11L11 3.5"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:checked]:opacity-100"
-                                            />
-                                            <path
-                                                d="M3 7H11"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:indeterminate]:opacity-100"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <label htmlFor="adult" className="font-medium text-gray-900">
-                                        Adult
-                                    </label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="group grid size-4 grid-cols-1">
-                                        <input
-                                            id="kids"
-                                            name="kids"
-                                            type="checkbox"
-                                            value="kids"
-                                            onChange={handleAgeGroupChange}
-                                            aria-describedby="agegroup-kids"
-                                            className={classNames("col-start-1 row-start-1", getCheckBoxFieldCss())}
-                                        />
-                                        <svg
-                                            fill="none"
-                                            viewBox="0 0 14 14"
-                                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-[:disabled]:stroke-gray-950/25"
-                                        >
-                                            <path
-                                                d="M3 8L6 11L11 3.5"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:checked]:opacity-100"
-                                            />
-                                            <path
-                                                d="M3 7H11"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="opacity-0 group-has-[:indeterminate]:opacity-100"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <label htmlFor="kids" className="font-medium text-gray-900">
-                                        Kids
-                                    </label>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <div className="col-span-full">
-                            <label htmlFor="cover-photo" className="block text-sm/6 font-semibold text-gray-900">
-                                Recipe image
-                            </label>
-                            <div
-                                className="mt-2.5 flex justify-center content-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                                <div className="text-center">
-                                    {selectedImage ? (
-                                        <Image
-                                            src={selectedImage}
-                                            alt="Selected"
-                                            width={400}
-                                            height={400}
-                                            aria-hidden="true"
-                                            className="mb-4 mx-auto size-fit object-cover rounded-lg"
-                                        />
-                                    ) : (
-                                        <PhotoIcon aria-hidden="true" className="mx-auto size-12 text-gray-300"/>
-                                    )}
-                                    <div className="mt-4 flex text-center text-sm/6 text-gray-600">
-                                        <label
-                                            htmlFor="imageUpload"
-                                            className={classNames("relative cursor-pointer", getLinkTextCss())}
-                                        >
-                                            <span>Upload an image</span>
-                                            <input
-                                                id="imageUpload"
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleImageChange}
-                                                className="sr-only"
-                                            />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs/5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    ))}
                 </div>
-                <div className="mt-10">
+
+                {/* 4. Meal Type + Age Group */}
+                <section>
+                    <h3 className="font-label text-xs uppercase tracking-[0.15em] font-semibold text-primary mb-4">Meal Type &amp; Age Group</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {MEAL_TYPE_OPTIONS.map(option => (
+                            <button
+                                key={option}
+                                type="button"
+                                onClick={() => toggleChip(option, mealType, setMealType)}
+                                className={`px-4 py-2 rounded-full font-label text-xs font-bold flex items-center gap-1 active:scale-95 transition-all ${
+                                    mealType.includes(option)
+                                        ? 'bg-primary text-on-primary'
+                                        : 'bg-surface-container-high text-on-surface'
+                                }`}
+                            >
+                                {option}
+                                {mealType.includes(option) && <span className="material-symbols-outlined text-xs">close</span>}
+                            </button>
+                        ))}
+                        {AGE_GROUP_OPTIONS.map(option => (
+                            <button
+                                key={option}
+                                type="button"
+                                onClick={() => toggleChip(option, ageGroup, setAgeGroup)}
+                                className={`px-4 py-2 rounded-full font-label text-xs font-bold flex items-center gap-1 active:scale-95 transition-all ${
+                                    ageGroup.includes(option)
+                                        ? 'bg-secondary-fixed text-on-secondary-fixed'
+                                        : 'bg-surface-container-high text-on-surface'
+                                }`}
+                            >
+                                {option}
+                                {ageGroup.includes(option) && <span className="material-symbols-outlined text-xs">close</span>}
+                            </button>
+                        ))}
+                    </div>
+                </section>
+
+                {/* 5. Nutrition */}
+                <section>
+                    <h3 className="font-label text-xs uppercase tracking-[0.15em] font-semibold text-primary mb-4">Nutrition <span className="normal-case text-outline font-normal">(optional)</span></h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        {[
+                            {label: 'Calories', unit: 'kcal', value: calories, onChange: setCalories},
+                            {label: 'Protein', unit: 'g', value: protein, onChange: setProtein},
+                            {label: 'Carbs', unit: 'g', value: carbohydrates, onChange: setCarbohydrates},
+                            {label: 'Fats', unit: 'g', value: fats, onChange: setFats},
+                        ].map(field => (
+                            <div key={field.label} className="bg-surface-container-low rounded-xl p-4">
+                                <label className="block font-label text-[10px] uppercase tracking-widest font-bold text-outline mb-2">{field.label}</label>
+                                <div className="flex items-end gap-1">
+                                    <input
+                                        type="number"
+                                        value={field.value}
+                                        onChange={e => field.onChange(e.target.value)}
+                                        className="w-full bg-transparent border-none p-0 focus:ring-0 font-headline text-xl font-bold outline-none"
+                                    />
+                                    <span className="text-xs text-outline font-label mb-0.5">{field.unit}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* 6. Ingredients */}
+                <section>
+                    <div className="flex items-baseline gap-2 mb-6">
+                        <h2 className="font-headline text-xl font-bold">Ingredients</h2>
+                        <span className="font-label text-xs uppercase tracking-widest text-outline">The Palette</span>
+                    </div>
+                    <div className="space-y-3">
+                        {ingredientRows.map((row, index) => (
+                            <div key={index} className="flex items-center gap-3 bg-surface-container-low p-3 rounded-xl">
+                                <div className="w-16 flex-shrink-0">
+                                    <input
+                                        type="text"
+                                        value={row.qty}
+                                        onChange={e => updateIngredientRow(index, 'qty', e.target.value)}
+                                        placeholder="Qty"
+                                        className="w-full border-none bg-surface-container-low rounded-lg p-2 text-center text-sm font-body focus:ring-1 focus:ring-primary/30 outline-none"
+                                    />
+                                </div>
+                                <div className="flex-1">
+                                    <input
+                                        type="text"
+                                        value={row.name}
+                                        onChange={e => updateIngredientRow(index, 'name', e.target.value)}
+                                        placeholder="Ingredient name"
+                                        className="w-full border-none bg-surface-container-low rounded-lg p-2 text-sm font-body focus:ring-1 focus:ring-primary/30 outline-none"
+                                    />
+                                </div>
+                                <button type="button" onClick={() => removeIngredientRow(index)} className="text-outline-variant hover:text-error transition-colors p-1">
+                                    <span className="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    <button type="button" onClick={addIngredientRow} className="mt-4 flex items-center gap-1 text-primary hover:bg-primary-container/10 px-3 py-1 rounded-full transition-colors active:scale-95">
+                        <span className="material-symbols-outlined text-lg">add</span>
+                        <span className="font-label text-xs font-bold">ADD ITEM</span>
+                    </button>
+                </section>
+
+                {/* 7. Steps */}
+                <section>
+                    <div className="flex items-baseline gap-2 mb-6">
+                        <h2 className="font-headline text-xl font-bold">Preparation</h2>
+                        <span className="font-label text-xs uppercase tracking-widest text-outline">The Process</span>
+                    </div>
+                    <div className="space-y-6">
+                        {steps.map((step, index) => (
+                            <div key={index} className="flex gap-4 items-start">
+                                <div className={`flex-none w-10 h-10 rounded-full font-headline font-bold flex items-center justify-center mt-1 text-white ${index === 0 ? 'bg-primary' : 'bg-primary-container'}`}>
+                                    {index + 1}
+                                </div>
+                                <div className="flex-1">
+                                    <textarea
+                                        rows={2}
+                                        value={step}
+                                        onChange={e => updateStep(index, e.target.value)}
+                                        placeholder="Describe this step..."
+                                        className="w-full border-none bg-surface-container-low rounded-xl p-4 text-sm font-body focus:ring-1 focus:ring-primary/30 resize-none outline-none"
+                                    />
+                                </div>
+                                {steps.length > 1 && (
+                                    <button type="button" onClick={() => removeStep(index)} className="text-outline-variant hover:text-error transition-colors p-1 mt-3">
+                                        <span className="material-symbols-outlined">close</span>
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                    <button type="button" onClick={addStep} className="mt-6 flex items-center gap-1 text-primary hover:bg-primary-container/10 px-3 py-1 rounded-full transition-colors active:scale-95">
+                        <span className="material-symbols-outlined text-lg">playlist_add</span>
+                        <span className="font-label text-xs font-bold">ADD STEP</span>
+                    </button>
+                </section>
+            </div>
+
+            {/* Mobile fixed footer */}
+            <footer className="fixed bottom-0 left-0 w-full z-50 p-6 bg-surface/95 backdrop-blur-md md:hidden">
+                <div className="max-w-2xl mx-auto grid grid-cols-2 gap-4">
+                    <button
+                        type="button"
+                        onClick={clearForm}
+                        className="w-full h-14 rounded-full font-label font-semibold text-primary border-2 border-primary/20 hover:bg-primary/5 active:scale-95 transition-all"
+                    >
+                        Clear Draft
+                    </button>
                     <button
                         type="submit"
                         disabled={loading}
-                        className={classNames(
-                            "block w-full",
-                            getPrimaryButtonCss(),
-                            loading ? "opacity-50 cursor-not-allowed" : ""
-                        )}
+                        className={`w-full h-14 rounded-full font-label font-semibold text-white bg-gradient-to-br from-primary to-primary-container shadow-lg shadow-primary/20 active:scale-95 transition-all ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
                     >
-                        {loading ? "Adding Recipe..." : "Add Recipe"}
+                        {loading ? 'Publishing...' : 'Publish Recipe'}
                     </button>
                 </div>
-            </form>
-        </div>
+            </footer>
+
+            {/* ── Desktop layout ── */}
+            <div className="hidden md:block pb-24 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
+                {/* Page Header */}
+                <header className="mb-12 text-center">
+                    <span className="inline-block text-sm uppercase tracking-[0.2em] font-label font-semibold text-secondary mb-3">
+                        New Creation
+                    </span>
+                    <h1 className="font-headline text-4xl md:text-5xl font-bold text-on-surface">
+                        Draft Your Masterpiece
+                    </h1>
+                    <p className="text-on-surface-variant mt-4 max-w-xl mx-auto font-body">
+                        Document your culinary secrets with elegance. Every detail counts in the art of storytelling through food.
+                    </p>
+                </header>
+
+                <div className="space-y-12">
+                    {/* Hero Image Upload */}
+                    <section className="relative group">
+                        <label htmlFor="imageUpload" className="cursor-pointer block">
+                            <div className="w-full h-80 rounded-xl bg-surface-container-low flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 overflow-hidden group-hover:border-primary/50 transition-colors relative">
+                                {selectedImage ? (
+                                    <Image src={selectedImage} alt="Recipe preview" fill className="object-cover"/>
+                                ) : null}
+                                <div className={`z-10 text-center p-6 bg-surface-container-lowest/90 backdrop-blur rounded-xl shadow-sm ${selectedImage ? 'opacity-0 group-hover:opacity-100 transition-opacity' : ''}`}>
+                                    <span className="material-symbols-outlined text-4xl text-primary mb-2 block">add_a_photo</span>
+                                    <p className="font-headline text-lg font-semibold text-on-surface">
+                                        {selectedImage ? 'Change Hero Image' : 'Upload Hero Image'}
+                                    </p>
+                                    <p className="font-label text-sm text-on-surface-variant">
+                                        High resolution horizontal format recommended
+                                    </p>
+                                </div>
+                            </div>
+                        </label>
+                        <input id="imageUpload" type="file" accept="image/*" onChange={handleImageChange} className="sr-only"/>
+                    </section>
+
+                    {/* Basic Info Bento */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="md:col-span-3 bg-surface-container-low p-5 sm:p-8 rounded-xl">
+                            <label className="block text-xs uppercase tracking-widest font-label font-bold text-on-surface-variant mb-4">Recipe Title</label>
+                            <input
+                                type="text"
+                                required
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                placeholder="e.g., Heirloom Tomato & Burrata Salad"
+                                className="w-full bg-transparent border-0 border-b border-outline-variant/30 focus:border-primary focus:ring-0 text-xl sm:text-3xl font-headline font-bold text-on-surface placeholder:text-outline-variant transition-all pb-2 outline-none"
+                            />
+                        </div>
+                        {[
+                            {label: 'Prep Time', value: prepTime, onChange: (v: string) => setPrepTime(v === '' ? '' : parseInt(v)), unit: 'mins'},
+                            {label: 'Cook Time', value: cookTime, onChange: (v: string) => setCookTime(v === '' ? '' : parseInt(v)), unit: 'mins'},
+                            {label: 'Servings', value: servings, onChange: (v: string) => setServings(v === '' ? '' : parseInt(v)), unit: 'people'},
+                        ].map(field => (
+                            <div key={field.label} className="bg-surface-container-low p-5 sm:p-8 rounded-xl flex flex-col justify-between">
+                                <label className="block text-xs uppercase tracking-widest font-label font-bold text-on-surface-variant mb-4">{field.label}</label>
+                                <div className="flex items-end gap-2">
+                                    <input
+                                        type="number"
+                                        value={field.value}
+                                        onChange={e => field.onChange(e.target.value)}
+                                        className="w-20 bg-transparent border-0 border-b border-outline-variant/30 focus:border-primary focus:ring-0 text-2xl font-headline font-bold text-on-surface transition-all outline-none"
+                                    />
+                                    <span className="text-on-surface-variant font-label font-medium mb-1">{field.unit}</span>
+                                </div>
+                            </div>
+                        ))}
+                        <div className="bg-surface-container-low p-5 sm:p-8 rounded-xl flex flex-col justify-between">
+                            <label className="block text-xs uppercase tracking-widest font-label font-bold text-on-surface-variant mb-4">Meal Type</label>
+                            <div className="flex flex-wrap gap-2">
+                                {MEAL_TYPE_OPTIONS.map(option => (
+                                    <button key={option} type="button" onClick={() => toggleChip(option, mealType, setMealType)}
+                                        className={`px-4 py-1 rounded-full text-xs font-semibold font-label transition-colors ${mealType.includes(option) ? 'bg-primary text-on-primary' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-high'}`}>
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="bg-surface-container-low p-5 sm:p-8 rounded-xl flex flex-col justify-between">
+                            <label className="block text-xs uppercase tracking-widest font-label font-bold text-on-surface-variant mb-4">Age Group</label>
+                            <div className="flex flex-wrap gap-2">
+                                {AGE_GROUP_OPTIONS.map(option => (
+                                    <button key={option} type="button" onClick={() => toggleChip(option, ageGroup, setAgeGroup)}
+                                        className={`px-4 py-1 rounded-full text-xs font-semibold font-label transition-colors ${ageGroup.includes(option) ? 'bg-primary text-on-primary' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-high'}`}>
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="md:col-span-3 bg-surface-container-low p-5 sm:p-8 rounded-xl">
+                            <label className="block text-xs uppercase tracking-widest font-label font-bold text-on-surface-variant mb-6">Nutrition (optional)</label>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                {[
+                                    {label: 'Calories', unit: 'kcal', value: calories, onChange: setCalories},
+                                    {label: 'Protein', unit: 'g', value: protein, onChange: setProtein},
+                                    {label: 'Carbs', unit: 'g', value: carbohydrates, onChange: setCarbohydrates},
+                                    {label: 'Fats', unit: 'g', value: fats, onChange: setFats},
+                                ].map(field => (
+                                    <div key={field.label}>
+                                        <p className="text-[10px] uppercase tracking-widest font-label font-bold text-outline mb-2">{field.label}</p>
+                                        <div className="flex items-end gap-1">
+                                            <input type="number" value={field.value} onChange={e => field.onChange(e.target.value)}
+                                                className="w-16 bg-transparent border-0 border-b border-outline-variant/30 focus:border-primary focus:ring-0 text-xl font-headline font-bold text-on-surface transition-all outline-none"/>
+                                            <span className="text-xs text-on-surface-variant font-label mb-1">{field.unit}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Ingredients */}
+                    <section className="bg-surface-container-low p-5 sm:p-8 md:p-12 rounded-xl">
+                        <div className="mb-8">
+                            <h2 className="font-headline text-2xl font-bold text-on-surface">Ingredients</h2>
+                            <p className="text-sm text-on-surface-variant font-label">The building blocks of flavor</p>
+                        </div>
+                        <div className="space-y-4">
+                            {ingredientRows.map((row, index) => (
+                                <div key={index} className="grid grid-cols-12 gap-2 sm:gap-4 items-center">
+                                    <div className="col-span-3">
+                                        <input type="text" value={row.qty} onChange={e => updateIngredientRow(index, 'qty', e.target.value)} placeholder="Qty (e.g. 200g)"
+                                            className="w-full bg-surface-container-low border-0 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"/>
+                                    </div>
+                                    <div className="col-span-8">
+                                        <input type="text" value={row.name} onChange={e => updateIngredientRow(index, 'name', e.target.value)} placeholder="Ingredient name"
+                                            className="w-full bg-surface-container-low border-0 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"/>
+                                    </div>
+                                    <div className="col-span-1 text-right">
+                                        <button type="button" onClick={() => removeIngredientRow(index)} className="material-symbols-outlined text-outline-variant hover:text-error transition-colors">delete</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button type="button" onClick={addIngredientRow} className="mt-6 flex items-center gap-2 text-primary font-semibold text-sm hover:opacity-80 transition-opacity">
+                            <span className="material-symbols-outlined text-lg">add_circle</span>
+                            Add Ingredient
+                        </button>
+                    </section>
+
+                    {/* Instructions */}
+                    <section className="space-y-6">
+                        <div>
+                            <h2 className="font-headline text-2xl font-bold text-on-surface">Instructions</h2>
+                            <p className="text-sm text-on-surface-variant font-label">Guide them through the process</p>
+                        </div>
+                        <div className="space-y-6">
+                            {steps.map((step, index) => (
+                                <div key={index} className="flex gap-6 group">
+                                    <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-headline font-bold ${index === 0 ? 'bg-primary-fixed text-on-primary-fixed' : 'bg-surface-container-high text-on-surface-variant'}`}>
+                                        {index + 1}
+                                    </div>
+                                    <div className="flex-grow bg-surface-container-low p-6 rounded-xl group-hover:bg-surface-container transition-colors relative">
+                                        <textarea rows={3} value={step} onChange={e => updateStep(index, e.target.value)}
+                                            placeholder={index === 0 ? "Describe the first step of your culinary journey..." : "What happens next?"}
+                                            className="w-full bg-transparent border-0 p-0 focus:ring-0 text-on-surface placeholder:text-outline-variant resize-none outline-none"/>
+                                        {steps.length > 1 && (
+                                            <button type="button" onClick={() => removeStep(index)} className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity text-outline-variant hover:text-error">
+                                                <span className="material-symbols-outlined text-sm">delete</span>
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button type="button" onClick={addStep} className="mt-6 flex items-center gap-2 text-primary font-semibold text-sm hover:opacity-80 transition-opacity">
+                            <span className="material-symbols-outlined text-lg">add_task</span>
+                            Add Step
+                        </button>
+                    </section>
+
+                    {/* Sticky Action Bar */}
+                    <div className="sticky bottom-8 flex justify-center pt-8">
+                        <div className="bg-surface-container-highest/90 backdrop-blur-xl px-4 py-3 rounded-full shadow-xl flex items-center gap-4">
+                            <button type="button" onClick={clearForm} className="px-8 py-3 rounded-full text-on-surface font-label font-bold text-sm hover:bg-surface-container-high transition-colors">
+                                Clear Draft
+                            </button>
+                            <button type="submit" disabled={loading}
+                                className={`bg-gradient-to-br from-primary to-primary-container px-10 py-3 rounded-full text-white font-label font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                                {loading ? 'Publishing...' : 'Publish Recipe'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     );
 }

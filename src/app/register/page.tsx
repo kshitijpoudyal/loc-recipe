@@ -1,11 +1,11 @@
 "use client";
-import React, {useEffect} from 'react';
-import {LoginComponent} from "@/app/components/pageComponents/Login";
-import {redirectToHome} from "@/app/utils/routerUtils/RouterUtils";
-import {useRouter} from "next/navigation";
+import React, {useEffect} from "react";
+import {RegisterComponent} from "@/app/components/pageComponents/Register";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
+import {useRouter} from "next/navigation";
+import {redirectToHome} from "@/app/utils/routerUtils/RouterUtils";
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const router = useRouter();
     const {user} = useAuth();
 
@@ -17,7 +17,7 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen bg-surface flex items-center justify-center p-0 md:p-8">
-            <LoginComponent/>
+            <RegisterComponent/>
         </div>
     );
 }
