@@ -193,10 +193,11 @@ export default function HomePage() {
                         <div className="w-full md:w-7/12 relative group">
                             <div className="absolute -top-4 -left-4 w-24 h-24 bg-secondary-fixed rounded-full -z-10 group-hover:scale-110 transition-transform duration-500" />
                             <div className="rounded-xl overflow-hidden shadow-2xl h-[260px] sm:h-[360px] md:h-[450px]">
-                                <img
+                                <Image
                                     src={HERO_IMAGE}
                                     alt="Mediterranean vegetable tart on a rustic wooden board"
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    className="object-cover"
                                 />
                             </div>
                             {featuredRecipe && (
