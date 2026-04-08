@@ -120,61 +120,6 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
                             {/* Body */}
                             <div className="px-6 md:px-10 py-8 flex flex-col gap-8 overflow-hidden">
 
-                                {/* Selected section */}
-                                <div>
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h2 className="font-headline text-xl font-bold">Selected</h2>
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-label text-xs uppercase tracking-widest text-primary font-bold">
-                                                {selected.length} {selected.length === 1 ? 'Recipe' : 'Recipes'}
-                                            </span>
-                                            {selected.length > 0 && (
-                                                <button
-                                                    onClick={() => setSelected([])}
-                                                    className="text-xs font-semibold font-label text-error border border-error/30 rounded-full px-3 py-1 bg-surface-container-lowest/80 hover:bg-error/10 transition-colors"
-                                                >
-                                                    Clear all
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {selected.length === 0 ? (
-                                        <p className="font-body text-sm text-outline italic px-1">
-                                            No recipes selected yet — pick from the list below.
-                                        </p>
-                                    ) : (
-                                        <div className="space-y-1">
-                                            {selected.map((recipe, idx) => (
-                                                <div key={recipe.recipeId} className="flex items-center gap-3 group p-2.5 rounded-xl hover:bg-surface-container-low transition-all">
-                                                    <span className="w-8 h-8 flex items-center justify-center bg-surface-container-high rounded-full font-headline font-bold text-primary text-sm flex-shrink-0">
-                                                        {idx + 1}
-                                                    </span>
-                                                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
-                                                        {recipe.imageUrl ? (
-                                                            <Image src={recipe.imageUrl} alt={recipe.name} width={40} height={40} className="w-full h-full object-cover"/>
-                                                        ) : (
-                                                            <div className="w-full h-full flex items-center justify-center">
-                                                                <span className="material-symbols-outlined text-outline-variant text-sm">restaurant</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <span className="font-body text-sm text-on-surface-variant flex-1 truncate">{recipe.name}</span>
-                                                    <button
-                                                        onClick={() => remove(recipe)}
-                                                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-error/10 text-error"
-                                                    >
-                                                        <XMarkIcon className="size-4"/>
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Divider */}
-                                <div className="h-px bg-outline-variant/20"/>
-
                                 {/* All recipes section */}
                                 <div className="flex flex-col gap-4 min-h-0">
                                     <div className="flex items-center justify-between">
