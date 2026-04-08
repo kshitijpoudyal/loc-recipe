@@ -3,6 +3,7 @@
 import {MealType, Recipe, WeekDay} from "@/app/data/DataInterface";
 import React, {useMemo, useState} from "react";
 import {Dialog, DialogBackdrop, DialogPanel} from "@headlessui/react";
+import {XMarkIcon} from "@heroicons/react/24/outline";
 import Image from "next/image";
 import {updateSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
 
@@ -14,6 +15,12 @@ export interface AssignRecipeToWeekDayProps {
     mealType: MealType;
     selectedRecipeList: Recipe[];
 }
+
+const MEAL_ICONS: Record<MealType, string> = {
+    breakfast: 'breakfast_dining',
+    lunch: 'lunch_dining',
+    dinner: 'dinner_dining',
+};
 
 export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
     isOpen,
@@ -61,7 +68,6 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
         }
     };
 
-    const dayLabel = weekDay.name;
     const mealLabel = mealType.charAt(0).toUpperCase() + mealType.slice(1);
 
     return (
@@ -71,175 +77,223 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
                 className="fixed inset-0 bg-on-surface/40 backdrop-blur-sm transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
             />
 
-            {/* Bottom sheet on mobile, centered dialog on desktop */}
-            <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center md:px-4">
-                <DialogPanel
-                    transition
-                    className="w-full md:max-w-lg bg-background rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col max-h-[90vh] data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
-                >
-                    {/* Drag handle (mobile) */}
-                    <div className="flex justify-center pt-3 pb-1 md:hidden">
-                        <div className="w-10 h-1 bg-outline-variant/40 rounded-full"/>
-                    </div>
+            <div className="fixed inset-0 z-[60] w-screen overflow-y-auto">
+                <div className="flex min-h-full items-stretch justify-center md:items-center md:px-4 lg:px-8">
+                    <DialogPanel
+                        transition
+                        className="flex w-full transform text-left text-base transition data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in md:my-8 md:max-w-2xl data-[closed]:md:translate-y-0 data-[closed]:md:scale-95"
+                    >
+                        <div className="relative flex w-full flex-col overflow-hidden bg-background shadow-2xl rounded-xl">
 
-                    {/* Header */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant/10">
-                        <div>
-                            <p className="font-label text-[10px] uppercase tracking-widest text-outline font-semibold">{dayLabel}</p>
-                            <h2 className="font-headline text-xl font-bold text-on-surface">{mealLabel}</h2>
-                        </div>
-                        <button
-                            onClick={() => setIsOpenAction(false)}
-                            className="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant"
-                        >
-                            <span className="material-symbols-outlined text-xl">close</span>
-                        </button>
-                    </div>
-
-                    {/* Selected pills */}
-                    {selected.length > 0 && (
-                        <div className="px-6 pt-4 pb-2">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="font-label text-[10px] uppercase tracking-widest text-primary font-bold">
-                                    Selected ({selected.length})
-                                </span>
+                            {/* Close button */}
+                            <div className="absolute right-4 top-4 z-20">
                                 <button
-                                    onClick={() => setSelected([])}
-                                    className="font-label text-[10px] uppercase tracking-widest text-error font-semibold ml-auto"
+                                    type="button"
+                                    onClick={() => setIsOpenAction(false)}
+                                    className="p-1.5 rounded-full bg-surface-container-lowest/80 backdrop-blur text-on-surface-variant hover:text-on-surface transition-colors"
                                 >
-                                    Clear all
+                                    <span className="sr-only">Close</span>
+                                    <XMarkIcon aria-hidden="true" className="size-5"/>
                                 </button>
                             </div>
-                            <div className="flex flex-wrap gap-2">
-                                {selected.map(recipe => (
-                                    <div
-                                        key={recipe.recipeId}
-                                        className="flex items-center gap-1.5 bg-primary/10 text-primary rounded-full pl-3 pr-2 py-1"
-                                    >
-                                        <span className="font-label text-xs font-semibold truncate max-w-[120px]">{recipe.name}</span>
-                                        <button
-                                            onClick={() => remove(recipe)}
-                                            className="w-4 h-4 rounded-full bg-primary/20 hover:bg-primary/40 flex items-center justify-center transition-colors flex-shrink-0"
-                                        >
-                                            <span className="material-symbols-outlined text-primary" style={{fontSize: '12px'}}>close</span>
-                                        </button>
+
+                            {/* Hero */}
+                            <header className="relative w-full h-36 md:h-44 overflow-hidden flex-shrink-0 bg-surface-container-high">
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent"/>
+                                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent"/>
+                                <div className="absolute bottom-6 left-6 md:left-10 right-6 md:right-10">
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        <span className="px-3 py-0.5 bg-secondary-fixed text-on-secondary-fixed rounded-full text-xs font-semibold tracking-wider uppercase font-label">
+                                            {weekDay.name}
+                                        </span>
+                                        <span className="px-3 py-0.5 bg-surface-container-highest text-on-surface rounded-full text-xs font-semibold tracking-wider uppercase font-label flex items-center gap-1">
+                                            <span className="material-symbols-outlined" style={{fontSize: '12px'}}>{MEAL_ICONS[mealType]}</span>
+                                            {mealLabel}
+                                        </span>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                                    <h1 className="font-headline text-2xl md:text-3xl font-bold text-on-surface tracking-tight leading-tight">
+                                        Assign a Recipe
+                                    </h1>
+                                </div>
+                            </header>
 
-                    {/* Search */}
-                    <div className="px-6 pt-4 pb-2">
-                        <div className="flex items-center gap-3 bg-surface-container-low rounded-xl px-4 py-3">
-                            <span className="material-symbols-outlined text-outline text-xl">search</span>
-                            <input
-                                type="text"
-                                value={search}
-                                onChange={e => setSearch(e.target.value)}
-                                placeholder="Search recipes..."
-                                className="flex-1 bg-transparent font-body text-sm outline-none placeholder:text-outline-variant text-on-surface"
-                            />
-                            {search && (
-                                <button onClick={() => setSearch('')} className="text-outline-variant hover:text-on-surface">
-                                    <span className="material-symbols-outlined text-lg">close</span>
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                            {/* Body */}
+                            <div className="px-6 md:px-10 py-8 flex flex-col gap-8 overflow-hidden">
 
-                    {/* Recipe list */}
-                    <div className="flex-1 overflow-y-auto px-6 py-2 space-y-2">
-                        {filteredRecipes.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-12 text-outline-variant">
-                                <span className="material-symbols-outlined text-4xl mb-2">search_off</span>
-                                <p className="font-label text-sm">No recipes found</p>
-                            </div>
-                        ) : (
-                            filteredRecipes.map(recipe => {
-                                const selected_ = isSelected(recipe);
-                                return (
-                                    <button
-                                        key={recipe.recipeId}
-                                        type="button"
-                                        onClick={() => toggle(recipe)}
-                                        className={`w-full flex items-center gap-4 p-3 rounded-2xl transition-all text-left ${
-                                            selected_
-                                                ? 'bg-primary/10 ring-1 ring-primary/30'
-                                                : 'bg-surface-container-low hover:bg-surface-container-high'
-                                        }`}
-                                    >
-                                        {/* Image */}
-                                        <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-high">
-                                            {recipe.imageUrl ? (
-                                                <Image
-                                                    src={recipe.imageUrl}
-                                                    alt={recipe.name}
-                                                    width={64}
-                                                    height={64}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-outline-variant">restaurant</span>
+                                {/* Selected section */}
+                                <div>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="font-headline text-xl font-bold">Selected</h2>
+                                        <div className="flex items-center gap-3">
+                                            <span className="font-label text-xs uppercase tracking-widest text-primary font-bold">
+                                                {selected.length} {selected.length === 1 ? 'Recipe' : 'Recipes'}
+                                            </span>
+                                            {selected.length > 0 && (
+                                                <button
+                                                    onClick={() => setSelected([])}
+                                                    className="text-xs font-semibold font-label text-error border border-error/30 rounded-full px-3 py-1 bg-surface-container-lowest/80 hover:bg-error/10 transition-colors"
+                                                >
+                                                    Clear all
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {selected.length === 0 ? (
+                                        <p className="font-body text-sm text-outline italic px-1">
+                                            No recipes selected yet — pick from the list below.
+                                        </p>
+                                    ) : (
+                                        <div className="space-y-1">
+                                            {selected.map((recipe, idx) => (
+                                                <div key={recipe.recipeId} className="flex items-center gap-3 group p-2.5 rounded-xl hover:bg-surface-container-low transition-all">
+                                                    <span className="w-8 h-8 flex items-center justify-center bg-surface-container-high rounded-full font-headline font-bold text-primary text-sm flex-shrink-0">
+                                                        {idx + 1}
+                                                    </span>
+                                                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
+                                                        {recipe.imageUrl ? (
+                                                            <Image src={recipe.imageUrl} alt={recipe.name} width={40} height={40} className="w-full h-full object-cover"/>
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center">
+                                                                <span className="material-symbols-outlined text-outline-variant text-sm">restaurant</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <span className="font-body text-sm text-on-surface-variant flex-1 truncate">{recipe.name}</span>
+                                                    <button
+                                                        onClick={() => remove(recipe)}
+                                                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-error/10 text-error"
+                                                    >
+                                                        <XMarkIcon className="size-4"/>
+                                                    </button>
                                                 </div>
-                                            )}
+                                            ))}
                                         </div>
+                                    )}
+                                </div>
 
-                                        {/* Info */}
-                                        <div className="flex-1 min-w-0">
-                                            <p className={`font-headline text-sm font-semibold leading-tight truncate ${selected_ ? 'text-primary' : 'text-on-surface'}`}>
-                                                {recipe.name}
-                                            </p>
-                                            <div className="flex flex-wrap gap-1.5 mt-1.5 items-center">
-                                                {recipe.mealType?.slice(0, 2).map(t => (
-                                                    <span key={t} className="bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full text-[9px] font-label font-bold uppercase tracking-tight">
-                                                        {t}
-                                                    </span>
-                                                ))}
-                                                {((recipe.prepTime ?? 0) + (recipe.cookTime ?? 0)) > 0 && (
-                                                    <span className="text-[10px] text-outline font-label">
-                                                        {(recipe.prepTime ?? 0) + (recipe.cookTime ?? 0)}m
-                                                    </span>
-                                                )}
+                                {/* Divider */}
+                                <div className="h-px bg-outline-variant/20"/>
+
+                                {/* All recipes section */}
+                                <div className="flex flex-col gap-4 min-h-0">
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="font-headline text-xl font-bold">All Recipes</h2>
+                                        <span className="font-label text-xs uppercase tracking-widest text-primary font-bold">
+                                            {filteredRecipes.length} Items
+                                        </span>
+                                    </div>
+
+                                    {/* Search */}
+                                    <div className="flex items-center gap-3 bg-surface-container-low rounded-xl px-4 py-3">
+                                        <span className="material-symbols-outlined text-outline text-xl">search</span>
+                                        <input
+                                            type="text"
+                                            value={search}
+                                            onChange={e => setSearch(e.target.value)}
+                                            placeholder="Search recipes..."
+                                            className="flex-1 bg-transparent font-body text-sm outline-none placeholder:text-outline-variant text-on-surface"
+                                        />
+                                        {search && (
+                                            <button onClick={() => setSearch('')} className="text-outline-variant hover:text-on-surface transition-colors">
+                                                <XMarkIcon className="size-4"/>
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {/* Recipe rows */}
+                                    <div className="space-y-1 max-h-64 overflow-y-auto -mx-6 md:-mx-10 px-6 md:px-10">
+                                        {filteredRecipes.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center py-10 text-outline-variant">
+                                                <span className="material-symbols-outlined text-4xl mb-2">search_off</span>
+                                                <p className="font-label text-sm">No recipes found</p>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            filteredRecipes.map(recipe => {
+                                                const checked = isSelected(recipe);
+                                                return (
+                                                    <label
+                                                        key={recipe.recipeId}
+                                                        className="flex items-center gap-3 group cursor-pointer p-2.5 rounded-xl hover:bg-surface-container-low transition-all"
+                                                    >
+                                                        {/* Step-circle style checkbox */}
+                                                        <span className={`w-8 h-8 flex items-center justify-center rounded-full font-headline font-bold text-sm flex-shrink-0 transition-colors ${
+                                                            checked
+                                                                ? 'bg-primary text-on-primary'
+                                                                : 'bg-surface-container-high text-primary group-hover:bg-primary group-hover:text-on-primary'
+                                                        }`}>
+                                                            {checked
+                                                                ? <span className="material-symbols-outlined" style={{fontSize: '16px'}}>check</span>
+                                                                : <span className="material-symbols-outlined" style={{fontSize: '16px'}}>add</span>
+                                                            }
+                                                        </span>
 
-                                        {/* Checkmark */}
-                                        <div className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center transition-all ${
-                                            selected_
-                                                ? 'bg-primary'
-                                                : 'border-2 border-outline-variant/30'
-                                        }`}>
-                                            {selected_ && (
-                                                <span className="material-symbols-outlined text-on-primary" style={{fontSize: '14px'}}>check</span>
-                                            )}
-                                        </div>
-                                    </button>
-                                );
-                            })
-                        )}
-                    </div>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={checked}
+                                                            onChange={() => toggle(recipe)}
+                                                            className="sr-only"
+                                                        />
 
-                    {/* Footer */}
-                    <div className="px-6 py-4 border-t border-outline-variant/10 flex gap-3">
-                        <button
-                            type="button"
-                            onClick={() => setIsOpenAction(false)}
-                            className="flex-1 py-3 rounded-full border border-outline-variant/30 font-label text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleSave}
-                            disabled={saving}
-                            className="flex-2 flex-grow-[2] py-3 rounded-full bg-primary text-on-primary font-label text-sm font-bold tracking-wide shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
-                        >
-                            {saving ? 'Saving…' : `Save ${selected.length > 0 ? `(${selected.length})` : ''}`}
-                        </button>
-                    </div>
-                </DialogPanel>
+                                                        {/* Thumbnail */}
+                                                        <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
+                                                            {recipe.imageUrl ? (
+                                                                <Image src={recipe.imageUrl} alt={recipe.name} width={40} height={40} className="w-full h-full object-cover"/>
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center">
+                                                                    <span className="material-symbols-outlined text-outline-variant text-sm">restaurant</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Name + meta */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className={`font-body text-sm transition-colors truncate ${checked ? 'text-primary font-medium' : 'text-on-surface-variant group-hover:text-on-surface'}`}>
+                                                                {recipe.name}
+                                                            </p>
+                                                            <div className="flex gap-1.5 mt-0.5 flex-wrap items-center">
+                                                                {recipe.mealType?.slice(0, 2).map(t => (
+                                                                    <span key={t} className="px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed rounded-full text-[9px] font-semibold tracking-wider uppercase font-label">
+                                                                        {t}
+                                                                    </span>
+                                                                ))}
+                                                                {((recipe.prepTime ?? 0) + (recipe.cookTime ?? 0)) > 0 && (
+                                                                    <span className="text-[10px] text-outline font-label">
+                                                                        {(recipe.prepTime ?? 0) + (recipe.cookTime ?? 0)}m
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Footer */}
+                            <div className="px-6 md:px-10 py-6 border-t border-outline-variant/10 flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsOpenAction(false)}
+                                    className="flex-1 py-3 rounded-full border border-outline-variant/30 font-label text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleSave}
+                                    disabled={saving}
+                                    className="flex-[2] py-3 rounded-full bg-primary text-on-primary font-label text-sm font-bold tracking-wide shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
+                                >
+                                    {saving ? 'Saving…' : `Save${selected.length > 0 ? ` (${selected.length})` : ''}`}
+                                </button>
+                            </div>
+
+                        </div>
+                    </DialogPanel>
+                </div>
             </div>
         </Dialog>
     );
