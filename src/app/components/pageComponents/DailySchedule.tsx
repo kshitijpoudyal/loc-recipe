@@ -57,13 +57,13 @@ export default function DailyScheduleComponent() {
         }
     }, [allRecipe]);
 
-    function callbackAfterRecipeChange(isOpen: boolean, refresh?: boolean) {
+    const callbackAfterRecipeChange = useCallback((isOpen: boolean, refresh?: boolean) => {
         setIsAddRecipeOpen(isOpen);
         if (refresh) {
             setRefreshingDay(editingDayRef.current);
             loadSchedule();
         }
-    }
+    }, [loadSchedule]);
 
     const [recipeToWeekDayProps, setRecipeToWeekDayProps] = useState<AssignRecipeToWeekDayProps>({
         isOpen: false,
@@ -91,7 +91,7 @@ export default function DailyScheduleComponent() {
                 selectedRecipeList: selectedRecipes ?? [],
             });
         },
-        [allRecipe]
+        [allRecipe, callbackAfterRecipeChange]
     );
 
 
