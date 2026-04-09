@@ -25,9 +25,6 @@ export const uploadImage = async (imageFile: File) => {
 export const addRecipeToFirebase = async (recipe: Recipe) => {
     const data: Record<string, unknown> = {
         name: recipe.name,
-        prepTime: recipe.prepTime,
-        cookTime: recipe.cookTime,
-        servings: recipe.servings,
         mealType: recipe.mealType,
         ingredients: recipe.ingredients,
         steps: recipe.steps,
@@ -35,6 +32,9 @@ export const addRecipeToFirebase = async (recipe: Recipe) => {
         nutrition: recipe.nutrition,
         createdAt: new Date(),
     };
+    if (recipe.prepTime !== undefined) data.prepTime = recipe.prepTime;
+    if (recipe.cookTime !== undefined) data.cookTime = recipe.cookTime;
+    if (recipe.servings !== undefined) data.servings = recipe.servings;
     if (recipe.imageUrl !== undefined) data.imageUrl = recipe.imageUrl;
     if (recipe.createdBy !== undefined) data.createdBy = recipe.createdBy;
     if (recipe.createdByName !== undefined) data.createdByName = recipe.createdByName;
