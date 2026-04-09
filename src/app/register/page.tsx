@@ -7,13 +7,13 @@ import {redirectToHome} from "@/app/utils/routerUtils/RouterUtils";
 
 export default function RegisterPage() {
     const router = useRouter();
-    const {user} = useAuth();
+    const {user, authLoading} = useAuth();
 
     useEffect(() => {
-        if (user) {
+        if (!authLoading && user) {
             redirectToHome(router);
         }
-    }, [router, user]);
+    }, [router, user, authLoading]);
 
     return (
         <div className="min-h-screen bg-surface flex items-center justify-center p-0 md:p-8">

@@ -9,15 +9,15 @@ import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
 
 export default function AddRecipePage() {
     const router = useRouter();
-    const {user} = useAuth();
+    const {user, authLoading} = useAuth();
 
     useEffect(() => {
-        if (!user) {
+        if (!authLoading && !user) {
             redirectToLogin(router);
         }
-    }, [router, user]);
+    }, [router, user, authLoading]);
 
-    if (!user) {
+    if (authLoading || !user) {
         return <LoaderComponent loading={true} message="Please Login! Redirecting..."/>;
     }
 

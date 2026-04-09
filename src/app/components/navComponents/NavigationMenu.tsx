@@ -1,99 +1,235 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/app/components/baseComponents/AuthProvider";
+import { signOut } from "firebase/auth";
+import { auth } from "@/app/config/firebase";
 
 export default function NavigationMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [accountOpen, setAccountOpen] = useState(false);
     const { user } = useAuth();
+    const router = useRouter();
+    const pathname = usePathname();
+    const accountRef = useRef<HTMLDivElement>(null);
 
     const navLinks = [
-        { href: "/", label: "Home" },
-        { href: "/daily-schedule", label: "Planner", authOnly: true },
-        { href: "/add-recipe", label: "Add", authOnly: true },
-        { href: "/mock-data", label: "Mock Data", authOnly: true },
-        { href: "/login", label: "Login", guestOnly: true },
-        { href: "/logout", label: "Logout", authOnly: true },
+        { href: "/", label: "Home", icon: "home" },
+        { href: "/daily-schedule", label: "Meal Planner", icon: "calendar_today", authOnly: true },
+        { href: "/add-recipe", label: "Add Recipe", icon: "add_circle", authOnly: true },
+        { href: "/login", label: "Login", icon: "login", guestOnly: true },
     ].filter((item) => {
         if (item.authOnly) return !!user;
         if (item.guestOnly) return !user;
         return true;
     });
 
-    return (
-        <nav className="fixed top-0 w-full z-50 bg-surface/80 glass-nav">
-            <div className="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
-                {/* Brand + desktop links */}
-                <div className="flex items-center gap-8">
-                    <Link href="/" className="text-2xl font-headline font-bold text-primary">
-                        Lochu&apos;s Recipe
-                    </Link>
-                    <div className="hidden md:flex items-center gap-6">
-                        {navLinks.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className="text-on-surface/60 font-body font-medium hover:text-primary transition-colors duration-300"
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+    const bottomNavLinks = [
+        { href: "/", label: "Home", icon: "home", authOnly: false },
+        { href: "/daily-schedule", label: "Planner", icon: "restaurant_menu", authOnly: true },
+        { href: "/add-recipe", label: "Create", icon: "add_box", authOnly: true },
+        { href: "/login", label: "Profile", icon: "account_circle", guestOnly: true },
+    ].filter((item) => {
+        if (item.authOnly) return !!user;
+        if ((item as { guestOnly?: boolean }).guestOnly) return !user;
+        return true;
+    });
 
-                {/* Right: search + account + mobile hamburger */}
-                <div className="flex items-center gap-4">
-                    <div className="hidden lg:flex items-center bg-surface-container-low px-4 py-2 rounded-full">
-                        <span className="material-symbols-outlined text-outline" style={{ fontSize: "18px" }}>search</span>
-                        <input
-                            className="bg-transparent border-none focus:ring-0 text-sm font-label ml-2 w-64 placeholder:text-outline-variant outline-none"
-                            placeholder="Search curated recipes..."
-                            type="text"
-                        />
-                    </div>
-                    <button className="text-primary" aria-label="Account">
-                        <span className="material-symbols-outlined" style={{ fontSize: "28px" }}>account_circle</span>
-                    </button>
+    const handleLogout = async () => {
+        await signOut(auth);
+        setAccountOpen(false);
+        setMobileMenuOpen(false);
+        router.push("/login");
+    };
+
+    const isActive = (href: string) =>
+        href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+    return (
+        <>
+            {/* Top Header */}
+            <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-3">
+                    {/* Hamburger — mobile only */}
                     <button
-                        className="md:hidden text-on-surface"
+                        className="md:hidden text-primary hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95"
                         onClick={() => setMobileMenuOpen(true)}
                         aria-label="Open menu"
                     >
                         <span className="material-symbols-outlined">menu</span>
                     </button>
+                    <Link href="/" className="text-xl font-headline font-bold text-primary italic tracking-tight">
+                        Lochu&apos;s Kitchen
+                    </Link>
                 </div>
-            </div>
 
-            {/* Mobile drawer */}
-            <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="md:hidden">
-                <div className="fixed inset-0 z-10 bg-on-surface/20" />
-                <DialogPanel className="fixed inset-y-0 right-0 z-20 w-full max-w-sm bg-surface-container-lowest px-6 py-6 overflow-y-auto">
-                    <div className="flex items-center justify-between mb-8">
-                        <span className="text-xl font-headline font-bold text-primary">Lochu&apos;s Recipe</span>
-                        <button
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="text-on-surface-variant"
-                            aria-label="Close menu"
+                {/* Desktop nav links */}
+                <div className="hidden md:flex items-center gap-6">
+                    {navLinks.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`font-body font-medium transition-colors duration-200 ${
+                                isActive(item.href)
+                                    ? "text-primary"
+                                    : "text-on-surface/60 hover:text-primary"
+                            }`}
                         >
-                            <span className="material-symbols-outlined">close</span>
+                            {item.label}
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Right side: account */}
+                <div className="flex items-center gap-3">
+                    {/* Account dropdown (desktop) */}
+                    <div className="relative" ref={accountRef}>
+                        <button
+                            onClick={() => setAccountOpen(o => !o)}
+                            className="w-9 h-9 rounded-full overflow-hidden border-2 border-primary-container flex items-center justify-center"
+                            aria-label="Account"
+                        >
+                            {user?.photoURL ? (
+                                <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="material-symbols-outlined text-primary" style={{ fontSize: "28px" }}>account_circle</span>
+                            )}
                         </button>
+
+                        {accountOpen && user && (
+                            <>
+                                <div className="fixed inset-0 z-10" onClick={() => setAccountOpen(false)} />
+                                <div className="absolute right-0 top-11 z-20 w-52 bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/20 overflow-hidden">
+                                    <div className="px-4 py-3 border-b border-outline-variant/10">
+                                        <p className="font-label text-xs text-outline uppercase tracking-widest mb-0.5">Signed in as</p>
+                                        <p className="font-body text-sm text-on-surface font-medium truncate">
+                                            {user.displayName || user.email}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full flex items-center gap-2 px-4 py-3 text-sm font-label font-semibold text-error hover:bg-error/5 transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-base">logout</span>
+                                        Sign out
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
-                    <div className="flex flex-col gap-4">
+                </div>
+            </header>
+
+            {/* Mobile Drawer */}
+            <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="md:hidden">
+                {/* Backdrop */}
+                <div className="fixed inset-0 z-50 bg-on-surface/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+
+                <DialogPanel className="fixed top-0 left-0 z-[60] bg-surface rounded-r-3xl h-full w-[85%] max-w-80 shadow-2xl flex flex-col py-8 px-4 ease-in-out duration-300">
+                    {/* Profile Section */}
+                    <div className="flex flex-col items-start px-4 mb-8">
+                        <div className="w-20 h-20 rounded-2xl overflow-hidden mb-4 shadow-lg border-2 border-primary-container">
+                            {user?.photoURL ? (
+                                <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-primary-container flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-primary" style={{ fontSize: "40px" }}>person</span>
+                                </div>
+                            )}
+                        </div>
+                        <h2 className="text-2xl font-headline text-primary font-bold">
+                            {user?.displayName || "Guest"}
+                        </h2>
+                        <div className="flex flex-col">
+                            <span className="font-body uppercase tracking-[0.1em] text-xs text-secondary-container font-semibold">
+                                Culinary Curator
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Nav Links */}
+                    <nav className="flex-1 space-y-1">
                         {navLinks.map((item) => (
                             <Link
                                 key={item.href}
                                 href={item.href}
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="text-lg font-body font-medium text-on-surface hover:text-primary transition-colors py-2 border-b border-outline-variant/20"
+                                className={`mx-2 flex items-center gap-4 px-4 py-3.5 rounded-full transition-colors ${
+                                    isActive(item.href)
+                                        ? "bg-secondary-fixed text-on-secondary-fixed font-semibold"
+                                        : "text-on-surface hover:bg-surface-container-low"
+                                }`}
                             >
-                                {item.label}
+                                <span
+                                    className="material-symbols-outlined"
+                                    style={isActive(item.href) ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                                >
+                                    {item.icon}
+                                </span>
+                                <span className="font-headline text-lg">{item.label}</span>
                             </Link>
                         ))}
+
+                        {/* Sign out in drawer */}
+                        {user && (
+                            <button
+                                onClick={handleLogout}
+                                className="w-full mx-2 flex items-center gap-4 px-4 py-3.5 rounded-full text-error hover:bg-error/5 transition-colors"
+                            >
+                                <span className="material-symbols-outlined">logout</span>
+                                <span className="font-headline text-lg">Sign out</span>
+                            </button>
+                        )}
+                    </nav>
+
+                    {/* Footer */}
+                    <div className="px-4 py-4 mt-auto border-t border-outline-variant/20">
+                        <p className="font-body text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/60">
+                            Lochu&apos;s Kitchen © 2024
+                        </p>
                     </div>
                 </DialogPanel>
             </Dialog>
-        </nav>
+
+            {/* Bottom Navigation Bar (mobile only) */}
+            <footer className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-6 bg-surface/90 backdrop-blur-xl rounded-t-3xl shadow-[0_-4px_20px_rgba(24,29,20,0.06)] z-40">
+                {bottomNavLinks.map((item) => {
+                    const active = isActive(item.href);
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`flex flex-col items-center transition-all duration-200 ${
+                                active
+                                    ? "text-primary bg-surface-container-high rounded-xl px-3 py-1 scale-110"
+                                    : "text-on-surface/50 hover:text-on-surface/80"
+                            }`}
+                        >
+                            <span
+                                className="material-symbols-outlined"
+                                style={active ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                            >
+                                {item.icon}
+                            </span>
+                            <span className="font-body font-medium text-[10px] uppercase tracking-wider">{item.label}</span>
+                        </Link>
+                    );
+                })}
+
+                {/* Profile item for logged-in users */}
+                {user && (
+                    <button
+                        onClick={() => setAccountOpen(o => !o)}
+                        className={`flex flex-col items-center text-on-surface/50 hover:text-on-surface/80 transition-all duration-200`}
+                    >
+                        <span className="material-symbols-outlined">account_circle</span>
+                        <span className="font-body font-medium text-[10px] uppercase tracking-wider">Profile</span>
+                    </button>
+                )}
+            </footer>
+        </>
     );
 }

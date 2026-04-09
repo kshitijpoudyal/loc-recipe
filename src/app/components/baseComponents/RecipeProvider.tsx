@@ -3,6 +3,7 @@
 import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
 import {Recipe} from "@/app/data/DataInterface";
 import {fetchAllRecipes} from "@/app/utils/firebaseUtils/Recipe";
+import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 
 interface RecipeContextType {
     recipes: Recipe[];
@@ -17,18 +18,21 @@ const RecipeContext = createContext<RecipeContextType>({
 });
 
 export const RecipeProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+    const {user, authLoading} = useAuth();
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [loading, setLoading] = useState(true);
 
     const load = useCallback(async () => {
         setLoading(true);
-        setRecipes(await fetchAllRecipes());
+        setRecipes(await fetchAllRecipes(user?.uid ?? undefined));
         setLoading(false);
-    }, []);
+    }, [user?.uid]);
 
     useEffect(() => {
-        load();
-    }, [load]);
+        if (!authLoading) {
+            load();
+        }
+    }, [load, authLoading]);
 
     return (
         <RecipeContext.Provider value={{recipes, loading, invalidate: load}}>

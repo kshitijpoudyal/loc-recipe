@@ -1,5 +1,6 @@
 import {Recipe} from "@/app/data/DataInterface";
 import {addRecipeToFirebase} from "@/app/utils/firebaseUtils/Recipe";
+import {globalUserId} from "@/app/config/firebase";
 
 const mockRecipe: Recipe[] = [
     {
@@ -405,7 +406,7 @@ export const addMockRecipesToFirebase = async () => {
     try {
         // Loop through mockRecipe array and save each recipe to Firestore
         for (const recipe of mockRecipe) {
-            await addRecipeToFirebase(recipe)
+            await addRecipeToFirebase(recipe, globalUserId);
         }
         console.log('Mock recipes saved successfully!');
     } catch (error) {

@@ -4,6 +4,7 @@ import {DEFAULT_RECIPE} from "@/app/data/ConstData";
 import {Recipe} from "@/app/data/DataInterface";
 import RecipeCard from "@/app/components/baseComponents/RecipeCard";
 import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
+import EditRecipeModal from "@/app/components/pageComponents/EditRecipe";
 import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
@@ -12,12 +13,13 @@ export default function ListRecipeComponent() {
     const {recipes, loading, invalidate} = useRecipes();
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe>(DEFAULT_RECIPE);
     const [open, setOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
     const {user} = useAuth();
 
     const handleDelete = async (recipe: Recipe) => {
         if (!recipe.recipeId) return;
         if (!confirm(`Delete "${recipe.name}"?`)) return;
-        await deleteRecipeFromFirebase(recipe.recipeId);
+        await deleteRecipeFromFirebase(recipe.recipeId, recipe.createdBy!, recipe.isPublic);
         invalidate();
         setOpen(false);
     };
@@ -26,16 +28,24 @@ export default function ListRecipeComponent() {
         return (<LoaderComponent loading={loading}/>);
     }
 
-    const canDelete = user && selectedRecipe.createdBy === user.uid;
+    const isOwner = !!(user && selectedRecipe.createdBy === user.uid);
 
     return (
         <div>
+            {editOpen && (
+                <EditRecipeModal
+                    isOpen={editOpen}
+                    recipe={selectedRecipe}
+                    setIsOpenAction={setEditOpen}
+                />
+            )}
             {open && (
                 <RecipeDetailsTemplate
                     isOpen={open}
                     recipe={selectedRecipe}
                     setIsOpenAction={setOpen}
-                    onDelete={canDelete ? () => handleDelete(selectedRecipe) : undefined}
+                    onDelete={isOwner ? () => handleDelete(selectedRecipe) : undefined}
+                    onEdit={isOwner ? () => { setOpen(false); setEditOpen(true); } : undefined}
                 />
             )}
 

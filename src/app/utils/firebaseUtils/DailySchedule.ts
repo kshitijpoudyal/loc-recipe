@@ -1,54 +1,28 @@
 import {collection, doc, getDocs, setDoc} from "firebase/firestore";
-import {dailyScheduleTable, db} from "@/app/config/firebase";
+import {db, userScheduleCol} from "@/app/config/firebase";
 import {DailySchedule, MealType, Recipe} from "@/app/data/DataInterface";
 import {WEEK_DAYS} from "@/app/data/ConstData";
 
 export const updateSchedule = async (
     weekdayValue: string,
     mealType: MealType,
-    recipeId: string[],
+    recipeIds: string[],
+    userId: string,
 ): Promise<void> => {
-    console.log("updateSchedule called")
     try {
-        // Reference the document for the specified weekday
-        const scheduleDocRef = doc(db, dailyScheduleTable, weekdayValue);
-
-        // Create document if missing, otherwise update the specified meal type
+        const scheduleDocRef = doc(db, userScheduleCol(userId), weekdayValue);
         await setDoc(scheduleDocRef, {
             weekday: weekdayValue,
-            [mealType]: recipeId,
+            [mealType]: recipeIds,
         }, {merge: true});
-
-        console.log(`RecipeId ${recipeId} successfully added to ${weekdayValue}'s ${mealType}.`);
     } catch (error) {
-        console.error("Error updating breakfast schedule:", error);
+        console.error("Error updating schedule:", error);
     }
 };
 
-export const fetchAllDailySchedules = async () => {
-    const dailyScheduleCollection = collection(db, dailyScheduleTable);
-    const dailyScheduleSnapshot = await getDocs(dailyScheduleCollection);
-    return dailyScheduleSnapshot.docs.map((doc) => ({
-        scheduleId: doc.id,
-        ...doc.data(),
-    })) as DailySchedule[];
-};
-
-export const addScheduleToFirestore = async (dailySchedule: DailySchedule) => {
-    const scheduleCollection = collection(db, dailyScheduleTable); // Replace "schedules" with your desired Firestore collection name
-    const scheduleDocRef = doc(scheduleCollection, dailySchedule.weekday);
-    try {
-        await setDoc(scheduleDocRef, {
-            weekday: dailySchedule.weekday,
-            breakfast: dailySchedule.breakfast,
-            lunch: dailySchedule.lunch,
-            dinner: dailySchedule.dinner,
-            createdBy: dailySchedule.createdBy,
-            createdAt: new Date(),
-        });
-    } catch (error) {
-        console.error("Error adding schedule data:", error);
-    }
+export const fetchAllDailySchedules = async (userId: string): Promise<DailySchedule[]> => {
+    const snapshot = await getDocs(collection(db, userScheduleCol(userId)));
+    return snapshot.docs.map(d => ({scheduleId: d.id, ...d.data()})) as DailySchedule[];
 };
 
 export const mapAllRecipesToSchedule = (
@@ -80,4 +54,3 @@ export const mapAllRecipesToSchedule = (
 
     return scheduleLocal;
 };
-
