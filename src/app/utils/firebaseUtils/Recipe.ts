@@ -9,7 +9,9 @@ const fetchFromUser = async (userId: string): Promise<Recipe[]> => {
 };
 
 export const fetchAllRecipes = async (userId?: string): Promise<Recipe[]> => {
-    const globalRecipes = await fetchFromUser(globalUserId);
+    const globalRecipes = (await fetchFromUser(globalUserId)).map(r =>
+        r.createdBy === globalUserId ? { ...r, createdByName: "Lochu's Recipe" } : r
+    );
     if (!userId || userId === globalUserId) return globalRecipes;
     const userRecipes = await fetchFromUser(userId);
     // Merge: user's own copy takes precedence over global (same recipeId)
