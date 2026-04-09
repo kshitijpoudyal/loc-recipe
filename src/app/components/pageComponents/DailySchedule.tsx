@@ -4,6 +4,7 @@ import {MealType, Recipe, WeekDay} from "@/app/data/DataInterface";
 import {DEFAULT_RECIPE, MEAL_TYPES, WEEK_DAYS} from "@/app/data/ConstData";
 import {fetchAllDailySchedules, mapAllRecipesToSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
+import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {AssignRecipeToWeekDay, AssignRecipeToWeekDayProps} from "@/app/components/AssignRecipeToWeekDay";
 import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
 
@@ -23,6 +24,7 @@ const TODAY = new Date().toLocaleDateString('en-US', {weekday: 'long'}).toLowerC
 
 export default function DailyScheduleComponent() {
     const {recipes: allRecipe} = useRecipes();
+    const {user} = useAuth();
     const [recipesMap, setRecipesMap] = useState<Record<string, Record<MealType, Recipe[]>>>({});
     const [selectedDay, setSelectedDay] = useState<string>(TODAY);
     const [loading, setLoading] = useState(true);
@@ -46,8 +48,9 @@ export default function DailyScheduleComponent() {
     }, []);
 
     const loadSchedule = useCallback(async () => {
+        if (!user?.uid) return;
         try {
-            const dailySchedules = await fetchAllDailySchedules();
+            const dailySchedules = await fetchAllDailySchedules(user.uid);
             setRecipesMap(mapAllRecipesToSchedule(allRecipe, dailySchedules));
         } catch (error) {
             console.error("Error loading schedule:", error);
@@ -55,7 +58,7 @@ export default function DailyScheduleComponent() {
             setLoading(false);
             setRefreshingDay(null);
         }
-    }, [allRecipe]);
+    }, [allRecipe, user?.uid]);
 
     const callbackAfterRecipeChange = useCallback((isOpen: boolean, refresh?: boolean) => {
         setIsAddRecipeOpen(isOpen);

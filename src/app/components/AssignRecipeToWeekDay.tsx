@@ -6,6 +6,7 @@ import {Dialog, DialogBackdrop, DialogPanel} from "@headlessui/react";
 import {XMarkIcon} from "@heroicons/react/24/outline";
 import Image from "next/image";
 import {updateSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
+import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 
 export interface AssignRecipeToWeekDayProps {
     isOpen: boolean;
@@ -33,6 +34,7 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
     const [selected, setSelected] = useState<Recipe[]>(selectedRecipeList);
     const [search, setSearch] = useState('');
     const [saving, setSaving] = useState(false);
+    const {user} = useAuth();
 
     const filteredRecipes = useMemo(() => {
         const q = search.trim().toLowerCase();
@@ -56,10 +58,11 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
     };
 
     const handleSave = async () => {
+        if (!user?.uid) return;
         setSaving(true);
         try {
             const ids = selected.map(r => r.recipeId!).filter(Boolean);
-            await updateSchedule(weekDay.value, mealType, ids);
+            await updateSchedule(weekDay.value, mealType, ids, user.uid);
             setIsOpenAction(false, true);
         } catch (e) {
             console.error('Error saving schedule:', e);

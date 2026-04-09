@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Recipe } from "@/app/data/DataInterface";
 import { MEAL_TYPES } from "@/app/data/ConstData";
 import { useRecipes } from "@/app/components/baseComponents/RecipeProvider";
+import { useAuth } from "@/app/components/baseComponents/AuthProvider";
+import { deleteRecipeFromFirebase, toggleRecipePublic } from "@/app/utils/firebaseUtils/Recipe";
 import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
+import EditRecipeModal from "@/app/components/pageComponents/EditRecipe";
 
 const HERO_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuAHgwX2m5vJzXbS63imMz81bbkjghfpwp-wSx1jn3gHGeFKTzfMx_nWJGwSCvMfRXr4WIoNtFKNXqV9I82wP1xm4qouNJubz7SJ3sgEfx4trD0YJqiaNXE0TnzP-6fQo72nhu1SGDkmOcwSGA2J9MENranzQfzE9_9j84vJIGw9vWLWlqLFgfweqxc2HQeFp4-XzgH6ZcBxPYlpJ6iQfrIUbJ4lnk7tFvism_wgBalo_z7oX-9NdQIohGe5Pv974ak96tF2m9dlYYX9";
 
@@ -17,17 +20,69 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 export default function HomePage() {
-    const { recipes, loading } = useRecipes();
+    const { recipes, loading, invalidate } = useRecipes();
+    const { user } = useAuth();
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
     const [detailOpen, setDetailOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
 
-    const filteredRecipes = useMemo(
-        () => activeFilter ? recipes.filter((r) => r.mealType?.includes(activeFilter)) : recipes,
-        [recipes, activeFilter]
-    );
+    const handleDelete = async (recipe: Recipe) => {
+        if (!recipe.recipeId) return;
+        if (!confirm(`Delete "${recipe.name}"?`)) return;
+        await deleteRecipeFromFirebase(recipe.recipeId, recipe.createdBy!, recipe.isPublic);
+        invalidate();
+        setDetailOpen(false);
+    };
 
-    const featuredRecipe = recipes[0] ?? null;
+    const handleTogglePublic = async (recipe: Recipe) => {
+        await toggleRecipePublic(recipe);
+        invalidate();
+        setDetailOpen(false);
+    };
+
+    const isOwner = (recipe: Recipe) => !!(user && recipe.createdBy === user.uid);
+
+    const filteredRecipes = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        return recipes.filter(r => {
+            const matchesFilter =
+                !activeFilter ? true :
+                activeFilter === 'my-recipes' ? r.createdBy === user?.uid :
+                r.mealType?.includes(activeFilter);
+            const matchesSearch = !q || r.name.toLowerCase().includes(q);
+            return matchesFilter && matchesSearch;
+        });
+    }, [recipes, activeFilter, searchQuery, user?.uid]);
+
+    // Daily pick — deterministic seed so it's consistent all day
+    const todayRecipe = useMemo(() => {
+        if (!recipes.length) return null;
+        const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+        return recipes[dayIndex % recipes.length];
+    }, [recipes]);
+
+    // Hero recipe — starts as today's pick, can be shuffled
+    const [heroRecipe, setHeroRecipe] = useState<Recipe | null>(null);
+    const [shuffling, setShuffling] = useState(false);
+
+    useEffect(() => {
+        if (todayRecipe && !heroRecipe) setHeroRecipe(todayRecipe);
+    }, [todayRecipe, heroRecipe]);
+
+    const handleShuffle = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (recipes.length < 2) return;
+        setShuffling(true);
+        setTimeout(() => {
+            let next: Recipe;
+            do { next = recipes[Math.floor(Math.random() * recipes.length)]; }
+            while (next.recipeId === heroRecipe?.recipeId && recipes.length > 1);
+            setHeroRecipe(next);
+            setShuffling(false);
+        }, 300);
+    };
 
     return (
         <div className="bg-surface text-on-surface">
@@ -40,41 +95,68 @@ export default function HomePage() {
                     {loading ? (
                         <div className="shimmer w-full aspect-[4/5] rounded-[2rem]"/>
                     ) : (
-                        <div className="relative w-full aspect-[4/5] rounded-[2rem] overflow-hidden bg-surface-container shadow-sm">
-                            {featuredRecipe?.imageUrl ? (
-                                <Image src={featuredRecipe.imageUrl} alt={featuredRecipe.name} fill className="object-cover"/>
+                        <div
+                            className="relative w-full aspect-[4/5] rounded-[2rem] overflow-hidden bg-surface-container shadow-sm cursor-pointer active:scale-[0.99] transition-transform"
+                            onClick={() => heroRecipe && (setSelectedRecipe(heroRecipe), setDetailOpen(true))}
+                        >
+                            {heroRecipe?.imageUrl ? (
+                                <Image src={heroRecipe.imageUrl} alt={heroRecipe.name} fill className={`object-cover transition-opacity duration-300 ${shuffling ? 'opacity-0' : 'opacity-100'}`}/>
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-surface-container-high">
                                     <span className="material-symbols-outlined text-outline" style={{fontSize: '64px'}}>restaurant</span>
                                 </div>
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"/>
-                            {featuredRecipe && (
+
+                            {/* Shuffle button */}
+                            <button
+                                onClick={handleShuffle}
+                                className={`absolute top-4 right-4 w-10 h-10 rounded-full bg-surface-container-lowest/70 backdrop-blur flex items-center justify-center text-on-surface hover:bg-surface-container-lowest transition-colors active:scale-90 ${shuffling ? 'animate-spin' : ''}`}
+                            >
+                                <span className="material-symbols-outlined text-base">shuffle</span>
+                            </button>
+
+                            {heroRecipe && (
                                 <div className="absolute bottom-0 left-0 p-8 w-full">
-                                    {featuredRecipe.mealType && featuredRecipe.mealType.length > 0 && (
-                                        <span className="inline-block px-3 py-1 bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold uppercase tracking-[0.2em] rounded-full mb-3 font-label capitalize">
-                                            {featuredRecipe.mealType[0]}
+                                    <span className="inline-block px-3 py-1 bg-surface-container-lowest/70 backdrop-blur text-primary text-[10px] font-bold uppercase tracking-[0.2em] rounded-full mb-3 font-label">
+                                        Today&apos;s Pick
+                                    </span>
+                                    {heroRecipe.mealType && heroRecipe.mealType.length > 0 && (
+                                        <span className="inline-block ml-2 px-3 py-1 bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold uppercase tracking-[0.2em] rounded-full mb-3 font-label capitalize">
+                                            {heroRecipe.mealType[0]}
                                         </span>
                                     )}
-                                    <h2 className="font-headline text-3xl text-white mb-6 leading-tight">{featuredRecipe.name}</h2>
-                                    <button
-                                        onClick={() => { setSelectedRecipe(featuredRecipe); setDetailOpen(true); }}
-                                        className="bg-gradient-to-br from-primary to-primary-container text-white px-8 py-4 rounded-full font-label font-semibold text-sm tracking-widest flex items-center gap-2 shadow-lg active:scale-95 transition-transform"
-                                    >
-                                        EXPLORE FEATURED TODAY
-                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                                    </button>
+                                    <h2 className="font-headline text-3xl text-white leading-tight">{heroRecipe.name}</h2>
                                 </div>
                             )}
                         </div>
                     )}
                 </section>
 
+                {/* Search bar */}
+                <section className="px-6 mb-6">
+                    <div className="relative">
+                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none">search</span>
+                        <input
+                            type="text"
+                            placeholder="Search recipes..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="w-full bg-surface-container-low rounded-2xl pl-12 pr-10 py-4 font-body text-base text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/40"
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery('')}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-base">close</span>
+                            </button>
+                        )}
+                    </div>
+                </section>
+
                 {/* Category filter pills */}
                 <section className="mb-10">
-                    <div className="px-6 mb-4 flex justify-between items-end">
-                        <h3 className="font-headline text-xl">Browse Categories</h3>
-                    </div>
                     <div className="flex gap-3 overflow-x-auto px-6 pb-2 hide-scrollbar">
                         <button
                             onClick={() => setActiveFilter(null)}
@@ -95,6 +177,16 @@ export default function HomePage() {
                                 {type}
                             </button>
                         ))}
+                        {user && (
+                            <button
+                                onClick={() => setActiveFilter('my-recipes')}
+                                className={`flex-shrink-0 px-6 py-3 rounded-full font-label font-medium text-xs tracking-wider transition-colors ${
+                                    activeFilter === 'my-recipes' ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'
+                                }`}
+                            >
+                                My Recipes
+                            </button>
+                        )}
                     </div>
                 </section>
 
@@ -132,6 +224,14 @@ export default function HomePage() {
                                         <div className="absolute top-4 left-4">
                                             <span className="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 rounded-full text-[10px] font-label font-bold uppercase tracking-tighter capitalize">
                                                 {recipe.mealType[0]}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {recipe.createdByName && (
+                                        <div className="absolute bottom-4 left-4">
+                                            <span className="inline-flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur text-on-surface px-3 py-1 rounded-full text-[10px] font-label font-semibold">
+                                                <span className="material-symbols-outlined" style={{fontSize: '12px'}}>person</span>
+                                                {recipe.createdByName}
                                             </span>
                                         </div>
                                     )}
@@ -179,44 +279,56 @@ export default function HomePage() {
                             <p className="text-base sm:text-lg text-on-surface-variant max-w-md leading-relaxed">
                                 Discover a curated collection of seasonal recipes designed for the modern kitchen. Earthy, vibrant, and intentionally crafted.
                             </p>
-                            <div className="pt-4">
-                                <Link
-                                    href="/list-recipe"
-                                    className="inline-block hero-gradient px-6 sm:px-8 py-3 sm:py-4 rounded-full text-white font-label font-semibold tracking-wide shadow-xl hover:scale-105 transition-transform"
-                                >
-                                    Explore Featured Today
-                                </Link>
-                            </div>
                         </div>
 
                         {/* Right: hero image + floating card */}
-                        <div className="w-full md:w-7/12 relative group">
+                        <div
+                            className="w-full md:w-7/12 relative group cursor-pointer"
+                            onClick={() => heroRecipe && (setSelectedRecipe(heroRecipe), setDetailOpen(true))}
+                        >
                             <div className="absolute -top-4 -left-4 w-24 h-24 bg-secondary-fixed rounded-full -z-10 group-hover:scale-110 transition-transform duration-500" />
-                            <div className="rounded-xl overflow-hidden shadow-2xl h-[260px] sm:h-[360px] md:h-[450px]">
-                                <Image
-                                    src={HERO_IMAGE}
-                                    alt="Mediterranean vegetable tart on a rustic wooden board"
-                                    fill
-                                    className="object-cover"
-                                />
+                            <div className="relative rounded-xl overflow-hidden shadow-2xl h-[260px] sm:h-[360px] md:h-[450px]">
+                                {heroRecipe?.imageUrl ? (
+                                    <Image
+                                        src={heroRecipe.imageUrl}
+                                        alt={heroRecipe.name}
+                                        fill
+                                        className={`object-cover group-hover:scale-105 transition-all duration-700 ${shuffling ? 'opacity-0 scale-105' : 'opacity-100'}`}
+                                    />
+                                ) : (
+                                    <Image
+                                        src={HERO_IMAGE}
+                                        alt="Hero"
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                )}
+
+                                {/* Shuffle button */}
+                                <button
+                                    onClick={handleShuffle}
+                                    className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-surface-container-lowest/70 backdrop-blur flex items-center justify-center text-on-surface hover:bg-surface-container-lowest transition-colors hover:scale-110 active:scale-90 ${shuffling ? 'animate-spin' : ''}`}
+                                >
+                                    <span className="material-symbols-outlined text-base">shuffle</span>
+                                </button>
                             </div>
-                            {featuredRecipe && (
-                                <div className="hidden sm:block absolute -bottom-6 -right-2 md:-right-6 bg-surface-container-lowest p-4 md:p-6 rounded-xl shadow-lg max-w-[220px] md:max-w-xs">
+                            {heroRecipe && (
+                                <div className="hidden sm:block absolute -bottom-6 -right-2 md:-right-6 bg-surface-container-lowest p-4 md:p-6 rounded-xl shadow-lg max-w-[220px] md:max-w-xs hover:shadow-xl transition-shadow">
                                     <span className="text-primary font-label text-xs font-bold uppercase tracking-widest mb-2 block">
-                                        Chef&apos;s Choice
+                                        Today&apos;s Pick
                                     </span>
-                                    <h3 className="font-headline text-base md:text-xl mb-2 line-clamp-2">{featuredRecipe.name}</h3>
+                                    <h3 className="font-headline text-base md:text-xl mb-2 line-clamp-2">{heroRecipe.name}</h3>
                                     <div className="flex items-center gap-3 text-sm text-outline flex-wrap">
-                                        {(featuredRecipe.cookTime ?? 0) > 0 && (
+                                        {(heroRecipe.cookTime ?? 0) > 0 && (
                                             <span className="flex items-center gap-1">
                                                 <span className="material-symbols-outlined text-sm">schedule</span>
-                                                {featuredRecipe.cookTime}m
+                                                {heroRecipe.cookTime}m
                                             </span>
                                         )}
-                                        {(featuredRecipe.servings ?? 0) > 0 && (
+                                        {(heroRecipe.servings ?? 0) > 0 && (
                                             <span className="flex items-center gap-1">
                                                 <span className="material-symbols-outlined text-sm">restaurant_menu</span>
-                                                {featuredRecipe.servings}
+                                                {heroRecipe.servings}
                                             </span>
                                         )}
                                     </div>
@@ -226,14 +338,30 @@ export default function HomePage() {
                     </div>
                 </section>
 
+                {/* Search bar */}
+                <section className="px-4 sm:px-8 mb-10">
+                    <div className="relative">
+                        <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-xl">search</span>
+                        <input
+                            type="text"
+                            placeholder="Search recipes by name..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="w-full bg-surface-container-low rounded-2xl pl-14 pr-12 py-5 font-body text-lg text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/40 transition-shadow"
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery('')}
+                                className="absolute right-5 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
+                            >
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        )}
+                    </div>
+                </section>
+
                 {/* Category Filters */}
                 <section className="px-4 sm:px-8 mb-12">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex flex-col">
-                            <h2 className="text-2xl font-headline font-semibold text-on-surface">Browse Categories</h2>
-                            <div className="h-1 w-12 bg-secondary-container mt-1" />
-                        </div>
-                    </div>
                     <div className="flex gap-4 overflow-x-auto pb-4">
                         <button
                             onClick={() => setActiveFilter(null)}
@@ -260,11 +388,24 @@ export default function HomePage() {
                                 {type}
                             </button>
                         ))}
+                        {user && (
+                            <button
+                                onClick={() => setActiveFilter('my-recipes')}
+                                className={`px-6 py-3 rounded-full flex items-center gap-2 whitespace-nowrap font-label font-medium transition-colors ${
+                                    activeFilter === 'my-recipes'
+                                        ? "bg-primary text-white"
+                                        : "bg-surface-container-low text-on-surface hover:bg-surface-container-high"
+                                }`}
+                            >
+                                <span className="material-symbols-outlined">person</span>
+                                My Recipes
+                            </button>
+                        )}
                     </div>
                 </section>
 
                 {/* Recipe Grid */}
-                <section className="px-4 sm:px-8">
+                <section id="recipes" className="px-4 sm:px-8">
                     {loading ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                             {Array.from({length: 6}).map((_, i) => (
@@ -300,7 +441,7 @@ export default function HomePage() {
                                     }}
                                 >
                                     {/* Image */}
-                                    <div className="h-72 overflow-hidden bg-surface-container-high">
+                                    <div className="relative h-72 overflow-hidden bg-surface-container-high">
                                         {recipe.imageUrl ? (
                                             <Image
                                                 src={recipe.imageUrl}
@@ -314,32 +455,34 @@ export default function HomePage() {
                                                 <span className="material-symbols-outlined" style={{ fontSize: "64px" }}>restaurant</span>
                                             </div>
                                         )}
-                                    </div>
 
-                                    {/* Meal type chips */}
-                                    {recipe.mealType && recipe.mealType.length > 0 && (
-                                        <div className="absolute top-4 left-4 flex flex-wrap gap-1">
-                                            {recipe.mealType.map(type => (
-                                                <span key={type} className="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 rounded-full text-xs font-label font-bold uppercase tracking-tighter capitalize">
-                                                    {type}
+                                        {/* Meal type chips — top left */}
+                                        {recipe.mealType && recipe.mealType.length > 0 && (
+                                            <div className="absolute top-4 left-4 flex flex-wrap gap-1">
+                                                {recipe.mealType.map(type => (
+                                                    <span key={type} className="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 rounded-full text-xs font-label font-bold uppercase tracking-tighter capitalize">
+                                                        {type}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Username pill — bottom left */}
+                                        {recipe.createdByName && (
+                                            <div className="absolute bottom-4 left-4">
+                                                <span className="inline-flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur text-on-surface px-3 py-1 rounded-full text-xs font-label font-semibold">
+                                                    <span className="material-symbols-outlined text-sm">person</span>
+                                                    {recipe.createdByName}
                                                 </span>
-                                            ))}
-                                        </div>
-                                    )}
+                                            </div>
+                                        )}
+                                    </div>
 
                                     {/* Card body */}
                                     <div className="p-6">
                                         <h3 className="text-2xl font-headline font-bold text-on-surface mb-3 group-hover:text-primary transition-colors">
                                             {recipe.name}
                                         </h3>
-                                        {recipe.createdByName && (
-                                            <div className="mb-3">
-                                                <span className="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-xs font-label">
-                                                    <span className="material-symbols-outlined text-sm">person</span>
-                                                    {recipe.createdByName}
-                                                </span>
-                                            </div>
-                                        )}
                                         <div className="flex items-center gap-4 text-sm text-outline font-label">
                                             {(recipe.cookTime ?? 0) > 0 && (
                                                 <span className="flex items-center gap-1">
@@ -377,7 +520,7 @@ export default function HomePage() {
                         <p className="text-sm text-outline mt-2 font-label">The Editorial Cookbook for the Modern Kitchen.</p>
                     </div>
                     <div className="flex gap-8 text-sm font-label text-on-surface-variant">
-                        <Link href="/list-recipe" className="hover:text-primary transition-colors">Recipes</Link>
+                        <Link href="/" className="hover:text-primary transition-colors">Recipes</Link>
                         <Link href="/add-recipe" className="hover:text-primary transition-colors">Add Recipe</Link>
                         <Link href="/daily-schedule" className="hover:text-primary transition-colors">Planner</Link>
                     </div>
@@ -397,6 +540,16 @@ export default function HomePage() {
                     isOpen={detailOpen}
                     recipe={selectedRecipe}
                     setIsOpenAction={setDetailOpen}
+                    onDelete={isOwner(selectedRecipe) ? () => handleDelete(selectedRecipe) : undefined}
+                    onEdit={isOwner(selectedRecipe) ? () => { setDetailOpen(false); setEditOpen(true); } : undefined}
+                    onTogglePublic={isOwner(selectedRecipe) ? () => handleTogglePublic(selectedRecipe) : undefined}
+                />
+            )}
+            {editOpen && selectedRecipe && (
+                <EditRecipeModal
+                    isOpen={editOpen}
+                    recipe={selectedRecipe}
+                    setIsOpenAction={setEditOpen}
                 />
             )}
         </div>

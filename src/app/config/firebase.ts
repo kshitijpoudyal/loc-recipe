@@ -22,5 +22,6 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const storage = getStorage(app); // Firebase Storage instance
 export const auth = getAuth(app);
-export const recipeTable = "recipe";
-export const dailyScheduleTable = "dailySchedule";
+export const globalUserId = "fYuhY5ZiduetO4dt73VU1RElYiV2";
+export const userRecipeCol = (userId: string) => `users/${userId}/recipe`;
+export const userScheduleCol = (userId: string) => `users/${userId}/dailySchedule`;

@@ -13,25 +13,20 @@ interface AuthenticationGateProps {
 
 export const AuthenticationGate: React.FC<AuthenticationGateProps> = ({children}) => {
     const router = useRouter();
-    const {user} = useAuth();
+    const {user, authLoading} = useAuth();
 
     useEffect(() => {
-        if (!user) {
+        if (!authLoading && !user) {
             redirectToLogin(router);
         }
-
-    }, [router, user]);
+    }, [router, user, authLoading]);
 
     return (
         <section className={getMainBodyCss()}>
-            {(user) ? (
-                <div>
-                    {children}
-                </div>
+            {user ? (
+                <div>{children}</div>
             ) : (
-                <div>
-                    <LoaderComponent loading={true} message={"Please Login! \nRedirecting you to Login Page..."}/>
-                </div>
+                <LoaderComponent loading={true} message={"Please Login! \nRedirecting you to Login Page..."}/>
             )}
         </section>
     );

@@ -13,28 +13,32 @@ interface AuthProviderProps {
 
 interface AuthContextType {
     user: User | null;
+    authLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
+    authLoading: true,
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({children, shouldRedirectToLogin}) => {
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
+    const [authLoading, setAuthLoading] = useState(true);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (authUser) => {
             setUser(authUser);
+            setAuthLoading(false);
             if (!authUser && shouldRedirectToLogin) {
                 redirectToLogin(router);
             }
         });
         return () => unsubscribe();
-    }, [router, shouldRedirectToLogin, user]);
+    }, [router, shouldRedirectToLogin]);
 
     return (
-        <AuthContext.Provider value={{user}}>
+        <AuthContext.Provider value={{user, authLoading}}>
             {children}
         </AuthContext.Provider>
     );

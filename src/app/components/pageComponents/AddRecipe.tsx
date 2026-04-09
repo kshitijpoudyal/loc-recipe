@@ -159,7 +159,6 @@ export default function AddRecipeComponent() {
                 servings: servings !== '' ? Number(servings) : undefined,
                 mealType: mealType.map(m => m.toLowerCase()),
                 ageGroup: ageGroup.map(a => a.toLowerCase()),
-                createdBy: user?.uid,
                 createdByName: user?.displayName || user?.email || undefined,
                 ingredients,
                 steps: steps.filter(s => s.trim()),
@@ -177,7 +176,7 @@ export default function AddRecipeComponent() {
                 recipe.imageUrl = importedImageUrl;
             }
 
-            await addRecipeToFirebase(recipe);
+            await addRecipeToFirebase(recipe, user!.uid);
             invalidate();
             alert('Recipe added successfully!');
             clearForm();

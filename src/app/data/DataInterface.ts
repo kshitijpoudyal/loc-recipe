@@ -32,6 +32,7 @@ export interface Recipe {
         sugar?: number; // in grams
     };
     imageUrl?: string,
+    isPublic?: boolean,
     createdAt?: Date,
     createdBy?: string,
     createdByName?: string
