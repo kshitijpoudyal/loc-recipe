@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/app/components/baseComponents/AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "@/app/config/firebase";
+import UserIcon from "@/app/components/baseComponents/UserIcon";
 
 export default function NavigationMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -83,9 +84,8 @@ export default function NavigationMenu() {
                     ))}
                 </div>
 
-                {/* Right side: account */}
-                <div className="flex items-center gap-3">
-                    {/* Account dropdown (desktop) */}
+                {/* Right side: account (desktop only) */}
+                <div className="hidden md:flex items-center gap-3">
                     <div className="relative" ref={accountRef}>
                         <button
                             onClick={() => setAccountOpen(o => !o)}
@@ -95,7 +95,7 @@ export default function NavigationMenu() {
                             {user?.photoURL ? (
                                 <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
-                                <span className="material-symbols-outlined text-primary" style={{ fontSize: "28px" }}>account_circle</span>
+                                <UserIcon className="w-7 h-7 text-primary" />
                             )}
                         </button>
 
@@ -136,7 +136,7 @@ export default function NavigationMenu() {
                                 <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="w-full h-full bg-primary-container flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-primary" style={{ fontSize: "40px" }}>person</span>
+                                    <UserIcon className="w-12 h-12 text-primary" />
                                 </div>
                             )}
                         </div>
@@ -225,7 +225,7 @@ export default function NavigationMenu() {
                         onClick={() => setAccountOpen(o => !o)}
                         className={`flex flex-col items-center text-on-surface/50 hover:text-on-surface/80 transition-all duration-200`}
                     >
-                        <span className="material-symbols-outlined">account_circle</span>
+                        <UserIcon className="w-6 h-6" />
                         <span className="font-body font-medium text-[10px] uppercase tracking-wider">Profile</span>
                     </button>
                 )}

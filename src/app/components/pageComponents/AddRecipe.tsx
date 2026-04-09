@@ -1,11 +1,12 @@
 "use client";
 
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {addRecipeToFirebase, uploadImage} from "@/app/utils/firebaseUtils/Recipe";
 import {Recipe} from "@/app/data/DataInterface";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
+import {getUserDisplayName} from "@/app/utils/firebaseUtils/User";
 
 const MEAL_TYPE_OPTIONS = ["Breakfast", "Lunch", "Dinner"];
 const AGE_GROUP_OPTIONS = ["Adult", "Kids"];
@@ -13,6 +14,16 @@ const AGE_GROUP_OPTIONS = ["Adult", "Kids"];
 type IngredientRow = { qty: string; name: string };
 
 export default function AddRecipeComponent() {
+    const { user } = useAuth();
+    const { invalidate } = useRecipes();
+    const [firestoreDisplayName, setFirestoreDisplayName] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (user?.uid) {
+            getUserDisplayName(user.uid).then(setFirestoreDisplayName);
+        }
+    }, [user?.uid]);
+
     const [name, setName] = useState('');
     const [prepTime, setPrepTime] = useState<number | ''>('');
     const [cookTime, setCookTime] = useState<number | ''>('');
@@ -32,9 +43,6 @@ export default function AddRecipeComponent() {
     const [importUrl, setImportUrl] = useState('');
     const [importLoading, setImportLoading] = useState(false);
     const [importStatus, setImportStatus] = useState<{type: 'success' | 'error'; message: string} | null>(null);
-    const {user} = useAuth();
-    const {invalidate} = useRecipes();
-
     const toggleChip = (value: string, list: string[], setList: (v: string[]) => void) => {
         setList(list.includes(value) ? list.filter(v => v !== value) : [...list, value]);
     };
@@ -159,7 +167,7 @@ export default function AddRecipeComponent() {
                 servings: servings !== '' ? Number(servings) : undefined,
                 mealType: mealType.map(m => m.toLowerCase()),
                 ageGroup: ageGroup.map(a => a.toLowerCase()),
-                createdByName: user?.displayName || user?.email || undefined,
+                createdByName: firestoreDisplayName || user?.displayName || user?.email || undefined,
                 ingredients,
                 steps: steps.filter(s => s.trim()),
                 nutrition: {
