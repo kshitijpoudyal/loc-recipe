@@ -27,7 +27,11 @@ export default function AddRecipeComponent() {
     const [fats, setFats] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [importedImageUrl, setImportedImageUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [importUrl, setImportUrl] = useState('');
+    const [importLoading, setImportLoading] = useState(false);
+    const [importStatus, setImportStatus] = useState<{type: 'success' | 'error'; message: string} | null>(null);
     const {user} = useAuth();
     const {invalidate} = useRecipes();
 
@@ -84,6 +88,59 @@ export default function AddRecipeComponent() {
         setFats('');
         setImageFile(null);
         setSelectedImage(null);
+        setImportedImageUrl(null);
+        setImportUrl('');
+        setImportStatus(null);
+    };
+
+    const prefillForm = (data: {
+        name?: string; prepTime?: number; cookTime?: number; servings?: number;
+        mealType?: string[]; ingredients?: {qty: string; name: string}[]; steps?: string[];
+        nutrition?: {calories?: number; protein?: number; carbohydrates?: number; fats?: number};
+        imageUrl?: string;
+    }) => {
+        if (data.name) setName(data.name);
+        if (data.prepTime) setPrepTime(data.prepTime);
+        if (data.cookTime) setCookTime(data.cookTime);
+        if (data.servings) setServings(data.servings);
+        if (data.mealType?.length) setMealType(data.mealType.map(m => m.charAt(0).toUpperCase() + m.slice(1)));
+        if (data.ingredients?.length) setIngredientRows(data.ingredients);
+        if (data.steps?.length) setSteps(data.steps);
+        if (data.nutrition) {
+            if (data.nutrition.calories) setCalories(String(data.nutrition.calories));
+            if (data.nutrition.protein) setProtein(String(data.nutrition.protein));
+            if (data.nutrition.carbohydrates) setCarbohydrates(String(data.nutrition.carbohydrates));
+            if (data.nutrition.fats) setFats(String(data.nutrition.fats));
+        }
+        if (data.imageUrl) {
+            setSelectedImage(data.imageUrl);
+            setImportedImageUrl(data.imageUrl);
+        }
+    };
+
+    const handleImport = async () => {
+        if (!importUrl.trim()) return;
+        setImportLoading(true);
+        setImportStatus(null);
+        try {
+            const res = await fetch('/api/import-recipe', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({url: importUrl.trim()}),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setImportStatus({type: 'error', message: data.error ?? 'Could not import recipe'});
+                return;
+            }
+            prefillForm(data);
+            const domain = new URL(importUrl.trim()).hostname.replace('www.', '');
+            setImportStatus({type: 'success', message: `Imported from ${domain} — review and publish`});
+        } catch {
+            setImportStatus({type: 'error', message: 'Failed to reach the URL'});
+        } finally {
+            setImportLoading(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -116,6 +173,8 @@ export default function AddRecipeComponent() {
 
             if (imageFile) {
                 recipe.imageUrl = await uploadImage(imageFile);
+            } else if (importedImageUrl) {
+                recipe.imageUrl = importedImageUrl;
             }
 
             await addRecipeToFirebase(recipe);
@@ -135,12 +194,47 @@ export default function AddRecipeComponent() {
             {/* ── Mobile layout ── */}
             <div className="md:hidden pt-24 pb-40 px-6 max-w-2xl mx-auto space-y-10">
 
+                {/* 0. Import from URL */}
+                <section className="bg-surface-container-low rounded-2xl p-5">
+                    <h3 className="font-label text-xs uppercase tracking-[0.15em] font-semibold text-primary mb-3 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-base">link</span>
+                        Import from URL
+                    </h3>
+                    <div className="flex gap-2">
+                        <input
+                            type="url"
+                            value={importUrl}
+                            onChange={e => setImportUrl(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleImport())}
+                            placeholder="Paste recipe URL…"
+                            className="flex-1 bg-background rounded-xl px-4 py-3 font-body text-sm outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleImport}
+                            disabled={importLoading || !importUrl.trim()}
+                            className="px-4 py-3 rounded-xl bg-primary text-on-primary font-label text-xs font-bold disabled:opacity-40 active:scale-95 transition-all flex items-center gap-1"
+                        >
+                            {importLoading
+                                ? <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+                                : <span className="material-symbols-outlined text-sm">download</span>
+                            }
+                        </button>
+                    </div>
+                    {importStatus && (
+                        <p className={`mt-3 text-xs font-label flex items-center gap-1 ${importStatus.type === 'success' ? 'text-primary' : 'text-error'}`}>
+                            <span className="material-symbols-outlined text-sm">{importStatus.type === 'success' ? 'check_circle' : 'error'}</span>
+                            {importStatus.message}
+                        </p>
+                    )}
+                </section>
+
                 {/* 1. Hero image upload */}
                 <section>
                     <label htmlFor="imageUploadMobile" className="cursor-pointer block">
                         <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-low border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center text-center p-8 transition-all hover:bg-surface-container-high/50">
                             {selectedImage && (
-                                <Image src={selectedImage} alt="Recipe preview" fill className="object-cover"/>
+                                <Image src={selectedImage} alt="Recipe preview" fill className="object-cover" unoptimized={!imageFile}/>
                             )}
                             <div className={`relative z-10 ${selectedImage ? 'opacity-0' : ''}`}>
                                 <span className="material-symbols-outlined text-5xl text-primary-container mb-4 block" style={{fontVariationSettings: "'FILL' 1"}}>add_a_photo</span>
@@ -364,12 +458,47 @@ export default function AddRecipeComponent() {
                 </header>
 
                 <div className="space-y-12">
+                    {/* Import from URL */}
+                    <section className="bg-surface-container-low rounded-2xl p-6">
+                        <h3 className="font-label text-xs uppercase tracking-[0.15em] font-semibold text-primary mb-4 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-base">link</span>
+                            Import from URL
+                        </h3>
+                        <div className="flex gap-3">
+                            <input
+                                type="url"
+                                value={importUrl}
+                                onChange={e => setImportUrl(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleImport())}
+                                placeholder="Paste a recipe URL from any website…"
+                                className="flex-1 bg-background rounded-xl px-5 py-3 font-body text-sm outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant"
+                            />
+                            <button
+                                type="button"
+                                onClick={handleImport}
+                                disabled={importLoading || !importUrl.trim()}
+                                className="px-6 py-3 rounded-xl bg-primary text-on-primary font-label text-sm font-bold disabled:opacity-40 hover:opacity-90 active:scale-95 transition-all flex items-center gap-2"
+                            >
+                                {importLoading
+                                    ? <><span className="material-symbols-outlined text-sm animate-spin">progress_activity</span> Importing…</>
+                                    : <><span className="material-symbols-outlined text-sm">download</span> Import</>
+                                }
+                            </button>
+                        </div>
+                        {importStatus && (
+                            <p className={`mt-3 text-sm font-label flex items-center gap-1.5 ${importStatus.type === 'success' ? 'text-primary' : 'text-error'}`}>
+                                <span className="material-symbols-outlined text-base">{importStatus.type === 'success' ? 'check_circle' : 'error'}</span>
+                                {importStatus.message}
+                            </p>
+                        )}
+                    </section>
+
                     {/* Hero Image Upload */}
                     <section className="relative group">
                         <label htmlFor="imageUpload" className="cursor-pointer block">
                             <div className="w-full h-80 rounded-xl bg-surface-container-low flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 overflow-hidden group-hover:border-primary/50 transition-colors relative">
                                 {selectedImage ? (
-                                    <Image src={selectedImage} alt="Recipe preview" fill className="object-cover"/>
+                                    <Image src={selectedImage} alt="Recipe preview" fill className="object-cover" unoptimized={!imageFile}/>
                                 ) : null}
                                 <div className={`z-10 text-center p-6 bg-surface-container-lowest/90 backdrop-blur rounded-xl shadow-sm ${selectedImage ? 'opacity-0 group-hover:opacity-100 transition-opacity' : ''}`}>
                                     <span className="material-symbols-outlined text-4xl text-primary mb-2 block">add_a_photo</span>
