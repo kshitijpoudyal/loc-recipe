@@ -9,9 +9,11 @@ export interface RecipeDetailsTemplate {
     recipe: Recipe;
     setIsOpenAction: (open: boolean) => void;
     onDelete?: () => void;
+    onEdit?: () => void;
+    onTogglePublic?: () => void;
 }
 
-export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction, onDelete}: RecipeDetailsTemplate) {
+export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction, onDelete, onEdit, onTogglePublic}: RecipeDetailsTemplate) {
     const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
 
     function toggleIngredient(idx: number) {
@@ -37,8 +39,33 @@ export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction, 
                     >
                         <div className="relative flex w-full flex-col overflow-hidden bg-background shadow-2xl rounded-xl">
 
-                            {/* Close / Delete buttons */}
+                            {/* Close / Edit / Public / Delete buttons */}
                             <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
+                                {onTogglePublic && (
+                                    <button
+                                        type="button"
+                                        onClick={onTogglePublic}
+                                        className={`text-xs font-semibold font-label border rounded-full px-3 py-1 backdrop-blur flex items-center gap-1 transition-colors ${
+                                            recipe.isPublic
+                                                ? 'text-tertiary border-tertiary/30 bg-tertiary/10 hover:bg-tertiary/20'
+                                                : 'text-on-surface-variant border-outline-variant/30 bg-surface-container-lowest/80 hover:bg-surface-container-low'
+                                        }`}
+                                    >
+                                        <span className="material-symbols-outlined" style={{fontSize: '13px'}}>
+                                            {recipe.isPublic ? 'public' : 'public_off'}
+                                        </span>
+                                        {recipe.isPublic ? 'Public' : 'Private'}
+                                    </button>
+                                )}
+                                {onEdit && (
+                                    <button
+                                        type="button"
+                                        onClick={onEdit}
+                                        className="text-xs font-semibold font-label text-primary border border-primary/30 rounded-full px-3 py-1 bg-surface-container-lowest/80 backdrop-blur hover:bg-primary/10 transition-colors"
+                                    >
+                                        Edit
+                                    </button>
+                                )}
                                 {onDelete && (
                                     <button
                                         type="button"
