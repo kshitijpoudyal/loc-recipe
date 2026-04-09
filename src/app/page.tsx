@@ -24,6 +24,7 @@ export default function HomePage() {
     const { user } = useAuth();
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [filterSheetOpen, setFilterSheetOpen] = useState(false);
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
     const [detailOpen, setDetailOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
@@ -133,60 +134,38 @@ export default function HomePage() {
                     )}
                 </section>
 
-                {/* Search bar */}
+                {/* Search + Filter icon */}
                 <section className="px-6 mb-6">
-                    <div className="relative">
-                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none">search</span>
-                        <input
-                            type="text"
-                            placeholder="Search recipes..."
-                            value={searchQuery}
-                            onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full bg-surface-container-low rounded-2xl pl-12 pr-10 py-4 font-body text-base text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/40"
-                        />
-                        {searchQuery && (
-                            <button
-                                onClick={() => setSearchQuery('')}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-base">close</span>
-                            </button>
-                        )}
-                    </div>
-                </section>
-
-                {/* Category filter pills */}
-                <section className="mb-10">
-                    <div className="flex gap-3 overflow-x-auto px-6 pb-2 hide-scrollbar">
+                    <div className="flex gap-3 items-center">
+                        <div className="relative flex-1">
+                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none">search</span>
+                            <input
+                                type="text"
+                                placeholder="Search recipes..."
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                className="w-full bg-surface-container-low rounded-2xl pl-12 pr-10 py-4 font-body text-base text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/40"
+                            />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery('')}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-base">close</span>
+                                </button>
+                            )}
+                        </div>
                         <button
-                            onClick={() => setActiveFilter(null)}
-                            className={`flex-shrink-0 px-6 py-3 rounded-full font-label font-medium text-xs tracking-wider transition-colors ${
-                                activeFilter === null ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'
+                            onClick={() => setFilterSheetOpen(true)}
+                            className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center transition-colors relative ${
+                                activeFilter ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'
                             }`}
                         >
-                            All Recipes
+                            <span className="material-symbols-outlined">tune</span>
+                            {activeFilter && (
+                                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-secondary-container"/>
+                            )}
                         </button>
-                        {MEAL_TYPES.map(type => (
-                            <button
-                                key={type}
-                                onClick={() => setActiveFilter(type)}
-                                className={`flex-shrink-0 px-6 py-3 rounded-full font-label font-medium text-xs tracking-wider capitalize transition-colors ${
-                                    activeFilter === type ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'
-                                }`}
-                            >
-                                {type}
-                            </button>
-                        ))}
-                        {user && (
-                            <button
-                                onClick={() => setActiveFilter('my-recipes')}
-                                className={`flex-shrink-0 px-6 py-3 rounded-full font-label font-medium text-xs tracking-wider transition-colors ${
-                                    activeFilter === 'my-recipes' ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'
-                                }`}
-                            >
-                                My Recipes
-                            </button>
-                        )}
                     </div>
                 </section>
 
@@ -264,6 +243,74 @@ export default function HomePage() {
                     )}
                 </section>
             </div>
+
+            {/* ── Mobile filter bottom sheet ── */}
+            {filterSheetOpen && (
+                <>
+                    <div
+                        className="md:hidden fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-[60]"
+                        onClick={() => setFilterSheetOpen(false)}
+                    />
+                    <div className="md:hidden fixed bottom-0 left-0 right-0 z-[70] bg-surface rounded-t-[2rem] shadow-[0_-8px_40px_rgba(24,29,20,0.12)] flex flex-col max-h-[80vh]">
+                        {/* Handle */}
+                        <div className="flex justify-center py-4">
+                            <div className="w-12 h-1.5 bg-outline-variant/30 rounded-full"/>
+                        </div>
+                        {/* Header */}
+                        <div className="px-8 pb-4">
+                            <h2 className="text-2xl font-headline font-bold text-on-surface">Filter Recipes</h2>
+                            <p className="font-body text-sm text-on-surface-variant mt-1">Select a category to refine your view.</p>
+                        </div>
+                        {/* Options */}
+                        <div className="px-6 py-2 flex-1 overflow-y-auto">
+                            <div className="space-y-2">
+                                {[
+                                    { value: null, label: 'All Recipes', icon: 'restaurant_menu' },
+                                    { value: 'breakfast', label: 'Breakfast', icon: 'bakery_dining' },
+                                    { value: 'lunch', label: 'Lunch', icon: 'lunch_dining' },
+                                    { value: 'dinner', label: 'Dinner', icon: 'dinner_dining' },
+                                    ...(user ? [{ value: 'my-recipes', label: 'My Recipes', icon: 'menu_book' }] : []),
+                                ].map(item => {
+                                    const isActive = activeFilter === item.value;
+                                    return (
+                                        <button
+                                            key={item.label}
+                                            onClick={() => setActiveFilter(item.value)}
+                                            className={`w-full flex items-center justify-between p-4 rounded-xl transition-colors ${isActive ? 'bg-surface-container-low' : 'hover:bg-surface-container-low'}`}
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <span
+                                                    className={`material-symbols-outlined ${isActive ? 'text-primary' : 'text-on-surface-variant'}`}
+                                                    style={isActive ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                                                >
+                                                    {item.icon}
+                                                </span>
+                                                <span className={`font-body font-medium ${isActive ? 'text-on-surface' : 'text-on-surface-variant'}`}>
+                                                    {item.label}
+                                                </span>
+                                            </div>
+                                            {isActive && (
+                                                <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
+                                                    check_circle
+                                                </span>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        {/* Apply button */}
+                        <div className="p-6 pt-4 pb-10">
+                            <button
+                                onClick={() => setFilterSheetOpen(false)}
+                                className="w-full py-4 rounded-full bg-primary text-on-primary font-body font-bold text-base shadow-lg hover:opacity-90 active:scale-[0.98] transition-all"
+                            >
+                                Apply Filter
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
 
             {/* ── Desktop layout ── */}
             <main className="hidden md:block pt-24 pb-12 max-w-screen-2xl mx-auto">
