@@ -147,7 +147,7 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
                                     </div>
 
                                     {/* Recipe rows */}
-                                    <div className="space-y-1 max-h-64 overflow-y-auto -mx-6 md:-mx-10 px-6 md:px-10">
+                                    <div className="space-y-1 max-h-[60vh] overflow-y-auto -mx-6 md:-mx-10 px-6 md:px-10">
                                         {filteredRecipes.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-10 text-outline-variant">
                                                 <span className="material-symbols-outlined text-4xl mb-2">search_off</span>
