@@ -115,7 +115,7 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
                                         </span>
                                     </div>
                                     <h1 className="font-headline text-2xl md:text-3xl font-bold text-on-surface tracking-tight leading-tight">
-                                        Assign a Recipe
+                                        Assign Recipes
                                     </h1>
                                 </div>
                             </header>
