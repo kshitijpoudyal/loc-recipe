@@ -2,7 +2,7 @@ import React, {useState, useRef, useCallback, useEffect, useMemo} from 'react';
 import Image from 'next/image';
 import {MealType, Recipe, WeekDay} from "@/app/data/DataInterface";
 import {DEFAULT_RECIPE, MEAL_TYPES, WEEK_DAYS} from "@/app/data/ConstData";
-import {fetchAllDailySchedules, mapAllRecipesToSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
+import {fetchAllDailySchedules, mapAllRecipesToSchedule, updateSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {AssignRecipeToWeekDay, AssignRecipeToWeekDayProps} from "@/app/components/AssignRecipeToWeekDay";
@@ -47,6 +47,17 @@ export default function DailyScheduleComponent() {
         }, {} as Record<string, number>);
     }, []);
 
+    const { weekLabel, monthAbbr } = useMemo(() => {
+        const today = new Date();
+        const dow = today.getDay();
+        const monday = new Date(today);
+        monday.setDate(today.getDate() + (dow === 0 ? -6 : 1 - dow));
+        return {
+            weekLabel: monday.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }),
+            monthAbbr: monday.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+        };
+    }, []);
+
     const loadSchedule = useCallback(async () => {
         if (!user?.uid) return;
         try {
@@ -59,6 +70,16 @@ export default function DailyScheduleComponent() {
             setRefreshingDay(null);
         }
     }, [allRecipe, user?.uid]);
+
+    const handleRemoveRecipe = useCallback(async (day: WeekDay, mealType: MealType, recipeId: string) => {
+        if (!user?.uid) return;
+        setRefreshingDay(day.value);
+        const remaining = (recipesMap[day.value]?.[mealType] ?? [])
+            .map(r => r.recipeId!)
+            .filter(id => id !== recipeId);
+        await updateSchedule(day.value, mealType, remaining, user.uid);
+        await loadSchedule();
+    }, [user?.uid, loadSchedule, recipesMap]);
 
     const callbackAfterRecipeChange = useCallback((isOpen: boolean, refresh?: boolean) => {
         setIsAddRecipeOpen(isOpen);
@@ -120,62 +141,57 @@ export default function DailyScheduleComponent() {
             );
         }
 
-        if (firstRecipe.imageUrl) {
+        // Single recipe with image — hero card
+        if (recipes.length === 1 && firstRecipe.imageUrl) {
             return (
-                <div key={mealType} className="group relative overflow-hidden rounded-xl h-[180px] shadow-sm">
-                    <Image
-                        src={firstRecipe.imageUrl}
-                        alt={firstRecipe.name}
-                        fill
-                        className="object-cover grayscale-[0.1] group-hover:scale-105 transition-transform duration-500 cursor-pointer"
-                        onClick={() => {
-                            setIsRecipeDetailsOpen(true);
-                            setSelectedRecipeForDetails(firstRecipe);
-                        }}
-                    />
+                <div key={mealType} className="group relative overflow-hidden rounded-xl h-[180px] shadow-sm cursor-pointer"
+                    onClick={() => { setIsRecipeDetailsOpen(true); setSelectedRecipeForDetails(firstRecipe); }}>
+                    <Image src={firstRecipe.imageUrl} alt={firstRecipe.name} fill
+                        className="object-cover grayscale-[0.1] group-hover:scale-105 transition-transform duration-500"/>
                     <div className="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-transparent to-transparent pointer-events-none"/>
                     <div className="absolute bottom-0 left-0 p-3 w-full pointer-events-none">
                         <span className="font-label text-[10px] uppercase tracking-tighter text-white/70 font-bold mb-1 block">{mealType}</span>
                         <p className="font-headline text-sm font-semibold text-white leading-tight">{firstRecipe.name}</p>
                     </div>
-                    <button
-                        onClick={() => handleAddClick(day, mealType, recipes)}
-                        className="absolute top-2 right-2 text-white/60 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-                    >
+                    <button onClick={(e) => { e.stopPropagation(); handleAddClick(day, mealType, recipes); }}
+                        className="absolute top-2 right-2 text-white/60 hover:text-white transition-colors opacity-0 group-hover:opacity-100">
                         <span className="material-symbols-outlined text-sm">edit</span>
                     </button>
                 </div>
             );
         }
 
+        // Multiple recipes — stacked list
         return (
-            <div
-                key={mealType}
-                className="group relative bg-surface-container-low rounded-xl p-4 h-[180px] transition-all hover:bg-surface-container-high cursor-pointer flex flex-col justify-between"
-                onClick={() => {
-                    setIsRecipeDetailsOpen(true);
-                    setSelectedRecipeForDetails(firstRecipe);
-                }}
-            >
-                <span className="font-label text-[10px] uppercase tracking-tighter text-outline-variant font-bold mb-2">{mealType}</span>
-                <div className="bg-surface-container-lowest p-3 rounded-lg shadow-sm">
-                    <p className="font-headline text-sm font-semibold leading-tight">{firstRecipe.name}</p>
-                    {((firstRecipe.prepTime ?? 0) + (firstRecipe.cookTime ?? 0) > 0) && (
-                        <div className="flex items-center gap-1 mt-2 text-[10px] text-primary">
-                            <span className="material-symbols-outlined" style={{fontSize: '12px'}}>timer</span>
-                            {(firstRecipe.prepTime ?? 0) + (firstRecipe.cookTime ?? 0)}m
-                        </div>
-                    )}
+            <div key={mealType} className="rounded-xl overflow-hidden border border-outline-variant/20">
+                {/* Meal label header */}
+                <div className="flex items-center justify-between px-3 py-2 bg-surface-container-high">
+                    <span className="font-label text-[10px] uppercase tracking-widest font-bold text-outline">{mealType}</span>
+                    <button onClick={() => handleAddClick(day, mealType, recipes)}
+                        className="text-primary hover:bg-primary/10 rounded-full p-0.5 transition-colors">
+                        <span className="material-symbols-outlined text-sm">add</span>
+                    </button>
                 </div>
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddClick(day, mealType, recipes);
-                    }}
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-outline hover:text-primary"
-                >
-                    <span className="material-symbols-outlined text-sm">edit</span>
-                </button>
+                {/* Recipe rows */}
+                <div className="divide-y divide-outline-variant/10 bg-surface-container-low">
+                    {recipes.map((recipe) => (
+                        <div key={recipe.recipeId}
+                            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-surface-container transition-colors group"
+                            onClick={() => { setIsRecipeDetailsOpen(true); setSelectedRecipeForDetails(recipe); }}>
+                            <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
+                                {recipe.imageUrl ? (
+                                    <Image src={recipe.imageUrl} alt={recipe.name} width={32} height={32} className="w-full h-full object-cover"/>
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-outline-variant" style={{fontSize: '14px'}}>restaurant</span>
+                                    </div>
+                                )}
+                            </div>
+                            <p className="font-body text-xs flex-1 min-w-0 truncate group-hover:text-primary transition-colors">{recipe.name}</p>
+                            <span className="material-symbols-outlined text-outline-variant text-sm opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }
@@ -269,24 +285,19 @@ export default function DailyScheduleComponent() {
         <div className="pb-12 px-4 sm:px-6 lg:px-12 max-w-[1600px] mx-auto">
             {/* Mobile shimmer */}
             <div className="lg:hidden space-y-8">
-                <div>
-                    <div className="shimmer h-3 w-24 rounded-full mb-3"/>
-                    <div className="shimmer h-9 w-56 rounded-xl mb-4"/>
-                    <div className="flex gap-3 overflow-hidden">
-                        {Array.from({length: 7}).map((_, i) => (
-                            <div key={i} className="shimmer min-w-[56px] h-20 rounded-xl flex-shrink-0"/>
+                <div className="shimmer h-9 w-48 rounded-xl"/>
+                <div className="shimmer h-3 w-40 rounded-full"/>
+                {Array.from({length: 4}).map((_, i) => (
+                    <div key={i} className="space-y-3">
+                        <div className="flex justify-between">
+                            <div className="shimmer h-6 w-28 rounded-lg"/>
+                            <div className="shimmer h-4 w-12 rounded-lg"/>
+                        </div>
+                        {Array.from({length: 3}).map((_, j) => (
+                            <div key={j} className="shimmer rounded-xl h-[60px]"/>
                         ))}
                     </div>
-                </div>
-                <div className="space-y-6">
-                    {Array.from({length: 3}).map((_, i) => (
-                        <div key={i} className="space-y-3">
-                            <div className="shimmer h-5 w-36 rounded-lg"/>
-                            <div className="shimmer rounded-xl h-32"/>
-                        </div>
-                    ))}
-                </div>
-                <div className="shimmer rounded-3xl h-40"/>
+                ))}
             </div>
             {/* Desktop shimmer */}
             <div className="hidden lg:grid grid-cols-12 gap-8">
@@ -333,8 +344,6 @@ export default function DailyScheduleComponent() {
         </div>
     );
 
-    const selectedDayObj = WEEK_DAYS.find(d => d.value === selectedDay) ?? WEEK_DAYS[0];
-
     return (
         <div>
             {isAddRecipeOpen && <AssignRecipeToWeekDay {...recipeToWeekDayProps}/>}
@@ -349,60 +358,137 @@ export default function DailyScheduleComponent() {
             <div className="pb-12 px-4 sm:px-6 lg:px-12 max-w-[1600px] mx-auto">
 
                 {/* ── Mobile layout ── */}
-                <div className="lg:hidden space-y-8 pb-8">
+                <div className="lg:hidden pb-8">
 
-                    {/* Header + day picker */}
-                    <section>
-                        <p className="font-label uppercase tracking-widest text-xs text-outline mb-1">Weekly Plan</p>
-                        <h2 className="font-headline text-3xl text-primary font-bold">The Editorial Kitchen</h2>
-                        <div className="mt-4 flex gap-3 overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
-                            {WEEK_DAYS.map((day) => {
-                                const isSelected = day.value === selectedDay;
-                                const isToday = day.value === TODAY;
-                                return (
-                                    <button
-                                        key={day.id}
-                                        onClick={() => setSelectedDay(day.value)}
-                                        className={`flex flex-col items-center justify-center min-w-[56px] h-20 rounded-xl flex-shrink-0 transition-all ${
-                                            isSelected
-                                                ? 'bg-primary text-on-primary shadow-lg shadow-primary/20'
-                                                : 'bg-surface-container-low text-on-surface-variant'
-                                        }`}
-                                    >
-                                        <span className={`text-[10px] font-label uppercase font-semibold ${isToday && !isSelected ? 'text-primary' : ''}`}>
-                                            {DAY_SHORT[day.name]}
-                                        </span>
-                                        <span className={`font-headline text-xl ${isToday && !isSelected ? 'text-primary font-bold' : ''}`}>
-                                            {weekDates[day.value]}
-                                        </span>
-                                    </button>
-                                );
-                            })}
+                    {/* Header */}
+                    <header className="mb-8">
+                        <h2 className="font-headline text-3xl font-bold text-on-surface">Weekly Planner</h2>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="font-label text-[10px] uppercase tracking-widest font-semibold text-primary">
+                                Week of {weekLabel}
+                            </span>
+                            <div className="h-px flex-grow bg-outline-variant/20"/>
                         </div>
-                    </section>
+                    </header>
 
-                    {/* Meal slots */}
-                    <section className="space-y-6">
-                        {MEAL_TYPES.map(mealType => (
-                            <div key={mealType}>
-                                {renderMobileMealSlot(selectedDayObj, mealType)}
-                            </div>
-                        ))}
-                    </section>
+                    {/* All days */}
+                    <div className="space-y-10">
+                        {WEEK_DAYS.map((day) => {
+                            const isToday = day.value === TODAY;
+                            return (
+                                <section key={day.id}>
+                                    <div className="flex items-baseline justify-between mb-4">
+                                        <h3 className={`font-headline text-xl font-bold ${isToday ? 'text-primary' : 'text-on-surface'}`}>
+                                            {day.name}
+                                            {isToday && (
+                                                <span className="ml-2 font-label text-[10px] uppercase tracking-widest font-normal text-primary/70">Today</span>
+                                            )}
+                                        </h3>
+                                        <span className="font-label text-xs text-on-surface-variant">
+                                            {monthAbbr} {weekDates[day.value]}
+                                        </span>
+                                    </div>
 
-                    {/* Chef's Note */}
-                    <section className="bg-surface-container-low rounded-3xl p-6 relative overflow-hidden">
-                        <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl"/>
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-4">
-                                <span className="material-symbols-outlined text-primary" style={{fontVariationSettings: "'FILL' 1"}}>restaurant_menu</span>
-                                <h3 className="font-headline text-lg italic text-on-surface">Chef&apos;s Note</h3>
+                                    <div className="space-y-3">
+                                        {MEAL_TYPES.map((mealType) => {
+                                            if (refreshingDay === day.value) {
+                                                return <div key={mealType} className="shimmer rounded-xl h-[60px]"/>;
+                                            }
+                                            const recipes = recipesMap[day.value]?.[mealType] ?? [];
+                                            const mealLabel = mealType.charAt(0).toUpperCase() + mealType.slice(1);
+
+                                            if (recipes.length === 0) {
+                                                return (
+                                                    <div
+                                                        key={mealType}
+                                                        className="border-2 border-dashed border-outline-variant/30 rounded-xl p-3 flex items-center justify-between bg-surface/50"
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center">
+                                                                <span className="material-symbols-outlined text-outline-variant">restaurant_menu</span>
+                                                            </div>
+                                                            <p className="font-label text-xs font-medium text-on-surface-variant">Add {mealLabel}</p>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => handleAddClick(day, mealType, [])}
+                                                            className="bg-primary-container text-on-primary-container rounded-full p-1.5 flex items-center justify-center shadow-sm active:scale-90 transition-transform"
+                                                        >
+                                                            <span className="material-symbols-outlined text-sm">add</span>
+                                                        </button>
+                                                    </div>
+                                                );
+                                            }
+
+                                            return (
+                                                <div key={mealType} className="space-y-2">
+                                                    {/* Meal type label */}
+                                                    <p className="font-label text-[10px] uppercase tracking-widest font-semibold text-primary/70 px-1">{mealLabel}</p>
+
+                                                    {/* Each recipe row */}
+                                                    {recipes.map((recipe) => (
+                                                        <div
+                                                            key={recipe.recipeId}
+                                                            className="bg-surface-container-low rounded-xl p-3 flex items-center gap-3 cursor-pointer"
+                                                            onClick={() => { setIsRecipeDetailsOpen(true); setSelectedRecipeForDetails(recipe); }}
+                                                        >
+                                                            <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
+                                                                {recipe.imageUrl ? (
+                                                                    <Image src={recipe.imageUrl} alt={recipe.name} width={48} height={48} className="w-full h-full object-cover"/>
+                                                                ) : (
+                                                                    <div className="w-full h-full flex items-center justify-center">
+                                                                        <span className="material-symbols-outlined text-outline-variant text-sm">restaurant</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="flex-grow min-w-0">
+                                                                <h4 className="font-headline text-sm font-bold text-on-surface truncate">{recipe.name}</h4>
+                                                                {((recipe.prepTime ?? 0) + (recipe.cookTime ?? 0)) > 0 && (
+                                                                    <p className="font-label text-[10px] text-outline mt-0.5">
+                                                                        {(recipe.prepTime ?? 0) + (recipe.cookTime ?? 0)} min
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); handleRemoveRecipe(day, mealType, recipe.recipeId!); }}
+                                                                className="p-1 text-on-surface-variant hover:text-error transition-colors flex-shrink-0"
+                                                            >
+                                                                <span className="material-symbols-outlined text-sm">close</span>
+                                                            </button>
+                                                        </div>
+                                                    ))}
+
+                                                    {/* Add more */}
+                                                    <button
+                                                        onClick={() => handleAddClick(day, mealType, recipes)}
+                                                        className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-outline-variant/30 text-primary/60 hover:text-primary hover:border-primary/30 transition-colors"
+                                                    >
+                                                        <span className="material-symbols-outlined text-sm">add</span>
+                                                        <span className="font-label text-[10px] uppercase tracking-widest font-semibold">Add more</span>
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </section>
+                            );
+                        })}
+
+                        {/* Chef's Note */}
+                        <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm relative overflow-hidden">
+                            <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl"/>
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <span className="material-symbols-outlined text-primary">edit_note</span>
+                                    <h3 className="font-headline text-lg font-bold text-on-surface">Chef&apos;s Note</h3>
+                                </div>
+                                <div className="bg-surface-container-low rounded-xl p-4">
+                                    <p className="font-body text-sm leading-relaxed text-on-surface-variant italic">
+                                        &quot;Plan your week with seasonal ingredients. Prep sauces and bases on the weekend to save time on weeknights.&quot;
+                                    </p>
+                                </div>
                             </div>
-                            <p className="font-body text-sm text-on-surface-variant leading-relaxed">
-                                &quot;Plan your week with seasonal ingredients. Prep sauces and bases on the weekend to save time on weeknights.&quot;
-                            </p>
-                        </div>
-                    </section>
+                        </section>
+                    </div>
 
                 </div>
 
