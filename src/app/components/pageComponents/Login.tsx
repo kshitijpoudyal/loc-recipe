@@ -79,7 +79,9 @@ export const LoginComponent = () => {
             </section>
 
             {/* Right: Login Form */}
-            <section className="w-full md:w-1/2 lg:w-2/5 bg-surface-container-lowest flex flex-col justify-center px-8 md:px-16 lg:px-24 py-12 relative min-h-screen md:min-h-0">
+            <section className="w-full md:w-1/2 lg:w-2/5 bg-surface-container-lowest flex flex-col px-8 md:px-16 lg:px-24 py-12 relative min-h-screen md:min-h-0">
+
+                <div className="flex-1 flex flex-col justify-center">
 
                 {/* Mobile brand */}
                 <div className="md:hidden mb-12 text-center">
@@ -184,7 +186,9 @@ export const LoginComponent = () => {
                     </p>
                 </div>
 
-                <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-2">
+                </div>
+
+                <div className="mt-8 flex flex-col items-center gap-2 pb-4">
                     <div className="flex justify-center gap-6">
                         <a href="#" className="text-[10px] font-label uppercase tracking-tighter text-on-surface/30 hover:text-on-surface transition-colors">Privacy Policy</a>
                         <a href="#" className="text-[10px] font-label uppercase tracking-tighter text-on-surface/30 hover:text-on-surface transition-colors">Terms of Service</a>
