@@ -190,6 +190,12 @@ export default function NavigationMenu() {
                         <p className="font-body text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/60">
                             Lochu&apos;s Kitchen © 2024
                         </p>
+                        <p className="font-body text-[10px] text-on-surface-variant/40 mt-1">
+                            Powered by{' '}
+                            <a href="https://www.kshitijstudio.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors font-semibold">
+                                KshitijStudio
+                            </a>
+                        </p>
                     </div>
                 </DialogPanel>
             </Dialog>
@@ -219,16 +225,6 @@ export default function NavigationMenu() {
                     );
                 })}
 
-                {/* Profile item for logged-in users */}
-                {user && (
-                    <button
-                        onClick={() => setAccountOpen(o => !o)}
-                        className={`flex flex-col items-center text-on-surface/50 hover:text-on-surface/80 transition-all duration-200`}
-                    >
-                        <UserIcon className="w-6 h-6" />
-                        <span className="font-body font-medium text-[10px] uppercase tracking-wider">Profile</span>
-                    </button>
-                )}
             </footer>
         </>
     );
