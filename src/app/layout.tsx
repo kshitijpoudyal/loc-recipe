@@ -42,6 +42,14 @@ export default function RootLayout({
             <RecipeProvider>
                 <NavigationMenu/>
                 <main>{children}</main>
+                <footer className="w-full py-4 text-center">
+                    <p className="text-xs font-label text-on-surface/40">
+                        Powered by{' '}
+                        <a href="https://www.kshitijstudio.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors font-semibold">
+                            KshitijStudio
+                        </a>
+                    </p>
+                </footer>
             </RecipeProvider>
         </AuthProvider>
         </body>
