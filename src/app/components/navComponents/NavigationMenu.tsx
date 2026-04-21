@@ -8,11 +8,14 @@ import { useAuth } from "@/app/components/baseComponents/AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "@/app/config/firebase";
 import UserIcon from "@/app/components/baseComponents/UserIcon";
+import { usePWAInstall } from "@/app/components/baseComponents/PWAInstallProvider";
 
 export default function NavigationMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [accountOpen, setAccountOpen] = useState(false);
+    const [installInstructionsOpen, setInstallInstructionsOpen] = useState(false);
     const { user } = useAuth();
+    const { canInstall, isInstalled, isIOS, installApp } = usePWAInstall();
     const router = useRouter();
     const pathname = usePathname();
     const accountRef = useRef<HTMLDivElement>(null);
@@ -44,6 +47,14 @@ export default function NavigationMenu() {
         setAccountOpen(false);
         setMobileMenuOpen(false);
         router.push("/login");
+    };
+
+    const handleInstall = async () => {
+        if (canInstall) {
+            await installApp();
+        } else {
+            setInstallInstructionsOpen(true);
+        }
     };
 
     const isActive = (href: string) =>
@@ -99,23 +110,36 @@ export default function NavigationMenu() {
                             )}
                         </button>
 
-                        {accountOpen && user && (
+                        {accountOpen && (user || !isInstalled) && (
                             <>
                                 <div className="fixed inset-0 z-10" onClick={() => setAccountOpen(false)} />
                                 <div className="absolute right-0 top-11 z-20 w-52 bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/20 overflow-hidden">
-                                    <div className="px-4 py-3 border-b border-outline-variant/10">
-                                        <p className="font-label text-xs text-outline uppercase tracking-widest mb-0.5">Signed in as</p>
-                                        <p className="font-body text-sm text-on-surface font-medium truncate">
-                                            {user.displayName || user.email}
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full flex items-center gap-2 px-4 py-3 text-sm font-label font-semibold text-error hover:bg-error/5 transition-colors"
-                                    >
-                                        <span className="material-symbols-outlined text-base">logout</span>
-                                        Sign out
-                                    </button>
+                                    {user && (
+                                        <div className="px-4 py-3 border-b border-outline-variant/10">
+                                            <p className="font-label text-xs text-outline uppercase tracking-widest mb-0.5">Signed in as</p>
+                                            <p className="font-body text-sm text-on-surface font-medium truncate">
+                                                {user.displayName || user.email}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {!isInstalled && (
+                                        <button
+                                            onClick={() => { handleInstall(); setAccountOpen(false); }}
+                                            className="w-full flex items-center gap-2 px-4 py-3 text-sm font-label font-semibold text-primary hover:bg-primary/5 transition-colors border-b border-outline-variant/10"
+                                        >
+                                            <span className="material-symbols-outlined text-base">download</span>
+                                            Install App
+                                        </button>
+                                    )}
+                                    {user && (
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full flex items-center gap-2 px-4 py-3 text-sm font-label font-semibold text-error hover:bg-error/5 transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-base">logout</span>
+                                            Sign out
+                                        </button>
+                                    )}
                                 </div>
                             </>
                         )}
@@ -183,6 +207,17 @@ export default function NavigationMenu() {
                                 <span className="font-headline text-lg">Sign out</span>
                             </button>
                         )}
+
+                        {/* Install App in drawer */}
+                        {!isInstalled && (
+                            <button
+                                onClick={() => { handleInstall(); setMobileMenuOpen(false); }}
+                                className="w-full mx-2 flex items-center gap-4 px-4 py-3.5 rounded-full text-primary hover:bg-primary/5 transition-colors"
+                            >
+                                <span className="material-symbols-outlined">download</span>
+                                <span className="font-headline text-lg">Install App</span>
+                            </button>
+                        )}
                     </nav>
 
                     {/* Footer */}
@@ -225,7 +260,64 @@ export default function NavigationMenu() {
                     );
                 })}
 
+                {!isInstalled && (
+                    <button
+                        onClick={handleInstall}
+                        className="flex flex-col items-center text-primary transition-all duration-200"
+                        aria-label="Install App"
+                    >
+                        <span className="material-symbols-outlined">download</span>
+                        <span className="font-body font-medium text-[10px] uppercase tracking-wider">Install</span>
+                    </button>
+                )}
             </footer>
+            {/* Install Instructions Modal */}
+            {installInstructionsOpen && (
+                <>
+                    <div className="fixed inset-0 z-[70] bg-on-surface/40 backdrop-blur-sm" onClick={() => setInstallInstructionsOpen(false)} />
+                    <div className="fixed bottom-0 left-0 right-0 z-[80] md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-96 bg-surface rounded-t-3xl md:rounded-3xl shadow-2xl p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-headline text-lg font-bold text-on-surface">Install App</h3>
+                            <button onClick={() => setInstallInstructionsOpen(false)} className="text-on-surface/50 hover:text-on-surface transition-colors">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        {isIOS ? (
+                            <div className="space-y-3">
+                                <p className="font-body text-sm text-on-surface/70">To install on iOS:</p>
+                                <ol className="space-y-3">
+                                    <li className="flex items-start gap-3">
+                                        <span className="w-6 h-6 rounded-full bg-primary-container text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                                        <span className="font-body text-sm text-on-surface">Tap the <strong>Share</strong> button <span className="material-symbols-outlined text-sm align-middle">ios_share</span> at the bottom of Safari</span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <span className="w-6 h-6 rounded-full bg-primary-container text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                                        <span className="font-body text-sm text-on-surface">Scroll down and tap <strong>Add to Home Screen</strong></span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <span className="w-6 h-6 rounded-full bg-primary-container text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                                        <span className="font-body text-sm text-on-surface">Tap <strong>Add</strong> to confirm</span>
+                                    </li>
+                                </ol>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                <p className="font-body text-sm text-on-surface/70">To install on your device:</p>
+                                <ol className="space-y-3">
+                                    <li className="flex items-start gap-3">
+                                        <span className="w-6 h-6 rounded-full bg-primary-container text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                                        <span className="font-body text-sm text-on-surface">Open this page in <strong>Chrome</strong> or <strong>Edge</strong></span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <span className="w-6 h-6 rounded-full bg-primary-container text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                                        <span className="font-body text-sm text-on-surface">Tap the <strong>menu</strong> (⋮) and select <strong>Add to Home Screen</strong> or <strong>Install App</strong></span>
+                                    </li>
+                                </ol>
+                            </div>
+                        )}
+                    </div>
+                </>
+            )}
         </>
     );
 }
