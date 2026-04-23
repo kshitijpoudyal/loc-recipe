@@ -174,28 +174,18 @@ export default function NavigationMenu() {
                         </div>
                     </div>
 
-                    {/* Nav Links */}
+                    {/* Actions — Install App and Sign out only (nav links are in bottom bar) */}
                     <nav className="flex-1 space-y-1">
-                        {navLinks.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className={`mx-2 flex items-center gap-4 px-4 py-3.5 rounded-full transition-colors ${
-                                    isActive(item.href)
-                                        ? "bg-secondary-fixed text-on-secondary-fixed font-semibold"
-                                        : "text-on-surface hover:bg-surface-container-low"
-                                }`}
+                        {/* Install App in drawer */}
+                        {!isInstalled && (
+                            <button
+                                onClick={() => { handleInstall(); setMobileMenuOpen(false); }}
+                                className="w-full mx-2 flex items-center gap-4 px-4 py-3.5 rounded-full text-primary hover:bg-primary/5 transition-colors"
                             >
-                                <span
-                                    className="material-symbols-outlined"
-                                    style={isActive(item.href) ? { fontVariationSettings: "'FILL' 1" } : undefined}
-                                >
-                                    {item.icon}
-                                </span>
-                                <span className="font-headline text-lg">{item.label}</span>
-                            </Link>
-                        ))}
+                                <span className="material-symbols-outlined">download</span>
+                                <span className="font-headline text-lg">Install App</span>
+                            </button>
+                        )}
 
                         {/* Sign out in drawer */}
                         {user && (
@@ -205,17 +195,6 @@ export default function NavigationMenu() {
                             >
                                 <span className="material-symbols-outlined">logout</span>
                                 <span className="font-headline text-lg">Sign out</span>
-                            </button>
-                        )}
-
-                        {/* Install App in drawer */}
-                        {!isInstalled && (
-                            <button
-                                onClick={() => { handleInstall(); setMobileMenuOpen(false); }}
-                                className="w-full mx-2 flex items-center gap-4 px-4 py-3.5 rounded-full text-primary hover:bg-primary/5 transition-colors"
-                            >
-                                <span className="material-symbols-outlined">download</span>
-                                <span className="font-headline text-lg">Install App</span>
                             </button>
                         )}
                     </nav>
@@ -260,16 +239,6 @@ export default function NavigationMenu() {
                     );
                 })}
 
-                {!isInstalled && (
-                    <button
-                        onClick={handleInstall}
-                        className="flex flex-col items-center text-primary transition-all duration-200"
-                        aria-label="Install App"
-                    >
-                        <span className="material-symbols-outlined">download</span>
-                        <span className="font-body font-medium text-[10px] uppercase tracking-wider">Install</span>
-                    </button>
-                )}
             </footer>
             {/* Install Instructions Modal */}
             {installInstructionsOpen && (
