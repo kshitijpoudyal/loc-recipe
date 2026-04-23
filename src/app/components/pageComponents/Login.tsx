@@ -187,20 +187,6 @@ export const LoginComponent = () => {
                 </div>
 
                 </div>
-
-                <div className="mt-8 flex flex-col items-center gap-2 pb-4">
-                    <div className="flex justify-center gap-6">
-                        <a href="#" className="text-[10px] font-label uppercase tracking-tighter text-on-surface/30 hover:text-on-surface transition-colors">Privacy Policy</a>
-                        <a href="#" className="text-[10px] font-label uppercase tracking-tighter text-on-surface/30 hover:text-on-surface transition-colors">Terms of Service</a>
-                        <a href="#" className="text-[10px] font-label uppercase tracking-tighter text-on-surface/30 hover:text-on-surface transition-colors">Help Center</a>
-                    </div>
-                    <p className="text-[10px] font-label text-on-surface/30">
-                        Powered by{' '}
-                        <a href="https://www.kshitijstudio.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors font-semibold">
-                            KshitijStudio
-                        </a>
-                    </p>
-                </div>
             </section>
         </div>
     );
