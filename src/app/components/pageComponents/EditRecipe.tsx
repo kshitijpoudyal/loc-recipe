@@ -147,7 +147,7 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
                             {/* Hero image */}
                             <header className="relative w-full h-52 overflow-hidden flex-shrink-0 bg-surface-container-high">
                                 {selectedImage && (
-                                    <Image src={selectedImage} alt={name} fill className="object-cover" unoptimized={!imageFile}/>
+                                    <Image src={selectedImage} alt={name} fill sizes="(max-width: 767px) 100vw, 600px" className="object-cover" unoptimized={!imageFile}/>
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"/>
                                 <label htmlFor="editImageUpload" className="absolute inset-0 cursor-pointer flex items-center justify-center z-10">
