@@ -37,7 +37,7 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
     const [search, setSearch] = useState('');
     const [saving, setSaving] = useState(false);
     const [ownerFilter, setOwnerFilter] = useState<'all' | 'mine'>('all');
-    const [mealFilter, setMealFilter] = useState<MealType>(mealType);
+    const [mealFilters, setMealFilters] = useState<MealType[]>([mealType]);
     const {user} = useAuth();
 
     const filteredRecipes = useMemo(() => {
@@ -45,11 +45,13 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
         if (ownerFilter === 'mine' && user?.uid) {
             result = result.filter(r => r.createdBy === user.uid);
         }
-        result = result.filter(r => r.mealType?.includes(mealFilter));
+        if (mealFilters.length > 0) {
+            result = result.filter(r => mealFilters.some(m => r.mealType?.includes(m)));
+        }
         const q = search.trim().toLowerCase();
         if (q) result = result.filter(r => r.name.toLowerCase().includes(q));
         return result;
-    }, [recipes, search, ownerFilter, mealFilter, user?.uid]);
+    }, [recipes, search, ownerFilter, mealFilters, user?.uid]);
 
     const isSelected = (recipe: Recipe) =>
         selected.some(r => r.recipeId === recipe.recipeId);
@@ -146,9 +148,13 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
                                     {MEAL_TYPES.map(m => (
                                         <button
                                             key={m}
-                                            onClick={() => setMealFilter(m)}
+                                            onClick={() => setMealFilters(prev =>
+                                                prev.includes(m)
+                                                    ? prev.length > 1 ? prev.filter(f => f !== m) : prev
+                                                    : [...prev, m]
+                                            )}
                                             className={`flex items-center gap-0.5 px-3 py-1 rounded-full text-[11px] font-semibold font-label tracking-wide transition-colors ${
-                                                mealFilter === m
+                                                mealFilters.includes(m)
                                                     ? 'bg-secondary-fixed text-on-secondary-fixed'
                                                     : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'
                                             }`}
