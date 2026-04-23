@@ -9,8 +9,8 @@ const FOOD_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuCS7sWIF0
 
 export const LoginComponent = () => {
     const router = useRouter();
-    const [email, setEmail] = useState("kcp@gmail.com");
-    const [password, setPassword] = useState("test123");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
