@@ -199,7 +199,7 @@ export default function AddRecipeComponent() {
         <form onSubmit={handleSubmit}>
 
             {/* ── Mobile layout ── */}
-            <div className="md:hidden pt-24 pb-40 px-6 max-w-2xl mx-auto space-y-10">
+            <div className="md:hidden pt-24 pb-64 px-6 max-w-2xl mx-auto space-y-10">
 
                 {/* 0. Import from URL */}
                 <section className="bg-surface-container-low rounded-2xl p-5">
@@ -430,7 +430,7 @@ export default function AddRecipeComponent() {
             </div>
 
             {/* Mobile fixed footer */}
-            <footer className="fixed bottom-0 left-0 w-full z-50 p-6 bg-surface/95 backdrop-blur-md md:hidden">
+            <footer className="fixed bottom-0 left-0 w-full z-30 pt-4 pb-24 px-6 bg-surface/95 backdrop-blur-md md:hidden">
                 <div className="max-w-2xl mx-auto grid grid-cols-2 gap-4">
                     <button
                         type="button"

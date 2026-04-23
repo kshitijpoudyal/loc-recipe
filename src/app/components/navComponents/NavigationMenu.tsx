@@ -14,6 +14,7 @@ export default function NavigationMenu() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [accountOpen, setAccountOpen] = useState(false);
     const [installInstructionsOpen, setInstallInstructionsOpen] = useState(false);
+    const [photoError, setPhotoError] = useState(false);
     const { user } = useAuth();
     const { canInstall, isInstalled, isIOS, installApp } = usePWAInstall();
     const router = useRouter();
@@ -62,8 +63,8 @@ export default function NavigationMenu() {
 
     return (
         <>
-            {/* Top Header */}
-            <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md flex items-center justify-between px-4 py-3">
+            {/* Top Header — hidden on mobile for login page */}
+            <header className={`fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md items-center justify-between px-4 py-3 ${pathname === "/login" || pathname === "/register" ? "hidden md:flex" : "flex"}`}>
                 <div className="flex items-center gap-3">
                     {/* Hamburger — mobile only */}
                     <button
@@ -103,8 +104,8 @@ export default function NavigationMenu() {
                             className="w-9 h-9 rounded-full overflow-hidden border-2 border-primary-container flex items-center justify-center"
                             aria-label="Account"
                         >
-                            {user?.photoURL ? (
-                                <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                            {user?.photoURL && !photoError ? (
+                                <img src={user.photoURL} alt="Profile" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={() => setPhotoError(true)} />
                             ) : (
                                 <UserIcon className="w-7 h-7 text-primary" />
                             )}
@@ -156,8 +157,8 @@ export default function NavigationMenu() {
                     {/* Profile Section */}
                     <div className="flex flex-col items-start px-4 mb-8">
                         <div className="w-20 h-20 rounded-2xl overflow-hidden mb-4 shadow-lg border-2 border-primary-container">
-                            {user?.photoURL ? (
-                                <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                            {user?.photoURL && !photoError ? (
+                                <img src={user.photoURL} alt="Profile" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={() => setPhotoError(true)} />
                             ) : (
                                 <div className="w-full h-full bg-primary-container flex items-center justify-center">
                                     <UserIcon className="w-12 h-12 text-primary" />
@@ -174,19 +175,8 @@ export default function NavigationMenu() {
                         </div>
                     </div>
 
-                    {/* Actions — Install App and Sign out only (nav links are in bottom bar) */}
+                    {/* Actions — Sign out only (nav links are in bottom bar) */}
                     <nav className="flex-1 space-y-1">
-                        {/* Install App in drawer */}
-                        {!isInstalled && (
-                            <button
-                                onClick={() => { handleInstall(); setMobileMenuOpen(false); }}
-                                className="w-full mx-2 flex items-center gap-4 px-4 py-3.5 rounded-full text-primary hover:bg-primary/5 transition-colors"
-                            >
-                                <span className="material-symbols-outlined">download</span>
-                                <span className="font-headline text-lg">Install App</span>
-                            </button>
-                        )}
-
                         {/* Sign out in drawer */}
                         {user && (
                             <button
