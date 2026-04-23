@@ -231,9 +231,42 @@ export default function DailyScheduleComponent() {
                         </div>
                         <span className="font-label text-[10px] uppercase tracking-widest text-outline font-semibold">Assign Recipe</span>
                     </button>
+                ) : recipes.length > 1 ? (
+                    // Multiple recipes — stacked list
+                    <div className="rounded-xl overflow-hidden border border-outline-variant/20">
+                        <div className="divide-y divide-outline-variant/10">
+                            {recipes.map((recipe) => (
+                                <div key={recipe.recipeId}
+                                    className="flex items-center gap-3 px-3 py-2.5 cursor-pointer active:bg-surface-container transition-colors"
+                                    onClick={() => { setIsRecipeDetailsOpen(true); setSelectedRecipeForDetails(recipe); }}>
+                                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
+                                        {recipe.imageUrl ? (
+                                            <Image src={recipe.imageUrl} alt={recipe.name} width={40} height={40} className="w-full h-full object-cover"/>
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-outline-variant" style={{fontSize: '16px'}}>restaurant</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className="font-body text-sm flex-1 min-w-0 truncate">{recipe.name}</p>
+                                    <span className="material-symbols-outlined text-outline-variant text-sm">chevron_right</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="px-3 py-2 border-t border-outline-variant/20 flex justify-end">
+                            <button
+                                onClick={() => handleAddClick(day, mealType, recipes)}
+                                className="flex items-center gap-1 text-primary text-xs font-label font-semibold"
+                            >
+                                <span className="material-symbols-outlined text-sm">edit</span>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
                 ) : (
+                    // Single recipe
                     <div
-                        className="bg-surface-container-lowest rounded-xl overflow-hidden flex shadow-sm h-32 cursor-pointer"
+                        className="rounded-xl overflow-hidden flex h-32 cursor-pointer"
                         onClick={() => { setIsRecipeDetailsOpen(true); setSelectedRecipeForDetails(firstRecipe); }}
                     >
                         <div className="w-1/3 h-full overflow-hidden flex-shrink-0">
