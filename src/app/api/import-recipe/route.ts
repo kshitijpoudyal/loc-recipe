@@ -24,6 +24,32 @@ function parseIngredient(str: string): {qty: string; name: string} {
     return {qty: '', name: str.trim()};
 }
 
+// ── JSON sanitizer (handles raw control chars inside string values) ──────────
+
+function sanitizeJson(str: string): string {
+    let result = '';
+    let inString = false;
+    let escaped = false;
+    for (let i = 0; i < str.length; i++) {
+        const c = str[i];
+        if (escaped) { result += c; escaped = false; continue; }
+        if (c === '\\' && inString) { escaped = true; result += c; continue; }
+        if (c === '"') { inString = !inString; result += c; continue; }
+        if (inString) {
+            const code = c.charCodeAt(0);
+            if (code < 0x20) {
+                if (c === '\n') result += '\\n';
+                else if (c === '\r') result += '\\r';
+                else if (c === '\t') result += '\\t';
+                else result += `\\u${code.toString(16).padStart(4, '0')}`;
+                continue;
+            }
+        }
+        result += c;
+    }
+    return result;
+}
+
 // ── JSON-LD helpers ──────────────────────────────────────────────────────────
 
 function extractSteps(instructions: unknown): string[] {
@@ -58,7 +84,7 @@ function findRecipeJsonLd(html: string): Record<string, unknown> | null {
     let match;
     while ((match = scriptRegex.exec(html)) !== null) {
         try {
-            const data = JSON.parse(match[1]) as Record<string, unknown>;
+            const data = JSON.parse(sanitizeJson(match[1])) as Record<string, unknown>;
             const isRecipe = (t: unknown) =>
                 t === 'Recipe' || (Array.isArray(t) && t.includes('Recipe'));
             if (isRecipe(data['@type'])) return data;
