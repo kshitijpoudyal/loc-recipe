@@ -43,6 +43,9 @@ export default function AddRecipeComponent() {
     const [importUrl, setImportUrl] = useState('');
     const [importLoading, setImportLoading] = useState(false);
     const [importStatus, setImportStatus] = useState<{type: 'success' | 'error'; message: string} | null>(null);
+    const [showJsonImport, setShowJsonImport] = useState(false);
+    const [jsonText, setJsonText] = useState('');
+    const [jsonStatus, setJsonStatus] = useState<{type: 'success' | 'error'; message: string} | null>(null);
     const toggleChip = (value: string, list: string[], setList: (v: string[]) => void) => {
         setList(list.includes(value) ? list.filter(v => v !== value) : [...list, value]);
     };
@@ -151,6 +154,24 @@ export default function AddRecipeComponent() {
         }
     };
 
+    const handleJsonImport = () => {
+        setJsonStatus(null);
+        try {
+            const data = JSON.parse(jsonText) as Record<string, unknown>;
+            const rawIngredients = data.ingredients as {qty?: string; name?: string; quantity?: number; unit?: string}[] | undefined;
+            const ingredients = rawIngredients?.map(ing => ({
+                qty: ing.qty ?? [ing.quantity, ing.unit].filter(Boolean).join(' '),
+                name: ing.name ?? '',
+            }));
+            prefillForm({...(data as Parameters<typeof prefillForm>[0]), ingredients});
+            setJsonStatus({type: 'success', message: 'Applied'});
+            setJsonText('');
+            setShowJsonImport(false);
+        } catch {
+            setJsonStatus({type: 'error', message: 'Invalid JSON'});
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -206,6 +227,12 @@ export default function AddRecipeComponent() {
                     <h3 className="font-label text-xs uppercase tracking-[0.15em] font-semibold text-primary mb-3 flex items-center gap-2">
                         <span className="material-symbols-outlined text-base">link</span>
                         Import from URL
+                        <button
+                            type="button"
+                            onClick={() => { setShowJsonImport(v => !v); setJsonStatus(null); }}
+                            className="ml-auto text-[10px] font-mono text-outline-variant/40 hover:text-outline-variant transition-colors select-none"
+                            title="Paste JSON"
+                        >{'{}'}</button>
                     </h3>
                     <div className="flex gap-2">
                         <input
@@ -234,6 +261,30 @@ export default function AddRecipeComponent() {
                             {importStatus.message}
                         </p>
                     )}
+                    {showJsonImport && (
+                        <div className="mt-3 space-y-2">
+                            <textarea
+                                rows={6}
+                                value={jsonText}
+                                onChange={e => setJsonText(e.target.value)}
+                                placeholder={'{\n  "name": "...",\n  "ingredients": [...]\n}'}
+                                className="w-full bg-background rounded-xl px-4 py-3 font-mono text-xs outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant/50 resize-none"
+                            />
+                            <div className="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={handleJsonImport}
+                                    disabled={!jsonText.trim()}
+                                    className="px-4 py-2 rounded-xl bg-primary text-on-primary font-mono text-xs font-bold disabled:opacity-40 active:scale-95 transition-all"
+                                >apply</button>
+                                {jsonStatus && (
+                                    <span className={`text-xs font-mono ${jsonStatus.type === 'success' ? 'text-primary' : 'text-error'}`}>
+                                        {jsonStatus.message}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </section>
 
                 {/* 1. Hero image upload */}
@@ -241,7 +292,7 @@ export default function AddRecipeComponent() {
                     <label htmlFor="imageUploadMobile" className="cursor-pointer block">
                         <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-low border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center text-center p-8 transition-all hover:bg-surface-container-high/50">
                             {selectedImage && (
-                                <Image src={selectedImage} alt="Recipe preview" fill className="object-cover" unoptimized={!imageFile}/>
+                                <Image src={selectedImage} alt="Recipe preview" fill sizes="100vw" className="object-cover" unoptimized={!imageFile}/>
                             )}
                             <div className={`relative z-10 ${selectedImage ? 'opacity-0' : ''}`}>
                                 <span className="material-symbols-outlined text-5xl text-primary-container mb-4 block" style={{fontVariationSettings: "'FILL' 1"}}>add_a_photo</span>
@@ -470,6 +521,12 @@ export default function AddRecipeComponent() {
                         <h3 className="font-label text-xs uppercase tracking-[0.15em] font-semibold text-primary mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined text-base">link</span>
                             Import from URL
+                            <button
+                                type="button"
+                                onClick={() => { setShowJsonImport(v => !v); setJsonStatus(null); }}
+                                className="ml-auto text-[11px] font-mono text-outline-variant/40 hover:text-outline-variant transition-colors select-none"
+                                title="Paste JSON"
+                            >{'{}'}</button>
                         </h3>
                         <div className="flex gap-3">
                             <input
@@ -498,6 +555,30 @@ export default function AddRecipeComponent() {
                                 {importStatus.message}
                             </p>
                         )}
+                        {showJsonImport && (
+                            <div className="mt-4 space-y-3">
+                                <textarea
+                                    rows={8}
+                                    value={jsonText}
+                                    onChange={e => setJsonText(e.target.value)}
+                                    placeholder={'{\n  "name": "...",\n  "ingredients": [...]\n}'}
+                                    className="w-full bg-background rounded-xl px-5 py-4 font-mono text-xs outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant/50 resize-none"
+                                />
+                                <div className="flex items-center gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={handleJsonImport}
+                                        disabled={!jsonText.trim()}
+                                        className="px-5 py-2 rounded-xl bg-primary text-on-primary font-mono text-xs font-bold disabled:opacity-40 hover:opacity-90 active:scale-95 transition-all"
+                                    >apply</button>
+                                    {jsonStatus && (
+                                        <span className={`text-xs font-mono ${jsonStatus.type === 'success' ? 'text-primary' : 'text-error'}`}>
+                                            {jsonStatus.message}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </section>
 
                     {/* Hero Image Upload */}
@@ -505,7 +586,7 @@ export default function AddRecipeComponent() {
                         <label htmlFor="imageUpload" className="cursor-pointer block">
                             <div className="w-full h-80 rounded-xl bg-surface-container-low flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 overflow-hidden group-hover:border-primary/50 transition-colors relative">
                                 {selectedImage ? (
-                                    <Image src={selectedImage} alt="Recipe preview" fill className="object-cover" unoptimized={!imageFile}/>
+                                    <Image src={selectedImage} alt="Recipe preview" fill sizes="(max-width: 767px) 100vw, 600px" className="object-cover" unoptimized={!imageFile}/>
                                 ) : null}
                                 <div className={`z-10 text-center p-6 bg-surface-container-lowest/90 backdrop-blur rounded-xl shadow-sm ${selectedImage ? 'opacity-0 group-hover:opacity-100 transition-opacity' : ''}`}>
                                     <span className="material-symbols-outlined text-4xl text-primary mb-2 block">add_a_photo</span>

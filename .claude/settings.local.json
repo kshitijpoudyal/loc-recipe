@@ -13,7 +13,11 @@
       "Bash(git remote:*)",
       "Bash(git config:*)",
       "Bash(npx eslint:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "WebFetch(domain:www.andy-cooks.com)",
+      "Bash(python3 -c ':*)",
+      "Bash(curl -s -H 'User-Agent: Mozilla/5.0 \\(compatible; RecipeImporter/1.0\\)' -H 'Accept: text/html,application/xhtml+xml' https://www.andy-cooks.com/blogs/recipes/thai-bbq-chicken)",
+      "Bash(python3)"
     ]
   }
 }

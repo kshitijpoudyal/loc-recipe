@@ -101,7 +101,7 @@ export default function HomePage() {
                             onClick={() => heroRecipe && (setSelectedRecipe(heroRecipe), setDetailOpen(true))}
                         >
                             {heroRecipe?.imageUrl ? (
-                                <Image src={heroRecipe.imageUrl} alt={heroRecipe.name} fill className={`object-cover transition-opacity duration-300 ${shuffling ? 'opacity-0' : 'opacity-100'}`}/>
+                                <Image src={heroRecipe.imageUrl} alt={heroRecipe.name} fill loading="eager" sizes="100vw" className={`object-cover transition-opacity duration-300 ${shuffling ? 'opacity-0' : 'opacity-100'}`}/>
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-surface-container-high">
                                     <span className="material-symbols-outlined text-outline" style={{fontSize: '64px'}}>restaurant</span>
@@ -340,6 +340,8 @@ export default function HomePage() {
                                         src={heroRecipe.imageUrl}
                                         alt={heroRecipe.name}
                                         fill
+                                        loading="eager"
+                                        sizes="(max-width: 767px) 100vw, 58vw"
                                         className={`object-cover group-hover:scale-105 transition-all duration-700 ${shuffling ? 'opacity-0 scale-105' : 'opacity-100'}`}
                                     />
                                 ) : (
@@ -347,6 +349,7 @@ export default function HomePage() {
                                         src={HERO_IMAGE}
                                         alt="Hero"
                                         fill
+                                        sizes="(max-width: 767px) 100vw, 58vw"
                                         className="object-cover group-hover:scale-105 transition-transform duration-700"
                                     />
                                 )}
@@ -493,9 +496,9 @@ export default function HomePage() {
                                             <Image
                                                 src={recipe.imageUrl}
                                                 alt={recipe.name}
-                                                width={600}
-                                                height={288}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                fill
+                                                sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                                                className="object-cover transition-transform duration-700 group-hover:scale-110"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-outline">

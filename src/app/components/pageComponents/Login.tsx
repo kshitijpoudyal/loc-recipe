@@ -1,7 +1,7 @@
 "use client";
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import Link from "next/link";
-import {authenticateUser, signInWithGoogle, handleGoogleRedirectResult} from "@/app/utils/firebaseUtils/User";
+import {authenticateUser, signInWithGoogle} from "@/app/utils/firebaseUtils/User";
 import {redirectToHome} from "@/app/utils/routerUtils/RouterUtils";
 import {useRouter} from "next/navigation";
 
@@ -13,14 +13,6 @@ export const LoginComponent = () => {
     const [password, setPassword] = useState("test123");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        handleGoogleRedirectResult()
-            .then((result) => {
-                if (result) redirectToHome(router);
-            })
-            .catch(console.error);
-    }, [router]);
 
     const handleGoogleLogin = async () => {
         setLoading(true);
