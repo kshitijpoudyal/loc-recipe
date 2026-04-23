@@ -1,5 +1,5 @@
 import {auth, db} from "@/app/config/firebase";
-import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, User} from 'firebase/auth';
+import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, updateProfile, User, UserCredential} from 'firebase/auth';
 import {doc, setDoc, getDoc} from 'firebase/firestore';
 
 export const saveUserProfile = async (uid: string, displayName: string, email: string) => {
@@ -11,12 +11,30 @@ export const getUserDisplayName = async (uid: string): Promise<string | null> =>
     return snap.exists() ? (snap.data().displayName ?? null) : null;
 };
 
-export const signInWithGoogle = async () => {
+const isMobileDevice = (): boolean => {
+    if (typeof window === 'undefined') return false;
+    return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
+export const signInWithGoogle = async (): Promise<UserCredential | null> => {
     const provider = new GoogleAuthProvider();
+    if (isMobileDevice()) {
+        await signInWithRedirect(auth, provider);
+        return null; // page navigates away; result handled via handleGoogleRedirectResult
+    }
     const credential = await signInWithPopup(auth, provider);
     const { uid, displayName, email } = credential.user;
     await saveUserProfile(uid, displayName ?? '', email ?? '');
     return credential;
+};
+
+export const handleGoogleRedirectResult = async (): Promise<UserCredential | null> => {
+    const result = await getRedirectResult(auth);
+    if (result) {
+        const { uid, displayName, email } = result.user;
+        await saveUserProfile(uid, displayName ?? '', email ?? '');
+    }
+    return result;
 };
 
 export const registerWithEmail = async (displayName: string, email: string, password: string) => {

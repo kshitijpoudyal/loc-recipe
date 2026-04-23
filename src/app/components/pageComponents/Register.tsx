@@ -1,7 +1,7 @@
 "use client";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Link from "next/link";
-import {registerWithEmail, signInWithGoogle} from "@/app/utils/firebaseUtils/User";
+import {registerWithEmail, signInWithGoogle, handleGoogleRedirectResult} from "@/app/utils/firebaseUtils/User";
 import {redirectToHome} from "@/app/utils/routerUtils/RouterUtils";
 import {useRouter} from "next/navigation";
 
@@ -15,6 +15,14 @@ export const RegisterComponent = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        handleGoogleRedirectResult()
+            .then((result) => {
+                if (result) redirectToHome(router);
+            })
+            .catch(console.error);
+    }, [router]);
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,8 +56,9 @@ export const RegisterComponent = () => {
         setLoading(true);
         setError("");
         try {
-            await signInWithGoogle();
-            redirectToHome(router);
+            const credential = await signInWithGoogle();
+            if (credential) redirectToHome(router);
+            // on mobile, signInWithRedirect navigates away — no further action needed
         } catch (err: unknown) {
             setError("Google sign-in failed. Please try again.");
             console.error(err);
