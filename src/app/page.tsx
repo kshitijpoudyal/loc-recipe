@@ -10,6 +10,7 @@ import { useAuth } from "@/app/components/baseComponents/AuthProvider";
 import { deleteRecipeFromFirebase, toggleRecipePublic } from "@/app/utils/firebaseUtils/Recipe";
 import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
 import EditRecipeModal from "@/app/components/pageComponents/EditRecipe";
+import ConfirmDialog from "@/app/components/baseComponents/ConfirmDialog";
 
 const HERO_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuAHgwX2m5vJzXbS63imMz81bbkjghfpwp-wSx1jn3gHGeFKTzfMx_nWJGwSCvMfRXr4WIoNtFKNXqV9I82wP1xm4qouNJubz7SJ3sgEfx4trD0YJqiaNXE0TnzP-6fQo72nhu1SGDkmOcwSGA2J9MENranzQfzE9_9j84vJIGw9vWLWlqLFgfweqxc2HQeFp4-XzgH6ZcBxPYlpJ6iQfrIUbJ4lnk7tFvism_wgBalo_z7oX-9NdQIohGe5Pv974ak96tF2m9dlYYX9";
 
@@ -28,11 +29,17 @@ export default function HomePage() {
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
     const [detailOpen, setDetailOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-    const handleDelete = async (recipe: Recipe) => {
+    const handleDelete = (recipe: Recipe) => {
         if (!recipe.recipeId) return;
-        if (!confirm(`Delete "${recipe.name}"?`)) return;
-        await deleteRecipeFromFirebase(recipe.recipeId, recipe.createdBy!, recipe.isPublic);
+        setConfirmDeleteOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedRecipe?.recipeId) return;
+        setConfirmDeleteOpen(false);
+        await deleteRecipeFromFirebase(selectedRecipe.recipeId, selectedRecipe.createdBy!, selectedRecipe.isPublic);
         invalidate();
         setDetailOpen(false);
     };
@@ -583,6 +590,19 @@ export default function HomePage() {
                     © 2024 Lochu&apos;s Recipe. All rights reserved. Designed with intention.
                 </div>
             </footer>
+
+            {/* Confirm delete modal */}
+            {selectedRecipe && (
+                <ConfirmDialog
+                    isOpen={confirmDeleteOpen}
+                    title="Delete Recipe"
+                    message={`Are you sure you want to delete "${selectedRecipe.name}"? This cannot be undone.`}
+                    confirmLabel="Delete"
+                    onConfirm={handleConfirmDelete}
+                    onCancel={() => setConfirmDeleteOpen(false)}
+                    variant="danger"
+                />
+            )}
 
             {/* Recipe detail modal */}
             {detailOpen && selectedRecipe && (

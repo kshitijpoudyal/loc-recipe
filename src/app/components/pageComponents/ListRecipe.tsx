@@ -8,18 +8,24 @@ import EditRecipeModal from "@/app/components/pageComponents/EditRecipe";
 import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
+import ConfirmDialog from "@/app/components/baseComponents/ConfirmDialog";
 
 export default function ListRecipeComponent() {
     const {recipes, loading, invalidate} = useRecipes();
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe>(DEFAULT_RECIPE);
     const [open, setOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const {user} = useAuth();
 
-    const handleDelete = async (recipe: Recipe) => {
-        if (!recipe.recipeId) return;
-        if (!confirm(`Delete "${recipe.name}"?`)) return;
-        await deleteRecipeFromFirebase(recipe.recipeId, recipe.createdBy!, recipe.isPublic);
+    const handleDelete = () => {
+        setConfirmDeleteOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedRecipe.recipeId) return;
+        setConfirmDeleteOpen(false);
+        await deleteRecipeFromFirebase(selectedRecipe.recipeId, selectedRecipe.createdBy!, selectedRecipe.isPublic);
         invalidate();
         setOpen(false);
     };
@@ -32,6 +38,15 @@ export default function ListRecipeComponent() {
 
     return (
         <div>
+            <ConfirmDialog
+                isOpen={confirmDeleteOpen}
+                title="Delete Recipe"
+                message={`Are you sure you want to delete "${selectedRecipe.name}"? This cannot be undone.`}
+                confirmLabel="Delete"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setConfirmDeleteOpen(false)}
+                variant="danger"
+            />
             {editOpen && (
                 <EditRecipeModal
                     isOpen={editOpen}
@@ -44,7 +59,7 @@ export default function ListRecipeComponent() {
                     isOpen={open}
                     recipe={selectedRecipe}
                     setIsOpenAction={setOpen}
-                    onDelete={isOwner ? () => handleDelete(selectedRecipe) : undefined}
+                    onDelete={isOwner ? handleDelete : undefined}
                     onEdit={isOwner ? () => { setOpen(false); setEditOpen(true); } : undefined}
                 />
             )}
