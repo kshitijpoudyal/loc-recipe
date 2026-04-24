@@ -7,6 +7,7 @@ import {Recipe} from "@/app/data/DataInterface";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
 import {getUserDisplayName} from "@/app/utils/firebaseUtils/User";
+import {Alert} from "@/app/components/Alerts";
 
 const MEAL_TYPE_OPTIONS = ["Breakfast", "Lunch", "Dinner"];
 const AGE_GROUP_OPTIONS = ["Adult", "Kids"];
@@ -24,6 +25,7 @@ export default function AddRecipeComponent() {
         }
     }, [user?.uid]);
 
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [prepTime, setPrepTime] = useState<number | ''>('');
     const [cookTime, setCookTime] = useState<number | ''>('');
@@ -207,7 +209,7 @@ export default function AddRecipeComponent() {
 
             await addRecipeToFirebase(recipe, user!.uid);
             invalidate();
-            alert('Recipe added successfully!');
+            setSuccessMessage('Recipe added successfully!');
             clearForm();
         } catch (error) {
             console.error("Error adding recipe:", error);
@@ -218,6 +220,12 @@ export default function AddRecipeComponent() {
 
     return (
         <form onSubmit={handleSubmit}>
+
+            {successMessage && (
+                <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[90] w-full max-w-sm px-4">
+                    <Alert message={successMessage} type="success" onDismiss={() => setSuccessMessage(null)} />
+                </div>
+            )}
 
             {/* ── Mobile layout ── */}
             <div className="md:hidden pt-24 pb-64 px-6 max-w-2xl mx-auto space-y-10">
