@@ -1,5 +1,5 @@
 import {auth, db} from "@/app/config/firebase";
-import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, User, UserCredential, getRedirectResult} from 'firebase/auth';
+import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider, updateProfile, User, UserCredential, getRedirectResult} from 'firebase/auth';
 import {doc, setDoc, getDoc} from 'firebase/firestore';
 
 export const saveUserProfile = async (uid: string, displayName: string, email: string) => {
@@ -20,8 +20,12 @@ export const handleGoogleRedirectResult = async (): Promise<UserCredential | nul
     return result;
 };
 
-export const signInWithGoogle = async (): Promise<UserCredential> => {
+export const signInWithGoogle = async (): Promise<UserCredential | null> => {
     const provider = new GoogleAuthProvider();
+    if (typeof window !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        await signInWithRedirect(auth, provider);
+        return null;
+    }
     const credential = await signInWithPopup(auth, provider);
     const { uid, displayName, email } = credential.user;
     await saveUserProfile(uid, displayName ?? '', email ?? '');
