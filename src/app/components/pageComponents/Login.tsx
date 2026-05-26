@@ -30,7 +30,14 @@ export const LoginComponent = () => {
             if (credential) redirectToHome(router);
             // on mobile, signInWithRedirect navigates away — no further action needed
         } catch (err: unknown) {
-            setError("Google sign-in failed. Please try again.");
+            const code = (err as { code?: string }).code;
+            if (code === 'auth/unauthorized-domain') {
+                setError("This domain is not authorized. Add it in Firebase Console → Authentication → Settings → Authorized domains.");
+            } else if (code === 'auth/cancelled-popup-request') {
+                // user opened multiple popups — ignore
+            } else {
+                setError(`Google sign-in failed. (${code ?? 'unknown'})`);
+            }
             console.error(err);
         } finally {
             setLoading(false);
@@ -131,9 +138,9 @@ export const LoginComponent = () => {
                             <label htmlFor="password" className="font-label text-sm font-semibold uppercase tracking-wider text-on-surface/70 block">
                                 Password
                             </label>
-                            <a href="#" className="text-xs font-label font-semibold text-primary hover:text-primary-container transition-colors">
+                            <Link href="/forgot-password" className="text-xs font-label font-semibold text-primary hover:text-primary-container transition-colors">
                                 Forgot password?
-                            </a>
+                            </Link>
                         </div>
                         <input
                             id="password"

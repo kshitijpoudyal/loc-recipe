@@ -1,5 +1,5 @@
 import {auth, db} from "@/app/config/firebase";
-import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider, updateProfile, User, UserCredential, getRedirectResult} from 'firebase/auth';
+import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider, updateProfile, User, UserCredential, getRedirectResult, sendPasswordResetEmail} from 'firebase/auth';
 import {doc, setDoc, getDoc} from 'firebase/firestore';
 
 export const saveUserProfile = async (uid: string, displayName: string, email: string) => {
@@ -22,14 +22,25 @@ export const handleGoogleRedirectResult = async (): Promise<UserCredential | nul
 
 export const signInWithGoogle = async (): Promise<UserCredential | null> => {
     const provider = new GoogleAuthProvider();
-    if (typeof window !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    const isMobile = typeof window !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
         await signInWithRedirect(auth, provider);
         return null;
     }
-    const credential = await signInWithPopup(auth, provider);
-    const { uid, displayName, email } = credential.user;
-    await saveUserProfile(uid, displayName ?? '', email ?? '');
-    return credential;
+    try {
+        const credential = await signInWithPopup(auth, provider);
+        const { uid, displayName, email } = credential.user;
+        await saveUserProfile(uid, displayName ?? '', email ?? '');
+        return credential;
+    } catch (err: unknown) {
+        const code = (err as { code?: string }).code;
+        // Fall back to redirect if popup was blocked
+        if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user') {
+            await signInWithRedirect(auth, provider);
+            return null;
+        }
+        throw err;
+    }
 };
 
 export const registerWithEmail = async (displayName: string, email: string, password: string) => {
@@ -63,4 +74,8 @@ export function getSignedInUser(): User | null {
 
 export const logoutUser = async () => {
     await auth.signOut();
+};
+
+export const sendPasswordReset = async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
 };
