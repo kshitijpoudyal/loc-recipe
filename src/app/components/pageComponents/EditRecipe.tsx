@@ -37,6 +37,7 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
     const [protein, setProtein] = useState(String(recipe.nutrition?.protein ?? ''));
     const [carbohydrates, setCarbohydrates] = useState(String(recipe.nutrition?.carbohydrates ?? ''));
     const [fats, setFats] = useState(String(recipe.nutrition?.fats ?? ''));
+    const [fiber, setFiber] = useState(String(recipe.nutrition?.fiber ?? ''));
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(recipe.imageUrl ?? null);
     const [loading, setLoading] = useState(false);
@@ -98,6 +99,7 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
                     protein: protein ? parseFloat(protein) : 0,
                     carbohydrates: carbohydrates ? parseFloat(carbohydrates) : 0,
                     fats: fats ? parseFloat(fats) : 0,
+                    fiber: fiber ? parseFloat(fiber) : 0,
                 },
             };
 
@@ -235,6 +237,7 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
                                             {label: 'Protein', unit: 'g', value: protein, onChange: setProtein},
                                             {label: 'Carbs', unit: 'g', value: carbohydrates, onChange: setCarbohydrates},
                                             {label: 'Fats', unit: 'g', value: fats, onChange: setFats},
+                                            {label: 'Fiber', unit: 'g', value: fiber, onChange: setFiber},
                                         ].map(field => (
                                             <div key={field.label} className="bg-surface-container-low rounded-xl p-4">
                                                 <label className="block font-label text-[10px] uppercase tracking-widest font-bold text-outline mb-2">{field.label}</label>

@@ -38,6 +38,7 @@ export default function AddRecipeComponent() {
     const [protein, setProtein] = useState('');
     const [carbohydrates, setCarbohydrates] = useState('');
     const [fats, setFats] = useState('');
+    const [fiber, setFiber] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [importedImageUrl, setImportedImageUrl] = useState<string | null>(null);
@@ -99,6 +100,7 @@ export default function AddRecipeComponent() {
         setProtein('');
         setCarbohydrates('');
         setFats('');
+        setFiber('');
         setImageFile(null);
         setSelectedImage(null);
         setImportedImageUrl(null);
@@ -109,7 +111,7 @@ export default function AddRecipeComponent() {
     const prefillForm = (data: {
         name?: string; prepTime?: number; cookTime?: number; servings?: number;
         mealType?: string[]; ingredients?: {qty: string; name: string}[]; steps?: string[];
-        nutrition?: {calories?: number; protein?: number; carbohydrates?: number; fats?: number};
+        nutrition?: {calories?: number; protein?: number; carbohydrates?: number; fats?: number; fiber?: number};
         imageUrl?: string;
     }) => {
         if (data.name) setName(data.name);
@@ -124,6 +126,7 @@ export default function AddRecipeComponent() {
             if (data.nutrition.protein) setProtein(String(data.nutrition.protein));
             if (data.nutrition.carbohydrates) setCarbohydrates(String(data.nutrition.carbohydrates));
             if (data.nutrition.fats) setFats(String(data.nutrition.fats));
+            if (data.nutrition.fiber) setFiber(String(data.nutrition.fiber));
         }
         if (data.imageUrl) {
             setSelectedImage(data.imageUrl);
@@ -198,6 +201,7 @@ export default function AddRecipeComponent() {
                     protein: protein ? parseFloat(protein) : 0,
                     carbohydrates: carbohydrates ? parseFloat(carbohydrates) : 0,
                     fats: fats ? parseFloat(fats) : 0,
+                    fiber: fiber ? parseFloat(fiber) : 0,
                 },
             };
 
@@ -396,6 +400,7 @@ export default function AddRecipeComponent() {
                             {label: 'Protein', unit: 'g', value: protein, onChange: setProtein},
                             {label: 'Carbs', unit: 'g', value: carbohydrates, onChange: setCarbohydrates},
                             {label: 'Fats', unit: 'g', value: fats, onChange: setFats},
+                            {label: 'Fiber', unit: 'g', value: fiber, onChange: setFiber},
                         ].map(field => (
                             <div key={field.label} className="bg-surface-container-low rounded-xl p-4">
                                 <label className="block font-label text-[10px] uppercase tracking-widest font-bold text-outline mb-2">{field.label}</label>
@@ -671,6 +676,7 @@ export default function AddRecipeComponent() {
                                     {label: 'Protein', unit: 'g', value: protein, onChange: setProtein},
                                     {label: 'Carbs', unit: 'g', value: carbohydrates, onChange: setCarbohydrates},
                                     {label: 'Fats', unit: 'g', value: fats, onChange: setFats},
+                                    {label: 'Fiber', unit: 'g', value: fiber, onChange: setFiber},
                                 ].map(field => (
                                     <div key={field.label}>
                                         <p className="text-[10px] uppercase tracking-widest font-label font-bold text-outline mb-2">{field.label}</p>

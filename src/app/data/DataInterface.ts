@@ -29,6 +29,7 @@ export interface Recipe {
         protein?: number; // in grams
         carbohydrates?: number; // in grams
         fats?: number; // in grams
+        fiber?: number; // in grams
         sugar?: number; // in grams
     };
     imageUrl?: string,
