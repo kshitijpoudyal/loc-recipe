@@ -119,6 +119,7 @@ function mapJsonLd(ld: Record<string, unknown>) {
             protein: parseNumber(nutrition?.proteinContent) ?? 0,
             carbohydrates: parseNumber(nutrition?.carbohydrateContent) ?? 0,
             fats: parseNumber(nutrition?.fatContent) ?? 0,
+            fiber: parseNumber(nutrition?.fiberContent) ?? 0,
         },
         imageUrl: extractImageUrl(ld.image),
     };
@@ -195,7 +196,7 @@ function parseMicrodata(html: string): ReturnType<typeof mapJsonLd> | null {
         mealType: [],
         ingredients,
         steps,
-        nutrition: {calories: 0, protein: 0, carbohydrates: 0, fats: 0},
+        nutrition: {calories: 0, protein: 0, carbohydrates: 0, fats: 0, fiber: 0},
         imageUrl,
     };
 }
