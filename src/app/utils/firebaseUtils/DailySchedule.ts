@@ -9,15 +9,13 @@ export const updateSchedule = async (
     recipeIds: string[],
     userId: string,
 ): Promise<void> => {
-    try {
-        const scheduleDocRef = doc(db, userScheduleCol(userId), weekdayValue);
-        await setDoc(scheduleDocRef, {
-            weekday: weekdayValue,
-            [mealType]: recipeIds,
-        }, {merge: true});
-    } catch (error) {
-        console.error("Error updating schedule:", error);
-    }
+    // Errors propagate so callers can tell the user the save failed.
+    const scheduleDocRef = doc(db, userScheduleCol(userId), weekdayValue);
+    await setDoc(scheduleDocRef, {
+        weekday: weekdayValue,
+        // De-duplicate so a recipe can't appear twice in the same slot.
+        [mealType]: Array.from(new Set(recipeIds)),
+    }, {merge: true});
 };
 
 export const fetchAllDailySchedules = async (userId: string): Promise<DailySchedule[]> => {
@@ -41,7 +39,8 @@ export const mapAllRecipesToSchedule = (
         if (!weekdayKey || !scheduleLocal[weekdayKey]) return;
 
         const addRecipes = (mealType: MealType, recipeIds: string[]) => {
-            recipeIds.forEach((recipeId) => {
+            // Skip duplicate IDs (older data may contain them) to keep React keys unique.
+            new Set(recipeIds).forEach((recipeId) => {
                 const recipe = recipeMap.get(recipeId);
                 if (recipe) scheduleLocal[weekdayKey][mealType].push(recipe);
             });

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
+import {isOptimizableImage} from "@/app/utils/imageUtils";
 import Link from "next/link";
 import { Recipe } from "@/app/data/DataInterface";
 import { MEAL_TYPES } from "@/app/data/ConstData";
@@ -11,6 +12,7 @@ import { deleteRecipeFromFirebase, toggleRecipePublic } from "@/app/utils/fireba
 import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
 import EditRecipeModal from "@/app/components/pageComponents/EditRecipe";
 import ConfirmDialog from "@/app/components/baseComponents/ConfirmDialog";
+import { FloatingAlert } from "@/app/components/Alerts";
 
 const HERO_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuAHgwX2m5vJzXbS63imMz81bbkjghfpwp-wSx1jn3gHGeFKTzfMx_nWJGwSCvMfRXr4WIoNtFKNXqV9I82wP1xm4qouNJubz7SJ3sgEfx4trD0YJqiaNXE0TnzP-6fQo72nhu1SGDkmOcwSGA2J9MENranzQfzE9_9j84vJIGw9vWLWlqLFgfweqxc2HQeFp4-XzgH6ZcBxPYlpJ6iQfrIUbJ4lnk7tFvism_wgBalo_z7oX-9NdQIohGe5Pv974ak96tF2m9dlYYX9";
 
@@ -30,6 +32,7 @@ export default function HomePage() {
     const [detailOpen, setDetailOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [actionError, setActionError] = useState<string | null>(null);
 
     const handleDelete = (recipe: Recipe) => {
         if (!recipe.recipeId) return;
@@ -39,15 +42,25 @@ export default function HomePage() {
     const handleConfirmDelete = async () => {
         if (!selectedRecipe?.recipeId) return;
         setConfirmDeleteOpen(false);
-        await deleteRecipeFromFirebase(selectedRecipe.recipeId, selectedRecipe.createdBy!, selectedRecipe.isPublic);
-        invalidate();
-        setDetailOpen(false);
+        try {
+            await deleteRecipeFromFirebase(selectedRecipe.recipeId, selectedRecipe.createdBy!, selectedRecipe.isPublic);
+            invalidate();
+            setDetailOpen(false);
+        } catch (err) {
+            console.error("Error deleting recipe:", err);
+            setActionError("Couldn't delete the recipe. Please try again.");
+        }
     };
 
     const handleTogglePublic = async (recipe: Recipe) => {
-        await toggleRecipePublic(recipe);
-        invalidate();
-        setDetailOpen(false);
+        try {
+            await toggleRecipePublic(recipe);
+            invalidate();
+            setDetailOpen(false);
+        } catch (err) {
+            console.error("Error changing recipe visibility:", err);
+            setActionError("Couldn't update who can see this recipe. Please try again.");
+        }
     };
 
     const isOwner = (recipe: Recipe) => !!(user && recipe.createdBy === user.uid);
@@ -65,19 +78,16 @@ export default function HomePage() {
     }, [recipes, activeFilter, searchQuery, user?.uid]);
 
     // Daily pick — deterministic seed so it's consistent all day
+    const [dayIndex] = useState(() => Math.floor(Date.now() / (1000 * 60 * 60 * 24)));
     const todayRecipe = useMemo(() => {
         if (!recipes.length) return null;
-        const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
         return recipes[dayIndex % recipes.length];
-    }, [recipes]);
+    }, [recipes, dayIndex]);
 
-    // Hero recipe — starts as today's pick, can be shuffled
-    const [heroRecipe, setHeroRecipe] = useState<Recipe | null>(null);
+    // Hero recipe — today's pick until the user shuffles
+    const [shuffledRecipe, setHeroRecipe] = useState<Recipe | null>(null);
+    const heroRecipe = shuffledRecipe ?? todayRecipe;
     const [shuffling, setShuffling] = useState(false);
-
-    useEffect(() => {
-        if (todayRecipe && !heroRecipe) setHeroRecipe(todayRecipe);
-    }, [todayRecipe, heroRecipe]);
 
     const handleShuffle = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -94,6 +104,7 @@ export default function HomePage() {
 
     return (
         <div className="bg-surface text-on-surface">
+            {actionError && <FloatingAlert message={actionError} type="error" onDismiss={() => setActionError(null)}/>}
 
             {/* ── Mobile layout ── */}
             <div className="md:hidden pt-16 pb-28">
@@ -108,7 +119,7 @@ export default function HomePage() {
                             onClick={() => heroRecipe && (setSelectedRecipe(heroRecipe), setDetailOpen(true))}
                         >
                             {heroRecipe?.imageUrl ? (
-                                <Image src={heroRecipe.imageUrl} alt={heroRecipe.name} fill loading="eager" sizes="100vw" className={`object-cover transition-opacity duration-300 ${shuffling ? 'opacity-0' : 'opacity-100'}`}/>
+                                <Image src={heroRecipe.imageUrl} unoptimized={!isOptimizableImage(heroRecipe.imageUrl)} alt={heroRecipe.name} fill loading="eager" sizes="100vw" className={`object-cover transition-opacity duration-300 ${shuffling ? 'opacity-0' : 'opacity-100'}`}/>
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-surface-container-high">
                                     <span className="material-symbols-outlined text-outline" style={{fontSize: '64px'}}>restaurant</span>
@@ -200,7 +211,7 @@ export default function HomePage() {
                             >
                                 <div className="relative aspect-video rounded-3xl overflow-hidden mb-4 shadow-sm bg-surface-container">
                                     {recipe.imageUrl ? (
-                                        <Image src={recipe.imageUrl} alt={recipe.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500"/>
+                                        <Image src={recipe.imageUrl} unoptimized={!isOptimizableImage(recipe.imageUrl)} alt={recipe.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500"/>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
                                             <span className="material-symbols-outlined text-outline" style={{fontSize: '48px'}}>restaurant</span>
@@ -344,7 +355,7 @@ export default function HomePage() {
                             <div className="relative rounded-xl overflow-hidden shadow-2xl h-[260px] sm:h-[360px] md:h-[450px]">
                                 {heroRecipe?.imageUrl ? (
                                     <Image
-                                        src={heroRecipe.imageUrl}
+                                        src={heroRecipe.imageUrl} unoptimized={!isOptimizableImage(heroRecipe.imageUrl)}
                                         alt={heroRecipe.name}
                                         fill
                                         loading="eager"
@@ -501,7 +512,7 @@ export default function HomePage() {
                                     <div className="relative h-72 overflow-hidden bg-surface-container-high">
                                         {recipe.imageUrl ? (
                                             <Image
-                                                src={recipe.imageUrl}
+                                                src={recipe.imageUrl} unoptimized={!isOptimizableImage(recipe.imageUrl)}
                                                 alt={recipe.name}
                                                 fill
                                                 sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"

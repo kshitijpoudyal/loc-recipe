@@ -1,4 +1,4 @@
-import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { CheckCircleIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import {ErrorType} from "@/app/data/DataInterface";
 
 interface AlertProps {
@@ -24,12 +24,13 @@ export function Alert({ message, type, onDismiss }: AlertProps) {
     };
 
     const styles = alertStyles[type];
+    const Icon = type === "error" ? XCircleIcon : CheckCircleIcon;
 
     return (
-        <div className={`rounded-md p-4 ${styles.bg}`}>
+        <div role={type === "error" ? "alert" : "status"} className={`rounded-md p-4 ${styles.bg}`}>
             <div className="flex">
                 <div className="shrink-0">
-                    <CheckCircleIcon aria-hidden="true" className={`h-5 w-5 ${styles.iconColor}`} />
+                    <Icon aria-hidden="true" className={`h-5 w-5 ${styles.iconColor}`} />
                 </div>
                 <div className="ml-3">
                     <p className={`text-sm font-medium ${styles.textColor}`}>{message}</p>
@@ -49,6 +50,14 @@ export function Alert({ message, type, onDismiss }: AlertProps) {
                     </div>
                 )}
             </div>
+        </div>
+    );
+}
+/** An Alert pinned near the top of the screen, for page-level feedback. */
+export function FloatingAlert(props: AlertProps) {
+    return (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[90] w-full max-w-sm px-4">
+            <Alert {...props}/>
         </div>
     );
 }
