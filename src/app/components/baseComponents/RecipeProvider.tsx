@@ -24,8 +24,14 @@ export const RecipeProvider: React.FC<{children: React.ReactNode}> = ({children}
 
     const load = useCallback(async () => {
         setLoading(true);
-        setRecipes(await fetchAllRecipes(user?.uid ?? undefined));
-        setLoading(false);
+        try {
+            setRecipes(await fetchAllRecipes(user?.uid ?? undefined));
+        } catch (err) {
+            // Keep showing whatever we had rather than spinning forever.
+            console.error("Error loading recipes:", err);
+        } finally {
+            setLoading(false);
+        }
     }, [user?.uid]);
 
     useEffect(() => {

@@ -7,7 +7,8 @@ import {Recipe} from "@/app/data/DataInterface";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
 import {getUserDisplayName} from "@/app/utils/firebaseUtils/User";
-import {Alert} from "@/app/components/Alerts";
+import {FloatingAlert} from "@/app/components/Alerts";
+import {rowsToIngredients} from "@/app/utils/ingredientUtils";
 
 const MEAL_TYPE_OPTIONS = ["Breakfast", "Lunch", "Dinner"];
 const AGE_GROUP_OPTIONS = ["Adult", "Kids"];
@@ -26,6 +27,7 @@ export default function AddRecipeComponent() {
     }, [user?.uid]);
 
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [prepTime, setPrepTime] = useState<number | ''>('');
     const [cookTime, setCookTime] = useState<number | ''>('');
@@ -139,9 +141,13 @@ export default function AddRecipeComponent() {
         setImportLoading(true);
         setImportStatus(null);
         try {
+            const idToken = await user?.getIdToken();
             const res = await fetch('/api/import-recipe', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(idToken ? {Authorization: `Bearer ${idToken}`} : {}),
+                },
                 body: JSON.stringify({url: importUrl.trim()}),
             });
             const data = await res.json();
@@ -179,12 +185,15 @@ export default function AddRecipeComponent() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!user) {
+            setErrorMessage('Please sign in again to save recipes.');
+            return;
+        }
         setLoading(true);
+        setErrorMessage(null);
 
         try {
-            const ingredients = ingredientRows
-                .filter(r => r.name.trim())
-                .map(r => ({name: r.name.trim(), quantity: 0, unit: r.qty.trim()}));
+            const ingredients = rowsToIngredients(ingredientRows);
 
             const recipe: Recipe = {
                 name,
@@ -206,17 +215,20 @@ export default function AddRecipeComponent() {
             };
 
             if (imageFile) {
-                recipe.imageUrl = await uploadImage(imageFile);
+                recipe.imageUrl = await uploadImage(imageFile, user.uid);
             } else if (importedImageUrl) {
                 recipe.imageUrl = importedImageUrl;
             }
 
-            await addRecipeToFirebase(recipe, user!.uid);
+            await addRecipeToFirebase(recipe, user.uid);
             invalidate();
             setSuccessMessage('Recipe added successfully!');
             clearForm();
         } catch (error) {
             console.error("Error adding recipe:", error);
+            setErrorMessage(error instanceof Error && /^(Images|Please)/.test(error.message)
+                ? error.message
+                : "Couldn't save the recipe. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -226,9 +238,10 @@ export default function AddRecipeComponent() {
         <form onSubmit={handleSubmit}>
 
             {successMessage && (
-                <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[90] w-full max-w-sm px-4">
-                    <Alert message={successMessage} type="success" onDismiss={() => setSuccessMessage(null)} />
-                </div>
+                <FloatingAlert message={successMessage} type="success" onDismiss={() => setSuccessMessage(null)} />
+            )}
+            {errorMessage && (
+                <FloatingAlert message={errorMessage} type="error" onDismiss={() => setErrorMessage(null)} />
             )}
 
             {/* ── Mobile layout ── */}

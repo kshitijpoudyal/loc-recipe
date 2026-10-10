@@ -1,6 +1,6 @@
 import {addDoc, collection, deleteDoc, doc, getDocs, setDoc, updateDoc} from "firebase/firestore";
 import {db, globalUserId, storage, userRecipeCol} from "@/app/config/firebase";
-import {getDownloadURL, ref, uploadBytes} from "@firebase/storage";
+import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {Recipe} from "@/app/data/DataInterface";
 
 const fetchFromUser = async (userId: string): Promise<Recipe[]> => {
@@ -24,9 +24,20 @@ export const findRecipeById = (_recipes: Recipe[], recipeId: string): Recipe | u
     return _recipes.find((recipe) => recipe.recipeId === recipeId);
 };
 
-export const uploadImage = async (imageFile: File) => {
-    const storageRef = ref(storage, `recipe/${imageFile.name}`);
-    const snapshot = await uploadBytes(storageRef, imageFile);
+export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+
+export const uploadImage = async (imageFile: File, userId: string) => {
+    if (!ALLOWED_IMAGE_TYPES.includes(imageFile.type)) {
+        throw new Error("Please choose a PNG, JPG, GIF or WebP image.");
+    }
+    if (imageFile.size > MAX_IMAGE_BYTES) {
+        throw new Error("Images must be 10MB or smaller.");
+    }
+    // Unique per-user path so two uploads with the same file name never overwrite each other.
+    const safeName = imageFile.name.replace(/[^\w.-]+/g, "_").slice(-80);
+    const storageRef = ref(storage, `recipe/${userId}/${crypto.randomUUID()}-${safeName}`);
+    const snapshot = await uploadBytes(storageRef, imageFile, {contentType: imageFile.type});
     return await getDownloadURL(snapshot.ref);
 };
 

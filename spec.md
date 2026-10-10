@@ -4,9 +4,9 @@
 
 A meal planning and recipe management tool that helps users organize meals across a weekly schedule. Users can create and store recipes, categorize them by meal type, and assign them to specific days and meal slots.
 
-**Primary audience:** Individuals planning their own meals.
+**Primary audience:** Individuals and families planning their own meals.
 
-The app operates as a **shared workspace** — all authenticated users interact with the same public recipe library and the same weekly schedule. There is no per-user data isolation.
+Each user has a **private** recipe collection and weekly schedule. Users can publish a recipe to a **shared library** that everyone can browse and add to their own plan.
 
 ---
 
@@ -16,29 +16,27 @@ The app operates as a **shared workspace** — all authenticated users interact 
 
 | Feature | Notes |
 |---|---|
-| User authentication (login / logout) | Email + password via Firebase Auth |
-| Protected routes | All routes except `/login` require authentication |
-| Add new recipe | Full form with image, ingredients, steps, nutrition, meal type, age group |
-| Upload recipe images | PNG, JPG, GIF up to 10MB via Firebase Storage |
-| View recipe list | Responsive grid of recipe cards |
-| View recipe details | Modal overlay with full recipe info |
-| Weekly meal schedule | Accordion view, one section per day |
-| Assign recipes to day + meal slot | Modal picker; saves the full list for that slot |
-| Multiple meal types per recipe | A recipe can be tagged as breakfast, lunch, and/or dinner |
-| Assign a recipe to multiple days/slots | No restriction on reuse across the schedule |
+| Sign in / register / sign out | Email + password or Google, via Firebase Auth |
+| Forgot password | Password-reset email |
+| Protected routes | Planner, add recipe and mock-data pages require sign-in |
+| Add recipe | Full form: image, ingredients, steps, nutrition, meal type, age group |
+| Import recipe from a URL | Server route reads schema.org JSON-LD or microdata; requires sign-in |
+| Import recipe from pasted JSON | Same fields as the form |
+| Edit and delete own recipes | Owner only |
+| Publish / unpublish a recipe | Copies the recipe into the shared library |
+| Browse, search and filter recipes | Home page; filter by meal type or "my recipes" |
+| Recipe details | Modal with ingredients, steps, nutrition, image |
+| Weekly meal schedule | Per user; current weekday selected by default |
+| Assign recipes to a day + meal slot | Picker with search and filters; deselect to remove |
+| Installable PWA | Manifest + service worker |
 | Responsive layout | Mobile-first, adapts to desktop |
 
-### Planned (Not Yet Built)
+### Planned
 
 | Feature | Notes |
 |---|---|
-| Edit recipe | No update function exists yet |
-| Delete recipe | No delete function exists yet |
-| Remove recipe from a schedule slot | Deselecting in the picker and saving achieves this; needs explicit UX |
-| Search recipes | No search on the recipe list |
-| Filter recipes | e.g., by meal type, age group |
-| Improved validation and error handling | Currently uses `alert()` and `console.error()` |
-| User registration UI | `registerUser()` exists but no `/register` route or form |
+| Shared `RecipeForm` component | Add and Edit duplicate the same form; mobile and desktop markup is also duplicated |
+| Week-specific schedules | Today the plan is a single repeating week |
 
 ---
 
@@ -46,75 +44,49 @@ The app operates as a **shared workspace** — all authenticated users interact 
 
 ### 3.1 Authentication
 
-1. Unauthenticated users are redirected to `/login` from any protected route.
-2. User enters email and password.
-3. On success, user is redirected to the home page.
-4. Logout clears the session and redirects to `/login`.
-5. Registration: currently backend-only (`registerUser()`).
+1. Visitors can browse the shared library on the home page without signing in.
+2. Protected pages redirect signed-out users to `/login`.
+3. Users sign in with email + password or Google (popup on desktop, redirect on mobile).
+4. New users register at `/register`; a profile (`users/{uid}`) stores the display name.
+5. `/forgot-password` sends a reset email.
 
 ### 3.2 Recipe Management
 
-**Create Recipe**
-1. User navigates to `/add-recipe`.
-2. Fills in:
-   - Name (required)
-   - Prep time, cook time, servings
-   - Ingredients (added one at a time: name + quantity + unit)
-   - Steps (entered as newline-separated text, split into an ordered array on save)
-   - Meal type (multi-select: breakfast, lunch, dinner)
-   - Age group (multi-select: adult, kids)
-   - Nutrition (calories, protein, carbohydrates, fats — per serving)
-   - Recipe image (optional upload)
-3. On submit: image (if provided) is uploaded to Firebase Storage first; then recipe is saved to Firestore.
-4. On success: form is cleared. User stays on the page.
+**Create**
+1. `/add-recipe`: optionally import from a URL or pasted JSON to pre-fill the form.
+2. Fill in name, times, servings, meal type, age group, ingredients (amount + name), steps, nutrition and an image.
+3. On save: the image (if any) is uploaded, then the recipe is written to `users/{uid}/recipe`.
+4. A success or error message is shown; on success the form is cleared.
 
-**View Recipes**
-1. User navigates to `/list-recipe`.
-2. All recipes are fetched and displayed in a responsive grid.
-3. Clicking a card opens a detail modal.
-4. Modal displays full recipe info (ingredients, steps, nutrition, image).
-5. Closing the modal returns to the list.
+**Browse**
+- The home page lists the shared library plus the user's own recipes, with a daily featured pick, search and filters.
 
-**Edit / Delete Recipe** *(planned)*
-- Not yet implemented. No Firestore update or delete functions exist.
+**Edit / Delete / Publish** (owner only)
+- From the details modal. Edits to a published recipe are also written to its shared-library copy.
+- Deleting or unpublishing removes the shared-library copy.
 
 ### 3.3 Weekly Schedule
 
-**View Schedule**
-1. User navigates to `/daily-schedule`.
-2. All recipes and all 7 weekday schedule documents are fetched and joined.
-3. Days are displayed as an accordion; the current weekday is expanded by default.
-4. Each day shows three meal slots: breakfast, lunch, dinner.
-5. Each slot shows assigned recipe cards and an "add" icon.
-
-**Assign Recipes to a Slot**
-1. User clicks the "add" icon on any meal slot.
-2. A modal opens showing all available recipes.
-3. Recipes already assigned to that slot are pre-selected.
-4. User toggles recipes on/off.
-5. User clicks "Assign."
-6. The full recipe ID list for that slot is written to Firestore (`updateSchedule`), replacing the previous list.
-7. Page reloads to reflect the change. *(Temporary — will be replaced with in-place state updates.)*
-
-**Remove a Recipe from a Slot** *(planned UX)*
-- Achieved by opening the assign modal, deselecting the recipe, and saving.
-- Removing a recipe from a slot does not delete the recipe from the library.
-
-**View Recipe Details from Schedule**
-- Clicking a recipe card in the schedule opens the recipe detail modal.
+1. `/daily-schedule` loads the user's recipes and their 7 weekday documents.
+2. Each day has breakfast, lunch and dinner slots.
+3. The "add" button on a slot opens a picker (search, meal and owner filters) with current recipes pre-selected.
+4. Saving writes the full list of recipe IDs for that slot; the day refreshes in place.
+5. If a save fails, the picker stays open and shows an error.
 
 ---
 
-## 4. Auth Rules — Shared Workspace Model
+## 4. Access Rules
 
-| Rule | Behaviour |
-|---|---|
-| Access | All routes except `/login` require a valid Firebase Auth session |
-| Recipe visibility | All authenticated users can view all recipes |
-| Recipe creation | Any authenticated user can add a recipe |
-| Schedule access | The weekly schedule is shared; any authenticated user can modify any slot |
-| Data isolation | None — no per-user filtering is enforced |
-| `createdBy` field | Present on the data model but **not written** to Firestore today (known gap) |
+Enforced by `firestore.rules` and `storage.rules`.
+
+| Data | Read | Write |
+|---|---|---|
+| `users/{uid}` profile | Owner | Owner |
+| `users/{uid}/recipe` | Owner | Owner (`createdBy` must equal owner) |
+| `users/{uid}/dailySchedule` | Owner | Owner |
+| Shared library recipes | Anyone | The recipe's author (`createdBy`), or the library account |
+| Recipe images | Signed-in users (and anyone holding a download URL) | Uploader, in their own folder, images ≤ 10MB |
+| `/mock-data` page | Library account only | — |
 
 ---
 
@@ -129,9 +101,10 @@ The app operates as a **shared workspace** — all authenticated users interact 
 - `alert()` and `console.error()`-only error handling is not acceptable in production.
 
 ### Image Uploads
-- Accepted formats: PNG, JPG, GIF
-- Maximum file size: 10MB
-- Stored in Firebase Cloud Storage; URL saved on the recipe document
+- Accepted formats: PNG, JPG, GIF, WebP
+- Maximum file size: 10MB (checked in the app and in `storage.rules`)
+- Stored at `recipe/{uid}/{uuid}-{filename}` in Firebase Cloud Storage; download URL saved on the recipe
+- Imported recipes may instead link to the source site's image URL
 
 ### Responsive Design
 - Mobile-first. Layouts adapt from single-column (mobile) to multi-column (tablet/desktop).
@@ -151,30 +124,21 @@ The app operates as a **shared workspace** — all authenticated users interact 
 
 ---
 
-## 6. Known Gaps & Issues (Current Implementation)
+## 6. Known Gaps
 
 | Issue | Location | Impact |
 |---|---|---|
-| `createdBy` not written on recipe create | `Recipe.ts: addRecipeToFirebase()` | No audit trail of who created a recipe |
-| `sugar` nutrition field has state but no form input | `AddRecipe.tsx` | Sugar is always saved as `0` |
-| No user registration UI | No `/register` route | New users cannot self-register via the app |
-| Full page reload after schedule update | `DailySchedule.tsx: callbackAfterRecipeChange()` | Unnecessary UX disruption; should use in-place state update |
-| Errors use `alert()` and `console.error()` | `AddRecipe.tsx`, `AssignRecipeToWeekDay.tsx` | Not user-friendly; no in-app error feedback |
-| No edit or delete for recipes | `Recipe.ts` | Recipes cannot be corrected or removed once added |
-| Schedule not scoped per user | `DailySchedule.ts: fetchAllDailySchedules()` | All users share one global weekly schedule |
+| Add/Edit forms duplicated, plus separate mobile and desktop markup | `AddRecipe.tsx`, `EditRecipe.tsx`, `DailySchedule.tsx` | Changes must be made in several places |
+| Data loading inside effects | `RecipeProvider`, `DailySchedule`, `PWAInstallProvider` | Shown as React Compiler lint warnings |
+| Fractional amounts stored as text | Ingredient `unit` field | "½ cup" keeps `quantity: 0`, so amounts can't be scaled yet |
+| Old images at `recipe/{filename}` | Cloud Storage | Read-only; new uploads use per-user folders |
 
 ---
 
 ## 7. Out of Scope
 
-The following will not be built:
-
-- Per-user private recipe libraries
 - Real-time collaboration
-- Offline mode
+- Offline editing
 - Notifications or reminders
 - Grocery list generation
-- External recipe import (e.g., from a URL)
-- Advanced filtering or recommendations
 - Pantry / inventory tracking
-- Public recipe sharing

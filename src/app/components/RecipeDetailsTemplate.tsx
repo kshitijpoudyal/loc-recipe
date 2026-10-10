@@ -1,6 +1,7 @@
 import {Dialog, DialogBackdrop, DialogPanel} from '@headlessui/react'
 import {XMarkIcon} from '@heroicons/react/24/outline'
 import Image from "next/image";
+import {isOptimizableImage} from "@/app/utils/imageUtils";
 import {Recipe} from "@/app/data/DataInterface";
 import {useState} from "react";
 
@@ -90,7 +91,7 @@ export default function RecipeDetailsTemplate({isOpen, recipe, setIsOpenAction, 
                                 {recipe.imageUrl ? (
                                     <Image
                                         alt={recipe.name}
-                                        src={recipe.imageUrl}
+                                        src={recipe.imageUrl} unoptimized={!isOptimizableImage(recipe.imageUrl)}
                                         fill
                                         className="object-cover"
                                         sizes="(max-width: 896px) 100vw, 896px"

@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import {isOptimizableImage} from "@/app/utils/imageUtils";
 import {Recipe} from "@/app/data/DataInterface";
 
 export interface RecipeCardProps {
@@ -19,7 +20,7 @@ export default function RecipeCard({recipe, isPreview}: RecipeCardProps) {
                 <div className={`relative aspect-square w-full rounded-lg bg-gray-100 overflow-hidden ${isPreview ? 'max-w-[100px]' : ''}`}>
                     <Image
                         alt={recipe.name}
-                        src={recipe.imageUrl}
+                        src={recipe.imageUrl} unoptimized={!isOptimizableImage(recipe.imageUrl)}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                         className="object-cover hover:drop-shadow-xl"
