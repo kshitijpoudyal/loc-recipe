@@ -1,12 +1,14 @@
 import React, {useState, useRef, useCallback, useEffect, useMemo} from 'react';
 import Image from 'next/image';
+import {isOptimizableImage} from "@/app/utils/imageUtils";
 import {MealType, Recipe, WeekDay} from "@/app/data/DataInterface";
 import {DEFAULT_RECIPE, MEAL_TYPES, WEEK_DAYS} from "@/app/data/ConstData";
-import {fetchAllDailySchedules, mapAllRecipesToSchedule, updateSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
+import {fetchAllDailySchedules, mapAllRecipesToSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {AssignRecipeToWeekDay, AssignRecipeToWeekDayProps} from "@/app/components/AssignRecipeToWeekDay";
 import RecipeDetailsTemplate from "@/app/components/RecipeDetailsTemplate";
+import {FloatingAlert} from "@/app/components/Alerts";
 
 const DAY_SHORT: Record<string, string> = {
     Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed',
@@ -28,6 +30,7 @@ export default function DailyScheduleComponent() {
     const [recipesMap, setRecipesMap] = useState<Record<string, Record<MealType, Recipe[]>>>({});
     const [selectedDay, setSelectedDay] = useState<string>(TODAY);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [refreshingDay, setRefreshingDay] = useState<string | null>(null);
     const [isAddRecipeOpen, setIsAddRecipeOpen] = useState(false);
     const [isRecipeDetailsOpen, setIsRecipeDetailsOpen] = useState(false);
@@ -47,39 +50,19 @@ export default function DailyScheduleComponent() {
         }, {} as Record<string, number>);
     }, []);
 
-    const { weekLabel, monthAbbr } = useMemo(() => {
-        const today = new Date();
-        const dow = today.getDay();
-        const monday = new Date(today);
-        monday.setDate(today.getDate() + (dow === 0 ? -6 : 1 - dow));
-        return {
-            weekLabel: monday.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }),
-            monthAbbr: monday.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
-        };
-    }, []);
-
     const loadSchedule = useCallback(async () => {
         if (!user?.uid) return;
         try {
             const dailySchedules = await fetchAllDailySchedules(user.uid);
             setRecipesMap(mapAllRecipesToSchedule(allRecipe, dailySchedules));
-        } catch (error) {
-            console.error("Error loading schedule:", error);
+        } catch (err) {
+            console.error("Error loading schedule:", err);
+            setError("Couldn't load your weekly plan. Please check your connection and try again.");
         } finally {
             setLoading(false);
             setRefreshingDay(null);
         }
     }, [allRecipe, user?.uid]);
-
-    const handleRemoveRecipe = useCallback(async (day: WeekDay, mealType: MealType, recipeId: string) => {
-        if (!user?.uid) return;
-        setRefreshingDay(day.value);
-        const remaining = (recipesMap[day.value]?.[mealType] ?? [])
-            .map(r => r.recipeId!)
-            .filter(id => id !== recipeId);
-        await updateSchedule(day.value, mealType, remaining, user.uid);
-        await loadSchedule();
-    }, [user?.uid, loadSchedule, recipesMap]);
 
     const callbackAfterRecipeChange = useCallback((isOpen: boolean, refresh?: boolean) => {
         setIsAddRecipeOpen(isOpen);
@@ -146,7 +129,7 @@ export default function DailyScheduleComponent() {
             return (
                 <div key={mealType} className={`group relative overflow-hidden rounded-xl ${heightClass} w-full shadow-sm cursor-pointer`}
                     onClick={() => { setIsRecipeDetailsOpen(true); setSelectedRecipeForDetails(firstRecipe); }}>
-                    <Image src={firstRecipe.imageUrl} alt={firstRecipe.name}
+                    <Image src={firstRecipe.imageUrl} unoptimized={!isOptimizableImage(firstRecipe.imageUrl)} alt={firstRecipe.name}
                         width={600} height={400}
                         className="absolute inset-0 w-full h-full object-cover grayscale-[0.1] group-hover:scale-105 transition-transform duration-500"/>
                     <div className="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-transparent to-transparent pointer-events-none"/>
@@ -181,7 +164,7 @@ export default function DailyScheduleComponent() {
                             onClick={() => { setIsRecipeDetailsOpen(true); setSelectedRecipeForDetails(recipe); }}>
                             <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
                                 {recipe.imageUrl ? (
-                                    <Image src={recipe.imageUrl} alt={recipe.name} width={32} height={32} className="w-full h-full object-cover"/>
+                                    <Image src={recipe.imageUrl} unoptimized={!isOptimizableImage(recipe.imageUrl)} alt={recipe.name} width={32} height={32} className="w-full h-full object-cover"/>
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center">
                                         <span className="material-symbols-outlined text-outline-variant" style={{fontSize: '14px'}}>restaurant</span>
@@ -241,7 +224,7 @@ export default function DailyScheduleComponent() {
                                     onClick={() => { setIsRecipeDetailsOpen(true); setSelectedRecipeForDetails(recipe); }}>
                                     <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
                                         {recipe.imageUrl ? (
-                                            <Image src={recipe.imageUrl} alt={recipe.name} width={40} height={40} className="w-full h-full object-cover"/>
+                                            <Image src={recipe.imageUrl} unoptimized={!isOptimizableImage(recipe.imageUrl)} alt={recipe.name} width={40} height={40} className="w-full h-full object-cover"/>
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
                                                 <span className="material-symbols-outlined text-outline-variant" style={{fontSize: '16px'}}>restaurant</span>
@@ -272,7 +255,7 @@ export default function DailyScheduleComponent() {
                         <div className="w-1/3 h-full overflow-hidden flex-shrink-0">
                             {firstRecipe.imageUrl ? (
                                 <Image
-                                    src={firstRecipe.imageUrl}
+                                    src={firstRecipe.imageUrl} unoptimized={!isOptimizableImage(firstRecipe.imageUrl)}
                                     alt={firstRecipe.name}
                                     width={120}
                                     height={128}
@@ -398,6 +381,7 @@ export default function DailyScheduleComponent() {
 
     return (
         <div>
+            {error && <FloatingAlert message={error} type="error" onDismiss={() => setError(null)}/>}
             {isAddRecipeOpen && <AssignRecipeToWeekDay {...recipeToWeekDayProps}/>}
             {isRecipeDetailsOpen && (
                 <RecipeDetailsTemplate
@@ -575,7 +559,7 @@ export default function DailyScheduleComponent() {
                                                     <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-high">
                                                         {recipe.imageUrl ? (
                                                             <Image
-                                                                src={recipe.imageUrl}
+                                                                src={recipe.imageUrl} unoptimized={!isOptimizableImage(recipe.imageUrl)}
                                                                 alt={recipe.name}
                                                                 width={64}
                                                                 height={64}

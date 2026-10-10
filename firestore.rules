@@ -1,0 +1,52 @@
+rules_version = '2';
+
+// Proposed rules for the loc-recipe data model. Review against the rules
+// currently deployed in the Firebase console before running
+// `firebase deploy --only firestore:rules`.
+//
+//   users/{uid}                     profile (displayName, email)
+//   users/{uid}/recipe/{id}         a user's own recipes
+//   users/{uid}/dailySchedule/{day} a user's weekly plan
+//   users/{GLOBAL}/recipe/{id}      shared library: copies of recipes users
+//                                   have made public (createdBy = author uid)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isUser(uid) { return signedIn() && request.auth.uid == uid; }
+    function globalUid() { return 'fYuhY5ZiduetO4dt73VU1RElYiV2'; }
+    function isGlobalAdmin() { return isUser(globalUid()); }
+
+    match /users/{uid} {
+      allow read, write: if isUser(uid);
+
+      match /dailySchedule/{day} {
+        allow read, write: if isUser(uid);
+      }
+
+      match /recipe/{recipeId} {
+        // The shared library is readable by anyone (the home page shows it to
+        // signed-out visitors); a user's own recipes only by that user.
+        allow read: if isUser(uid) || uid == globalUid();
+
+        // Own recipes: full control, and createdBy must stay the owner.
+        allow create: if isUser(uid)
+                      && request.resource.data.createdBy == uid;
+        allow update: if isUser(uid)
+                      && request.resource.data.createdBy == resource.data.createdBy;
+        allow delete: if isUser(uid);
+
+        // Shared library: authors may publish, update and unpublish only their
+        // own copies; the library account can manage everything.
+        allow create: if uid == globalUid() && signedIn()
+                      && request.resource.data.createdBy == request.auth.uid;
+        allow update: if uid == globalUid() && signedIn()
+                      && resource.data.createdBy == request.auth.uid
+                      && request.resource.data.createdBy == request.auth.uid;
+        allow delete: if uid == globalUid() && signedIn()
+                      && resource.data.createdBy == request.auth.uid;
+        allow write: if uid == globalUid() && isGlobalAdmin();
+      }
+    }
+  }
+}

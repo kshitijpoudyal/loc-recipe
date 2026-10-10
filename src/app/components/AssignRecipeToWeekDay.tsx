@@ -5,7 +5,9 @@ import React, {useMemo, useState} from "react";
 import {Dialog, DialogBackdrop, DialogPanel} from "@headlessui/react";
 import {XMarkIcon} from "@heroicons/react/24/outline";
 import Image from "next/image";
+import {isOptimizableImage} from "@/app/utils/imageUtils";
 import {updateSchedule} from "@/app/utils/firebaseUtils/DailySchedule";
+import {Alert} from "@/app/components/Alerts";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 
 export interface AssignRecipeToWeekDayProps {
@@ -36,6 +38,7 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
     const [selected, setSelected] = useState<Recipe[]>(selectedRecipeList);
     const [search, setSearch] = useState('');
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [ownerFilter, setOwnerFilter] = useState<'all' | 'mine'>('all');
     const [mealFilters, setMealFilters] = useState<MealType[]>([mealType]);
     const {user} = useAuth();
@@ -67,12 +70,14 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
     const handleSave = async () => {
         if (!user?.uid) return;
         setSaving(true);
+        setError(null);
         try {
             const ids = selected.map(r => r.recipeId!).filter(Boolean);
             await updateSchedule(weekDay.value, mealType, ids, user.uid);
             setIsOpenAction(false, true);
         } catch (e) {
             console.error('Error saving schedule:', e);
+            setError("Couldn't save your plan. Please try again.");
         } finally {
             setSaving(false);
         }
@@ -220,7 +225,7 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
                                                     {/* Thumbnail */}
                                                     <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-high">
                                                         {recipe.imageUrl ? (
-                                                            <Image src={recipe.imageUrl} alt={recipe.name} width={56} height={56} className="w-full h-full object-cover"/>
+                                                            <Image src={recipe.imageUrl} unoptimized={!isOptimizableImage(recipe.imageUrl)} alt={recipe.name} width={56} height={56} className="w-full h-full object-cover"/>
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center">
                                                                 <span className="material-symbols-outlined text-outline-variant">restaurant</span>
@@ -252,6 +257,12 @@ export const AssignRecipeToWeekDay: React.FC<AssignRecipeToWeekDayProps> = ({
                                     )}
                                 </div>
                             </div>
+
+                            {error && (
+                                <div className="flex-shrink-0 px-6 md:px-10 pt-4">
+                                    <Alert message={error} type="error" onDismiss={() => setError(null)}/>
+                                </div>
+                            )}
 
                             {/* Footer — always visible */}
                             <div className="flex-shrink-0 px-6 md:px-10 py-5 border-t border-outline-variant/10 flex gap-3">

@@ -42,3 +42,6 @@ next-env.d.ts
 
 # intellij
 .idea/*
+
+# local Claude Code settings
+.claude/settings.local.json

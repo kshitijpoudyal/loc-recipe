@@ -7,6 +7,9 @@ import {XMarkIcon} from "@heroicons/react/24/outline";
 import {updateRecipeInFirebase, uploadImage} from "@/app/utils/firebaseUtils/Recipe";
 import {Recipe} from "@/app/data/DataInterface";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
+import {useAuth} from "@/app/components/baseComponents/AuthProvider";
+import {Alert} from "@/app/components/Alerts";
+import {joinAmount, rowsToIngredients} from "@/app/utils/ingredientUtils";
 
 const MEAL_TYPE_OPTIONS = ["Breakfast", "Lunch", "Dinner"];
 const AGE_GROUP_OPTIONS = ["Adult", "Kids"];
@@ -21,9 +24,10 @@ export interface EditRecipeProps {
 
 export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditRecipeProps) {
     const {invalidate} = useRecipes();
+    const {user} = useAuth();
 
     const toIngredientRows = (r: Recipe): IngredientRow[] =>
-        r.ingredients?.map(i => ({qty: i.unit ? `${i.quantity > 0 ? i.quantity + ' ' : ''}${i.unit}`.trim() : String(i.quantity > 0 ? i.quantity : ''), name: i.name})) ?? [{qty: '', name: ''}];
+        r.ingredients?.map(i => ({qty: joinAmount(i), name: i.name})) ?? [{qty: '', name: ''}];
 
     const [name, setName] = useState(recipe.name);
     const [prepTime, setPrepTime] = useState<number | ''>(recipe.prepTime ?? '');
@@ -41,6 +45,7 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(recipe.imageUrl ?? null);
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const toggleChip = (value: string, list: string[], setList: (v: string[]) => void) => {
         setList(list.includes(value) ? list.filter(v => v !== value) : [...list, value]);
@@ -76,10 +81,9 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
         e.preventDefault();
         if (!recipe.recipeId) return;
         setLoading(true);
+        setErrorMessage(null);
         try {
-            const ingredients = ingredientRows
-                .filter(r => r.name.trim())
-                .map(r => ({name: r.name.trim(), quantity: 0, unit: r.qty.trim()}));
+            const ingredients = rowsToIngredients(ingredientRows);
 
             const updated: Recipe = {
                 recipeId: recipe.recipeId,
@@ -104,7 +108,8 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
             };
 
             if (imageFile) {
-                updated.imageUrl = await uploadImage(imageFile);
+                if (!user) throw new Error("Please sign in again to upload images.");
+                updated.imageUrl = await uploadImage(imageFile, user.uid);
             } else if (selectedImage) {
                 updated.imageUrl = selectedImage;
             }
@@ -114,6 +119,9 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
             setIsOpenAction(false);
         } catch (error) {
             console.error("Error updating recipe:", error);
+            setErrorMessage(error instanceof Error && /^(Images|Please)/.test(error.message)
+                ? error.message
+                : "Couldn't save your changes. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -308,6 +316,12 @@ export default function EditRecipeModal({isOpen, recipe, setIsOpenAction}: EditR
                                     </button>
                                 </div>
                             </div>
+
+                            {errorMessage && (
+                                <div className="px-6 md:px-10 pt-4">
+                                    <Alert message={errorMessage} type="error" onDismiss={() => setErrorMessage(null)}/>
+                                </div>
+                            )}
 
                             {/* Footer */}
                             <div className="px-6 md:px-10 py-6 border-t border-outline-variant/10 flex gap-3">

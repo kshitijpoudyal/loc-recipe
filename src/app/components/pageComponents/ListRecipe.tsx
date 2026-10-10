@@ -9,6 +9,7 @@ import {LoaderComponent} from "@/app/components/baseComponents/LoaderView";
 import {useAuth} from "@/app/components/baseComponents/AuthProvider";
 import {useRecipes} from "@/app/components/baseComponents/RecipeProvider";
 import ConfirmDialog from "@/app/components/baseComponents/ConfirmDialog";
+import {FloatingAlert} from "@/app/components/Alerts";
 
 export default function ListRecipeComponent() {
     const {recipes, loading, invalidate} = useRecipes();
@@ -16,6 +17,7 @@ export default function ListRecipeComponent() {
     const [open, setOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [actionError, setActionError] = useState<string | null>(null);
     const {user} = useAuth();
 
     const handleDelete = () => {
@@ -25,9 +27,14 @@ export default function ListRecipeComponent() {
     const handleConfirmDelete = async () => {
         if (!selectedRecipe.recipeId) return;
         setConfirmDeleteOpen(false);
-        await deleteRecipeFromFirebase(selectedRecipe.recipeId, selectedRecipe.createdBy!, selectedRecipe.isPublic);
-        invalidate();
-        setOpen(false);
+        try {
+            await deleteRecipeFromFirebase(selectedRecipe.recipeId, selectedRecipe.createdBy!, selectedRecipe.isPublic);
+            invalidate();
+            setOpen(false);
+        } catch (err) {
+            console.error("Error deleting recipe:", err);
+            setActionError("Couldn't delete the recipe. Please try again.");
+        }
     };
 
     if (loading) {
@@ -38,6 +45,7 @@ export default function ListRecipeComponent() {
 
     return (
         <div>
+            {actionError && <FloatingAlert message={actionError} type="error" onDismiss={() => setActionError(null)}/>}
             <ConfirmDialog
                 isOpen={confirmDeleteOpen}
                 title="Delete Recipe"

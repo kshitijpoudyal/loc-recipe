@@ -10,10 +10,13 @@ import {
 } from "@/app/utils/CssUtils";
 import HeroTitle from "@/app/components/baseComponents/HeroTitle";
 import {AuthenticationGate} from "@/app/components/AuthenticationGate";
+import {useAuth} from "@/app/components/baseComponents/AuthProvider";
+import {globalUserId} from "@/app/config/firebase";
 
 export default function AddMockDataForm() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const {user} = useAuth();
 
     const handleAction = async (action: () => Promise<void>, successMessage: string) => {
         setLoading(true);
@@ -28,6 +31,15 @@ export default function AddMockDataForm() {
             setLoading(false);
         }
     };
+
+    if (user && user.uid !== globalUserId) {
+        return (
+            <AuthenticationGate>
+                <HeroTitle title={"Not available"}/>
+                <p className="text-center mt-6">This page is only available to the recipe library account.</p>
+            </AuthenticationGate>
+        );
+    }
 
     return (
         <AuthenticationGate>
