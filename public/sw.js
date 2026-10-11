@@ -1,4 +1,6 @@
-const CACHE_NAME = 'lochus-kitchen-v1';
+// Bump the version to purge caches written by older workers (v1 cached
+// error responses such as 502s, which then never recovered).
+const CACHE_NAME = 'lochus-kitchen-v2';
 const STATIC_ASSETS = ['/'];
 
 self.addEventListener('install', (event) => {
@@ -39,8 +41,12 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(
             caches.match(event.request).then(
                 (cached) => cached || fetch(event.request).then((response) => {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                    // Only cache successful responses; caching an error (or an
+                    // opaque cross-origin response) would serve it forever.
+                    if (response.ok) {
+                        const clone = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                    }
                     return response;
                 })
             )
